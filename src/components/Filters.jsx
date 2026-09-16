@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { Check, ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react'
+import { ChevronDown, Search, X } from 'lucide-react'
 import { PRICE_BOUNDS, SCENT_FAMILIES } from '../data/products'
 import { classNames, formatPrice } from '../lib/format'
 
@@ -23,20 +23,18 @@ function PriceSlider({ range, onChange }) {
   const setMax = (value) => onChange([range[0], Math.max(Number(value), range[0] + STEP)])
 
   return (
-    <div className="w-full sm:w-64">
-      <div className="mb-3 flex items-baseline justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider2 text-cream-400">
-          Price
-        </span>
-        <span className="font-display text-base text-cream-100">
-          {formatPrice(range[0])} — {formatPrice(range[1])}
+    <div className="w-full lg:w-60">
+      <div className="mb-3 flex items-baseline justify-between gap-4">
+        <span className="text-[9px] uppercase tracking-wider2 text-bone-500">Price</span>
+        <span className="text-[11px] tabular-nums text-bone-200">
+          {formatPrice(range[0])} – {formatPrice(range[1])}
         </span>
       </div>
 
       <div className="relative h-5">
-        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-ink-700" />
+        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-ink-600" />
         <div
-          className="absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-gradient-to-r from-gold-500 to-gold-300"
+          className="absolute top-1/2 h-px -translate-y-1/2 bg-bone-200"
           style={{ left: `${leftPct}%`, right: `${100 - rightPct}%` }}
         />
         <input
@@ -65,35 +63,54 @@ function PriceSlider({ range, onChange }) {
 }
 
 const Filters = forwardRef(function Filters(
-  { query, onQueryChange, families, onToggleFamily, priceRange, onPriceChange, sort, onSortChange, resultCount, onReset, isFiltered },
+  {
+    query,
+    onQueryChange,
+    families,
+    onToggleFamily,
+    priceRange,
+    onPriceChange,
+    sort,
+    onSortChange,
+    resultCount,
+    onReset,
+    isFiltered,
+  },
   searchRef,
 ) {
   return (
-    <div className="rounded-3xl border border-white/[0.07] bg-ink-900/60 p-5 backdrop-blur-sm sm:p-7">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    <div className="border-y hairline py-7">
+      <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         {/* Search */}
-        <div className="relative flex-1 lg:max-w-sm">
+        <div className="relative flex-1 lg:max-w-xs">
+          <label
+            htmlFor="fragrance-search"
+            className="mb-3 block text-[9px] uppercase tracking-wider2 text-bone-500"
+          >
+            Search
+          </label>
           <Search
-            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cream-400"
-            strokeWidth={1.5}
+            className="pointer-events-none absolute bottom-3 left-0 h-3.5 w-3.5 text-bone-500"
+            strokeWidth={1.25}
           />
           <input
+            id="fragrance-search"
             ref={searchRef}
             type="search"
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Search by name or note…"
+            placeholder="Name or note…"
             aria-label="Search fragrances"
-            className="field pl-11 pr-10"
+            className="w-full border-b hairline bg-transparent px-6 pb-2.5 text-sm font-light text-bone-50 placeholder:text-bone-500 focus:border-bone-200 focus:outline-none focus:ring-0"
           />
           {query && (
             <button
               type="button"
               onClick={() => onQueryChange('')}
               aria-label="Clear search"
-              className="absolute right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-cream-400 transition-colors hover:bg-white/10 hover:text-cream-100"
+              className="absolute bottom-2 right-0 grid h-6 w-6 place-items-center text-bone-400 transition-colors hover:text-bone-50"
             >
-              <X className="h-3.5 w-3.5" strokeWidth={2} />
+              <X className="h-3 w-3" strokeWidth={1.75} />
             </button>
           )}
         </div>
@@ -101,16 +118,19 @@ const Filters = forwardRef(function Filters(
         <PriceSlider range={priceRange} onChange={onPriceChange} />
 
         {/* Sort */}
-        <div className="relative">
-          <SlidersHorizontal
-            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cream-400"
-            strokeWidth={1.5}
-          />
+        <div className="relative lg:w-52">
+          <label
+            htmlFor="fragrance-sort"
+            className="mb-3 block text-[9px] uppercase tracking-wider2 text-bone-500"
+          >
+            Sort
+          </label>
           <select
+            id="fragrance-sort"
             value={sort}
             onChange={(event) => onSortChange(event.target.value)}
             aria-label="Sort fragrances"
-            className="field cursor-pointer appearance-none pl-11 pr-10"
+            className="w-full cursor-pointer appearance-none border-b hairline bg-transparent pb-2.5 pr-6 text-sm font-light text-bone-50 focus:border-bone-200 focus:outline-none focus:ring-0"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value} className="bg-ink-850">
@@ -119,17 +139,15 @@ const Filters = forwardRef(function Filters(
             ))}
           </select>
           <ChevronDown
-            className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-cream-400"
-            strokeWidth={1.5}
+            className="pointer-events-none absolute bottom-3 right-0 h-3.5 w-3.5 text-bone-500"
+            strokeWidth={1.25}
           />
         </div>
       </div>
 
       {/* Scent families */}
-      <div className="mt-6 flex flex-wrap items-center gap-2 border-t hairline pt-6">
-        <span className="mr-1 text-[10px] font-medium uppercase tracking-wider2 text-cream-400">
-          Scent family
-        </span>
+      <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
+        <span className="text-[9px] uppercase tracking-wider2 text-bone-500">Family</span>
         {SCENT_FAMILIES.map((family) => {
           const active = families.includes(family)
           return (
@@ -139,29 +157,32 @@ const Filters = forwardRef(function Filters(
               onClick={() => onToggleFamily(family)}
               aria-pressed={active}
               className={classNames(
-                'inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-wider2 transition-all duration-300',
-                active
-                  ? 'border-gold-400/70 bg-gold-400/15 text-gold-200'
-                  : 'border-white/10 text-cream-300 hover:border-white/25 hover:text-cream-100',
+                'relative py-1 text-[10px] uppercase tracking-wider2 transition-colors duration-300',
+                active ? 'text-bone-50' : 'text-bone-400 hover:text-bone-100',
               )}
             >
-              {active && <Check className="h-3 w-3" strokeWidth={2.5} />}
               {family}
+              <span
+                className={classNames(
+                  'absolute -bottom-0.5 left-0 h-px bg-bone-100 transition-all duration-300',
+                  active ? 'w-full' : 'w-0',
+                )}
+              />
             </button>
           )
         })}
 
-        <div className="flex w-full items-center justify-between gap-4 pt-2 sm:ml-auto sm:w-auto sm:justify-end sm:pt-0">
-          <span className="text-[11px] tracking-wide text-cream-400">
-            {resultCount} {resultCount === 1 ? 'fragrance' : 'fragrances'}
+        <div className="flex w-full items-center justify-between gap-6 sm:ml-auto sm:w-auto">
+          <span className="text-[10px] tabular-nums text-bone-500">
+            {String(resultCount).padStart(2, '0')}{' '}
+            {resultCount === 1 ? 'fragrance' : 'fragrances'}
           </span>
           {isFiltered && (
             <button
               type="button"
               onClick={onReset}
-              className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wider2 text-gold-300 transition-colors hover:text-gold-100"
+              className="text-[10px] uppercase tracking-wider2 text-bone-200 underline underline-offset-4 transition-colors hover:text-bone-50"
             >
-              <X className="h-3 w-3" strokeWidth={2} />
               Reset
             </button>
           )}

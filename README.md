@@ -97,17 +97,34 @@ src/
 
 ## Design system
 
-Palette and type scale live in `tailwind.config.js`:
+Palette and type scale live in `tailwind.config.js`.
 
-| Token    | Role                                             |
-| -------- | ------------------------------------------------ |
-| `ink`    | Backgrounds, from `#07070a` to `#2b2b38`         |
-| `gold`   | Accents and calls to action, anchored on `#c9a961` |
-| `cream`  | Text, from `#fbf8f3` down to muted `#a89e8e`    |
+| Token  | Role                                                                    |
+| ------ | ----------------------------------------------------------------------- |
+| `ink`  | Warm near-blacks, `#0a0a09` → `#3a3733`. Page, panels, rules.            |
+| `bone` | The workhorse, `#faf8f4` → `#625c54`. Text, primary buttons, active states. |
+| `sand` | Restrained accent, `#e0d5c4` → `#8b7c68`.                                |
 
-Headings use Cormorant Garamond, body copy uses Inter, both loaded from Google Fonts with system
-serif and sans fallbacks. Reusable classes — `.btn-gold`, `.btn-ghost`, `.field`, `.eyebrow`,
-`.text-gilded` — are defined in the `@layer components` block of `src/index.css`.
+**The accent is rationed deliberately.** `sand` appears in exactly three places:
+section eyebrow labels, focus rings, and nothing else. Primary actions are paper-on-ink
+(`bone-50` background, `ink-950` text) rather than metallic, and the flacon chrome is
+achromatic graphite. The only real colour in the interface comes from the fragrances
+themselves, via each product's `palette`. An accent applied to headings, buttons, chips,
+badges, icons and borders at once stops reading as an accent and starts reading as the
+brand's material — which is how the first pass ended up looking like a gold merchant
+rather than a perfume house.
+
+Type pairs **Bodoni Moda** (didone display, high stroke contrast, couture rather than
+wedding-invitation) with **Jost** (geometric sans for navigation, labels and body).
+Both load from Google Fonts with serif and sans fallbacks. Display text uses the
+`.display` class, which sets an `opsz` of 96 so the hairlines hold up at headline size.
+
+Geometry is square throughout — hairline rules at `white/8%` do the structural work
+instead of borders and rounded cards. Radii survive only where a shape is inherently
+round: the cart badge, the slider thumbs and the checkout step markers.
+
+Reusable classes — `.btn-primary`, `.btn-outline`, `.field`, `.eyebrow`, `.display`,
+`.hairline` — are defined in the `@layer components` block of `src/index.css`.
 
 ## Accessibility
 

@@ -82,21 +82,24 @@ export default function Collection({ searchRef }) {
   }, [query, families, priceRange, sort])
 
   return (
-    <section id="collection" className="relative scroll-mt-24 py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <header className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">The Collection</p>
-          <h2 className="mt-4 font-display text-4xl font-light leading-tight text-cream-50 sm:text-5xl">
-            Twelve compositions,
-            <em className="text-gilded not-italic"> no compromises</em>
-          </h2>
-          <p className="mt-5 text-[15px] leading-relaxed text-cream-300">
+    <section id="collection" className="relative scroll-mt-24 py-24 sm:py-32">
+      <div className="mx-auto max-w-[1600px] px-6 sm:px-10">
+        <header className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="eyebrow">The Collection</p>
+            <h2 className="display mt-6 text-[clamp(2.4rem,5vw,4.25rem)]">
+              Twelve compositions,
+              <br />
+              <em className="font-display italic text-bone-200">no compromises</em>
+            </h2>
+          </div>
+          <p className="max-w-sm text-[14px] font-light leading-[1.75] text-bone-400 lg:pb-3">
             Filter by scent family or price, or search any single note — bergamot, oud, iris — to
             find the composition that carries it.
           </p>
         </header>
 
-        <div className="mt-12">
+        <div className="mt-14">
           <Filters
             ref={searchRef}
             query={query}
@@ -114,19 +117,19 @@ export default function Collection({ searchRef }) {
         </div>
 
         {results.length > 0 ? (
-          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-20 sm:grid-cols-2 xl:grid-cols-3">
             {results.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
         ) : (
-          <div className="mt-10 flex animate-fade-in flex-col items-center rounded-3xl border border-dashed border-white/10 px-6 py-24 text-center">
-            <SearchX className="h-8 w-8 text-cream-400" strokeWidth={1.25} />
-            <h3 className="mt-5 font-display text-2xl text-cream-100">Nothing matches that yet</h3>
-            <p className="mt-2 max-w-sm text-sm text-cream-400">
+          <div className="mt-16 flex animate-fade-in flex-col items-center px-6 py-28 text-center">
+            <SearchX className="h-7 w-7 text-bone-500" strokeWidth={1} />
+            <h3 className="mt-6 font-display text-3xl text-bone-100">Nothing matches that yet</h3>
+            <p className="mt-3 max-w-sm text-sm font-light text-bone-400">
               Try a broader price range, or clear the scent families to see the full collection.
             </p>
-            <button type="button" onClick={reset} className="btn-ghost mt-7">
+            <button type="button" onClick={reset} className="btn-outline mt-9">
               Clear Filters
             </button>
           </div>

@@ -4,18 +4,19 @@ import { classNames } from '../lib/format'
 /**
  * Vector stand-in for product photography.
  *
- * Each flacon is tinted from the fragrance's own `palette`, so the catalogue
- * reads as a coherent set of images without shipping a single binary asset.
+ * The flacon chrome is deliberately achromatic — graphite cap, clear glass —
+ * so the fragrance's own `palette` is the only colour in the frame. That keeps
+ * a grid of twelve bottles reading as a collection rather than as metal.
  * Swap this component for an <img> once real photography exists.
  */
 
 // Body geometry, shared by the fill calculation and the clip path.
-const BODY_TOP = 68
-const BODY_BOTTOM = 260
+const BODY_TOP = 72
+const BODY_BOTTOM = 264
 const BODY_PATH =
-  'M84 68 L116 68 C144 73 165 94 165 120 L165 238 C165 252 154 260 140 260 L60 260 C46 260 35 252 35 238 L35 120 C35 94 56 73 84 68 Z'
+  'M46 72 L154 72 C158 72 160 75 160 79 L160 252 C160 259 154 264 147 264 L53 264 C46 264 40 259 40 252 L40 79 C40 75 42 72 46 72 Z'
 
-export default function BottleVisual({ palette, fillLevel = 0.72, className, glow = true }) {
+export default function BottleVisual({ palette, fillLevel = 0.74, className, glow = true }) {
   const uid = useId().replace(/:/g, '')
   const liquid = `liquid-${uid}`
   const glass = `glass-${uid}`
@@ -34,37 +35,38 @@ export default function BottleVisual({ palette, fillLevel = 0.72, className, glo
       className={classNames('h-full w-full', className)}
     >
       <defs>
-        <linearGradient id={liquid} x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={liquid} x1="0" y1="0" x2="0.9" y2="1">
           <stop offset="0%" stopColor={palette.from} />
-          <stop offset="52%" stopColor={palette.via} />
+          <stop offset="55%" stopColor={palette.via} />
           <stop offset="100%" stopColor={palette.to} />
         </linearGradient>
 
         {/* Faceted glass: bright edges, a darker core, one catch-light */}
         <linearGradient id={glass} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.24" />
-          <stop offset="14%" stopColor="#ffffff" stopOpacity="0.04" />
-          <stop offset="55%" stopColor="#000000" stopOpacity="0.20" />
-          <stop offset="86%" stopColor="#ffffff" stopOpacity="0.05" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.18" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.20" />
+          <stop offset="13%" stopColor="#ffffff" stopOpacity="0.03" />
+          <stop offset="56%" stopColor="#000000" stopOpacity="0.22" />
+          <stop offset="88%" stopColor="#ffffff" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.15" />
         </linearGradient>
 
+        {/* Matte graphite, not metal */}
         <linearGradient id={cap} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#7d6432" />
-          <stop offset="24%" stopColor="#e6d3ab" />
-          <stop offset="52%" stopColor="#c9a961" />
-          <stop offset="78%" stopColor="#f4e9d2" />
-          <stop offset="100%" stopColor="#6f5a2d" />
+          <stop offset="0%" stopColor="#201e1d" />
+          <stop offset="18%" stopColor="#413d39" />
+          <stop offset="55%" stopColor="#2c2a27" />
+          <stop offset="88%" stopColor="#3a3632" />
+          <stop offset="100%" stopColor="#1b1a18" />
         </linearGradient>
 
         <linearGradient id={shine} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.5" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.42" />
           <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
         </linearGradient>
 
-        <radialGradient id={halo} cx="50%" cy="54%" r="50%">
-          <stop offset="0%" stopColor={palette.via} stopOpacity="0.40" />
-          <stop offset="62%" stopColor={palette.from} stopOpacity="0.12" />
+        <radialGradient id={halo} cx="50%" cy="56%" r="50%">
+          <stop offset="0%" stopColor={palette.via} stopOpacity="0.34" />
+          <stop offset="64%" stopColor={palette.from} stopOpacity="0.10" />
           <stop offset="100%" stopColor={palette.from} stopOpacity="0" />
         </radialGradient>
 
@@ -73,52 +75,73 @@ export default function BottleVisual({ palette, fillLevel = 0.72, className, glo
         </clipPath>
       </defs>
 
-      {glow && <circle cx="100" cy="164" r="98" fill={`url(#${halo})`} />}
+      {glow && <circle cx="100" cy="168" r="96" fill={`url(#${halo})`} />}
 
-      {/* Stopper, collar and neck */}
-      <rect x="74" y="8" width="52" height="36" rx="5" fill={`url(#${cap})`} />
-      <rect x="74" y="8" width="52" height="10" rx="5" fill="#ffffff" opacity="0.20" />
-      <rect x="74" y="38" width="52" height="6" fill="#000000" opacity="0.18" />
-      <rect x="79" y="44" width="42" height="7" rx="2.5" fill={`url(#${cap})`} />
-      <rect x="84" y="51" width="32" height="18" fill={palette.glass} />
-      <rect x="84" y="51" width="7" height="18" fill="#ffffff" opacity="0.12" />
-      <rect x="110" y="51" width="6" height="18" fill="#ffffff" opacity="0.06" />
+      {/* Stopper and neck */}
+      <rect x="68" y="8" width="64" height="42" fill={`url(#${cap})`} />
+      <rect x="68" y="8" width="64" height="4" fill="#ffffff" opacity="0.07" />
+      <rect x="68" y="46" width="64" height="4" fill="#000000" opacity="0.35" />
+      <rect x="82" y="50" width="36" height="22" fill={palette.glass} />
+      <rect x="82" y="50" width="6" height="22" fill="#ffffff" opacity="0.09" />
 
       {/* Flacon body: glass shell, then liquid clipped inside it */}
       <path d={BODY_PATH} fill={palette.glass} />
       <g clipPath={`url(#${clip})`}>
         <rect
-          x="30"
+          x="36"
           y={surfaceY}
-          width="140"
+          width="128"
           height={BODY_BOTTOM - surfaceY}
           fill={`url(#${liquid})`}
         />
         {/* Meniscus */}
-        <rect x="30" y={surfaceY} width="140" height="2.5" fill="#ffffff" opacity="0.30" />
+        <rect x="36" y={surfaceY} width="128" height="2" fill="#ffffff" opacity="0.26" />
         <path d={BODY_PATH} fill={`url(#${glass})`} />
-        <rect x="48" y="92" width="12" height="142" rx="6" fill={`url(#${shine})`} />
-        <rect x="146" y="124" width="5" height="100" rx="2.5" fill="#ffffff" opacity="0.10" />
+        <rect x="52" y="92" width="10" height="146" fill={`url(#${shine})`} />
+        <rect x="145" y="120" width="4" height="104" fill="#ffffff" opacity="0.08" />
       </g>
-      <path d={BODY_PATH} fill="none" stroke="#ffffff" strokeOpacity="0.18" strokeWidth="1.25" />
+      <path d={BODY_PATH} fill="none" stroke="#ffffff" strokeOpacity="0.15" strokeWidth="1" />
 
-      {/* Embossed house mark */}
-      <circle cx="100" cy="186" r="21" fill="none" stroke="#ffffff" strokeOpacity="0.24" />
+      {/* Apothecary label rather than an embossed seal */}
+      <rect
+        x="74"
+        y="176"
+        width="52"
+        height="40"
+        fill="#0a0a09"
+        fillOpacity="0.42"
+        stroke="#faf8f4"
+        strokeOpacity="0.24"
+        strokeWidth="0.6"
+      />
       <text
         x="100"
-        y="194"
+        y="196"
         textAnchor="middle"
-        fontFamily="Cormorant Garamond, Georgia, serif"
-        fontSize="22"
-        fill="#ffffff"
-        fillOpacity="0.5"
+        fontFamily="Bodoni Moda, Didot, Times New Roman, serif"
+        fontSize="14"
+        fill="#faf8f4"
+        fillOpacity="0.7"
       >
         N
       </text>
+      <line x1="84" y1="202" x2="116" y2="202" stroke="#faf8f4" strokeOpacity="0.18" />
+      <text
+        x="100"
+        y="211"
+        textAnchor="middle"
+        fontFamily="Jost, system-ui, sans-serif"
+        fontSize="5"
+        letterSpacing="1.6"
+        fill="#faf8f4"
+        fillOpacity="0.42"
+      >
+        PARFUM
+      </text>
 
       {/* Reflection on the display surface */}
-      <ellipse cx="100" cy="268" rx="66" ry="8" fill="#000000" opacity="0.5" />
-      <ellipse cx="100" cy="268" rx="44" ry="4.5" fill={palette.via} opacity="0.22" />
+      <ellipse cx="100" cy="268" rx="62" ry="6" fill="#000000" opacity="0.55" />
+      <ellipse cx="100" cy="268" rx="40" ry="3" fill={palette.via} opacity="0.18" />
     </svg>
   )
 }
