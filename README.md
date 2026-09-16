@@ -9,13 +9,28 @@ icons. Dark, minimal and fully responsive: deep blacks, muted golds and warm off
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+npm run dev      # http://localhost:5173/nafsah-perfumes/
 npm run build    # production bundle in dist/
 npm run preview  # serve the production bundle
 npm run lint     # ESLint
 ```
 
-Node 18+ is required.
+Node 18+ is required. The dev server is served under `/nafsah-perfumes/` rather than `/` because
+`base` is set for GitHub Pages (see Deployment); Vite prints the full URL on start.
+
+## Deployment
+
+Published to GitHub Pages at **https://almailgroup.github.io/nafsah-perfumes/** by
+`.github/workflows/deploy.yml`, which builds and deploys on every push to `main`. The repository's
+Pages source must be set to **GitHub Actions** (Settings → Pages → Source), not "Deploy from a
+branch" — the repo root holds Vite's source `index.html`, which a browser cannot execute.
+
+Because this is a *project* page rather than a user page, `vite.config.js` sets
+`base: '/nafsah-perfumes/'` so assets resolve under that prefix. Renaming the repository means
+updating that value to match.
+
+Only `dist/` is published; build output is never committed. A deploy can also be re-run by hand
+from the Actions tab via `workflow_dispatch`.
 
 ## Features
 
