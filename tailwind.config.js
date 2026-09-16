@@ -4,65 +4,64 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Warm near-blacks. A neutral grey-black reads as "tech"; the warm
-        // cast reads as paper stock and ink.
-        ink: {
-          950: '#0a0a09',
-          900: '#0f0f0e',
-          850: '#151413',
-          800: '#1c1b19',
-          700: '#292724',
-          600: '#3a3733',
+        // Primary reading surface. Cormorant Garamond's serifs are 12/1000em
+        // and survive on light grounds but wash out reversed on dark, so paper
+        // is the default and noir is the punctuating surface, not the reverse.
+        paper: {
+          50: '#faf7f1',
+          100: '#f4efe5',
+          200: '#ebe4d6',
+          300: '#dcd3c1',
+          400: '#c4b9a3',
         },
-        // The workhorse. Text, primary buttons, active states — everything the
-        // old palette used gold for.
-        bone: {
-          50: '#faf8f4',
-          100: '#efeae2',
-          200: '#ddd6ca',
-          300: '#b9b1a4',
-          400: '#8b847a',
-          500: '#625c54',
+        // Immersive surfaces: hero, cart drawer, checkout. Warm, never pure
+        // black — #f2efe9 on a warm near-black nearly doubles hairline survival
+        // versus #fff on #000.
+        noir: {
+          950: '#141210',
+          900: '#1c1916',
+          800: '#26221d',
+          700: '#3a352e',
+          600: '#575046',
+          500: '#6a6355',
+          400: '#9c9384',
         },
-        // Deliberately desaturated (24% vs the old gold's 47%) and rationed to
-        // micro-labels, focus rings and the shipping meter. Nothing else.
-        sand: {
-          200: '#e0d5c4',
-          300: '#c9bba6',
-          400: '#ad9c85',
-          500: '#8b7c68',
+        // Sealing-wax oxblood: the apothecary's label ink. Replaces metal
+        // entirely — no gold, no bronze, no champagne.
+        oxblood: {
+          700: '#5c2230',
+          600: '#6e2c3c',
+          500: '#8a3a4c',
+          300: '#c98c98',
         },
       },
       fontFamily: {
-        // A didone for display: the high stroke contrast reads couture rather
-        // than wedding-invitation, and it holds up at large sizes on dark.
-        display: ['"Bodoni Moda"', 'Didot', '"Times New Roman"', 'serif'],
-        // Geometric sans for everything else — fashion-house UI voice.
+        // Display only, never below 20px. See src/index.css for the ramp.
+        display: ['"Cormorant Garamond"', 'Garamond', 'Georgia', 'serif'],
+        // x-height 0.460 against Cormorant's 0.386 — the closest match on
+        // Google Fonts, so the two do not fight at adjacent sizes.
         sans: ['Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
       },
       letterSpacing: {
-        luxe: '0.34em',
-        wider2: '0.18em',
+        // Cormorant's caps are fitted for lowercase-adjacent use and need
+        // opening up; below 0.08em all-caps settings read cramped.
+        label: '0.16em',
+        wide2: '0.1em',
       },
-      transitionDuration: {
-        400: '400ms',
-      },
+      transitionDuration: { 400: '400ms' },
       keyframes: {
         'fade-up': {
-          '0%': { opacity: '0', transform: 'translateY(16px)' },
+          '0%': { opacity: '0', transform: 'translateY(14px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        'fade-in': {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
+        'fade-in': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
         'scale-in': {
-          '0%': { opacity: '0', transform: 'scale(0.97) translateY(10px)' },
+          '0%': { opacity: '0', transform: 'scale(0.98) translateY(8px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-12px)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
       animation: {

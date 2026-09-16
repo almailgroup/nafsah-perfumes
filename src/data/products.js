@@ -293,6 +293,14 @@ export const PRODUCTS = [
   },
 ]
 
+/**
+ * Catalogue numbers are positional and stable: the house numbers its extraits
+ * in the order they were composed, and the number is printed on every label.
+ */
+export const CATALOGUE_NUMBERS = Object.fromEntries(
+  PRODUCTS.map((product, index) => [product.id, String(index + 1).padStart(2, '0')]),
+)
+
 /** Fast lookup used by the cart to re-hydrate line items. */
 export const PRODUCTS_BY_ID = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]))
 

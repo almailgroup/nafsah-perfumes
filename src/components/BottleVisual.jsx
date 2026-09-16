@@ -4,28 +4,46 @@ import { classNames } from '../lib/format'
 /**
  * Vector stand-in for product photography.
  *
- * The flacon chrome is deliberately achromatic — graphite cap, clear glass —
- * so the fragrance's own `palette` is the only colour in the frame. That keeps
- * a grid of twelve bottles reading as a collection rather than as metal.
+ * An apothecary vial rather than a designer flacon: ground-glass stopper,
+ * sloped shoulders, a wrapped paper label carrying the catalogue number, and a
+ * wax seal at the neck. The glass is achromatic and the only colour is the
+ * fragrance's own `palette`, so twelve of these read as one collection.
+ *
+ * `onDark` flips the glass modelling — light grounds need dark contour and
+ * shadow, dark grounds need specular highlight — so the same component works
+ * on the paper catalogue and in the noir hero.
+ *
  * Swap this component for an <img> once real photography exists.
  */
 
-// Body geometry, shared by the fill calculation and the clip path.
-const BODY_TOP = 72
-const BODY_BOTTOM = 264
-const BODY_PATH =
-  'M46 72 L154 72 C158 72 160 75 160 79 L160 252 C160 259 154 264 147 264 L53 264 C46 264 40 259 40 252 L40 79 C40 75 42 72 46 72 Z'
+const BODY_TOP = 96
+const BODY_BOTTOM = 268
 
-export default function BottleVisual({ palette, fillLevel = 0.74, className, glow = true }) {
+const SILHOUETTE =
+  'M84 32 L116 32 L116 62 C116 67 118 71 123 74 L143 88 C150 94 154 104 154 114 ' +
+  'L154 250 C154 261 146 268 136 268 L64 268 C54 268 46 261 46 250 L46 114 ' +
+  'C46 104 50 94 57 88 L77 74 C82 71 84 67 84 62 Z'
+
+const STOPPER = 'M80 4 L120 4 L123 18 C123 25 113 30 100 30 C87 30 77 25 77 18 Z'
+
+export default function BottleVisual({
+  palette,
+  fillLevel = 0.88,
+  catalogue,
+  className,
+  onDark = false,
+}) {
   const uid = useId().replace(/:/g, '')
-  const liquid = `liquid-${uid}`
-  const glass = `glass-${uid}`
-  const cap = `cap-${uid}`
-  const shine = `shine-${uid}`
-  const halo = `halo-${uid}`
-  const clip = `clip-${uid}`
+  const liquid = `lq-${uid}`
+  const glass = `gl-${uid}`
+  const clip = `cl-${uid}`
 
   const surfaceY = BODY_BOTTOM - (BODY_BOTTOM - BODY_TOP) * fillLevel
+
+  const contour = onDark ? '#faf7f1' : '#141210'
+  const contourOpacity = onDark ? 0.34 : 0.42
+  const stopperFill = onDark ? '#3a352e' : '#cfc6b4'
+  const labelFill = onDark ? '#f4efe5' : '#faf7f1'
 
   return (
     <svg
@@ -35,113 +53,126 @@ export default function BottleVisual({ palette, fillLevel = 0.74, className, glo
       className={classNames('h-full w-full', className)}
     >
       <defs>
-        <linearGradient id={liquid} x1="0" y1="0" x2="0.9" y2="1">
+        <linearGradient id={liquid} x1="0" y1="0" x2="0.85" y2="1">
           <stop offset="0%" stopColor={palette.from} />
           <stop offset="55%" stopColor={palette.via} />
           <stop offset="100%" stopColor={palette.to} />
         </linearGradient>
 
-        {/* Faceted glass: bright edges, a darker core, one catch-light */}
         <linearGradient id={glass} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.20" />
-          <stop offset="13%" stopColor="#ffffff" stopOpacity="0.03" />
-          <stop offset="56%" stopColor="#000000" stopOpacity="0.22" />
-          <stop offset="88%" stopColor="#ffffff" stopOpacity="0.04" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0.15" />
+          <stop offset="0%" stopColor="#ffffff" stopOpacity={onDark ? 0.2 : 0.55} />
+          <stop offset="16%" stopColor="#ffffff" stopOpacity="0.04" />
+          <stop offset="58%" stopColor="#000000" stopOpacity={onDark ? 0.24 : 0.14} />
+          <stop offset="86%" stopColor="#ffffff" stopOpacity="0.06" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity={onDark ? 0.14 : 0.4} />
         </linearGradient>
-
-        {/* Matte graphite, not metal */}
-        <linearGradient id={cap} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#201e1d" />
-          <stop offset="18%" stopColor="#413d39" />
-          <stop offset="55%" stopColor="#2c2a27" />
-          <stop offset="88%" stopColor="#3a3632" />
-          <stop offset="100%" stopColor="#1b1a18" />
-        </linearGradient>
-
-        <linearGradient id={shine} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.42" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-
-        <radialGradient id={halo} cx="50%" cy="56%" r="50%">
-          <stop offset="0%" stopColor={palette.via} stopOpacity="0.34" />
-          <stop offset="64%" stopColor={palette.from} stopOpacity="0.10" />
-          <stop offset="100%" stopColor={palette.from} stopOpacity="0" />
-        </radialGradient>
 
         <clipPath id={clip}>
-          <path d={BODY_PATH} />
+          <path d={SILHOUETTE} />
         </clipPath>
       </defs>
 
-      {glow && <circle cx="100" cy="168" r="96" fill={`url(#${halo})`} />}
-
-      {/* Stopper and neck */}
-      <rect x="68" y="8" width="64" height="42" fill={`url(#${cap})`} />
-      <rect x="68" y="8" width="64" height="4" fill="#ffffff" opacity="0.07" />
-      <rect x="68" y="46" width="64" height="4" fill="#000000" opacity="0.35" />
-      <rect x="82" y="50" width="36" height="22" fill={palette.glass} />
-      <rect x="82" y="50" width="6" height="22" fill="#ffffff" opacity="0.09" />
-
-      {/* Flacon body: glass shell, then liquid clipped inside it */}
-      <path d={BODY_PATH} fill={palette.glass} />
-      <g clipPath={`url(#${clip})`}>
-        <rect
-          x="36"
-          y={surfaceY}
-          width="128"
-          height={BODY_BOTTOM - surfaceY}
-          fill={`url(#${liquid})`}
-        />
-        {/* Meniscus */}
-        <rect x="36" y={surfaceY} width="128" height="2" fill="#ffffff" opacity="0.26" />
-        <path d={BODY_PATH} fill={`url(#${glass})`} />
-        <rect x="52" y="92" width="10" height="146" fill={`url(#${shine})`} />
-        <rect x="145" y="120" width="4" height="104" fill="#ffffff" opacity="0.08" />
-      </g>
-      <path d={BODY_PATH} fill="none" stroke="#ffffff" strokeOpacity="0.15" strokeWidth="1" />
-
-      {/* Apothecary label rather than an embossed seal */}
+      {/* Ground-glass stopper */}
+      <path d={STOPPER} fill={stopperFill} />
+      <path d={STOPPER} fill="none" stroke={contour} strokeOpacity={contourOpacity} strokeWidth="1.1" />
+      <path d="M84 9 L91 9 L89 24 L82 22 Z" fill="#ffffff" opacity={onDark ? 0.12 : 0.55} />
+      <rect x="88" y="29" width="24" height="6" fill={stopperFill} />
       <rect
-        x="74"
-        y="176"
-        width="52"
-        height="40"
-        fill="#0a0a09"
-        fillOpacity="0.42"
-        stroke="#faf8f4"
-        strokeOpacity="0.24"
-        strokeWidth="0.6"
+        x="88"
+        y="29"
+        width="24"
+        height="6"
+        fill="none"
+        stroke={contour}
+        strokeOpacity={contourOpacity * 0.7}
+        strokeWidth="1"
+      />
+
+      {/* Vial: glass shell, then liquid clipped inside it */}
+      <path d={SILHOUETTE} fill={onDark ? '#1c1916' : '#ffffff'} fillOpacity={onDark ? 0.5 : 0.55} />
+      <g clipPath={`url(#${clip})`}>
+        <rect x="40" y={surfaceY} width="120" height={BODY_BOTTOM - surfaceY} fill={`url(#${liquid})`} />
+        <rect x="40" y={surfaceY} width="120" height="1.75" fill="#ffffff" opacity="0.4" />
+        <path d={SILHOUETTE} fill={`url(#${glass})`} />
+        <rect x="57" y="116" width="7" height="128" fill="#ffffff" opacity={onDark ? 0.24 : 0.42} />
+      </g>
+      <path d={SILHOUETTE} fill="none" stroke={contour} strokeOpacity={contourOpacity} strokeWidth="1.2" />
+
+      {/* Wax seal at the neck — the one spot of oxblood on the product */}
+      <circle cx="100" cy="80" r="9" fill="#6e2c3c" />
+      <circle cx="100" cy="80" r="9" fill="none" stroke="#141210" strokeOpacity="0.28" strokeWidth="0.8" />
+      <circle cx="96.8" cy="76.8" r="2.6" fill="#ffffff" opacity="0.18" />
+
+      {/* Wrapped paper label carrying the catalogue number */}
+      <rect x="68" y="168" width="64" height="56" fill={labelFill} />
+      <rect
+        x="68"
+        y="168"
+        width="64"
+        height="56"
+        fill="none"
+        stroke="#141210"
+        strokeOpacity="0.3"
+        strokeWidth="0.8"
+      />
+      <rect
+        x="70.5"
+        y="170.5"
+        width="59"
+        height="51"
+        fill="none"
+        stroke="#141210"
+        strokeOpacity="0.18"
+        strokeWidth="0.5"
       />
       <text
         x="100"
-        y="196"
+        y="193"
         textAnchor="middle"
-        fontFamily="Bodoni Moda, Didot, Times New Roman, serif"
-        fontSize="14"
-        fill="#faf8f4"
-        fillOpacity="0.7"
+        fontFamily="Cormorant Garamond, Garamond, Georgia, serif"
+        fontSize="21"
+        fontWeight="500"
+        fill="#141210"
       >
         N
       </text>
-      <line x1="84" y1="202" x2="116" y2="202" stroke="#faf8f4" strokeOpacity="0.18" />
+      <line x1="78" y1="199" x2="122" y2="199" stroke="#141210" strokeOpacity="0.28" strokeWidth="0.6" />
       <text
         x="100"
-        y="211"
+        y="210"
         textAnchor="middle"
         fontFamily="Jost, system-ui, sans-serif"
-        fontSize="5"
-        letterSpacing="1.6"
-        fill="#faf8f4"
-        fillOpacity="0.42"
+        fontSize="6"
+        letterSpacing="1.5"
+        fill="#141210"
+        fillOpacity="0.72"
       >
-        PARFUM
+        EXTRAIT
       </text>
+      {catalogue && (
+        <text
+          x="100"
+          y="219"
+          textAnchor="middle"
+          fontFamily="Jost, system-ui, sans-serif"
+          fontSize="5.5"
+          letterSpacing="1.2"
+          fill="#141210"
+          fillOpacity="0.55"
+        >
+          No. {catalogue}
+        </text>
+      )}
 
-      {/* Reflection on the display surface */}
-      <ellipse cx="100" cy="268" rx="62" ry="6" fill="#000000" opacity="0.55" />
-      <ellipse cx="100" cy="268" rx="40" ry="3" fill={palette.via} opacity="0.18" />
+      {/* Contact shadow */}
+      <ellipse
+        cx="100"
+        cy="271"
+        rx="56"
+        ry="5"
+        fill={onDark ? '#000000' : '#141210'}
+        opacity={onDark ? 0.5 : 0.16}
+      />
     </svg>
   )
 }

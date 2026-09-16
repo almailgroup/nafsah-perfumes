@@ -26,9 +26,9 @@ export default function App() {
     <CartProvider>
       <a
         href="#collection"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-bone-50 focus:px-6 focus:py-3 focus:text-[10px] focus:font-medium focus:uppercase focus:tracking-wider2 focus:text-ink-950"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-noir-950 focus:px-6 focus:py-3 focus:font-sans focus:text-[10px] focus:uppercase focus:tracking-label focus:text-paper-50"
       >
-        Skip to collection
+        Skip to catalogue
       </a>
 
       <Navbar onSearchFocus={focusSearch} />

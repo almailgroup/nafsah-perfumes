@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#0a0a09"/>
-  <rect x="12" y="5" width="8" height="5" rx="1" fill="#3a3733"/>
-  <path d="M9 14c0-2.2 1.8-4 4-4h6c2.2 0 4 1.8 4 4v10c0 2.2-1.8 4-4 4h-6c-2.2 0-4-1.8-4-4z" fill="#efeae2"/>
-  <path d="M11.5 17h9v5h-9z" fill="#0a0a09" opacity=".28"/>
+  <rect width="32" height="32" fill="#faf7f1"/>
+  <rect x="4.5" y="4.5" width="23" height="23" fill="none" stroke="#6e2c3c" stroke-width="1"/>
+  <text x="16" y="22" text-anchor="middle" font-family="Cormorant Garamond, Garamond, Georgia, serif"
+        font-size="17" font-weight="500" fill="#141210">N</text>
 </svg>

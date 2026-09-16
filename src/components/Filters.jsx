@@ -23,18 +23,18 @@ function PriceSlider({ range, onChange }) {
   const setMax = (value) => onChange([range[0], Math.max(Number(value), range[0] + STEP)])
 
   return (
-    <div className="w-full lg:w-60">
+    <div className="w-full lg:w-56">
       <div className="mb-3 flex items-baseline justify-between gap-4">
-        <span className="text-[9px] uppercase tracking-wider2 text-bone-500">Price</span>
-        <span className="text-[11px] tabular-nums text-bone-200">
-          {formatPrice(range[0])} – {formatPrice(range[1])}
+        <span className="ticket text-noir-500">Price</span>
+        <span className="t-figure text-[15px] text-noir-950">
+          {formatPrice(range[0])}–{formatPrice(range[1])}
         </span>
       </div>
 
       <div className="relative h-5">
-        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-ink-600" />
+        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-noir-950/20" />
         <div
-          className="absolute top-1/2 h-px -translate-y-1/2 bg-bone-200"
+          className="absolute top-1/2 h-px -translate-y-1/2 bg-noir-950"
           style={{ left: `${leftPct}%`, right: `${100 - rightPct}%` }}
         />
         <input
@@ -79,18 +79,14 @@ const Filters = forwardRef(function Filters(
   searchRef,
 ) {
   return (
-    <div className="border-y hairline py-7">
-      <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-        {/* Search */}
+    <div className="border-y border-noir-950/[0.14] py-6">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         <div className="relative flex-1 lg:max-w-xs">
-          <label
-            htmlFor="fragrance-search"
-            className="mb-3 block text-[9px] uppercase tracking-wider2 text-bone-500"
-          >
+          <label htmlFor="fragrance-search" className="ticket mb-3 block text-noir-500">
             Search
           </label>
           <Search
-            className="pointer-events-none absolute bottom-3 left-0 h-3.5 w-3.5 text-bone-500"
+            className="pointer-events-none absolute bottom-2.5 left-0 h-3.5 w-3.5 text-noir-500"
             strokeWidth={1.25}
           />
           <input
@@ -101,14 +97,14 @@ const Filters = forwardRef(function Filters(
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Name or note…"
             aria-label="Search fragrances"
-            className="w-full border-b hairline bg-transparent px-6 pb-2.5 text-sm font-light text-bone-50 placeholder:text-bone-500 focus:border-bone-200 focus:outline-none focus:ring-0"
+            className="w-full border-b border-noir-950/25 bg-transparent px-6 pb-2 font-sans text-[15px] font-light text-noir-950 placeholder:text-noir-500 focus:border-noir-950 focus:outline-none focus:ring-0"
           />
           {query && (
             <button
               type="button"
               onClick={() => onQueryChange('')}
               aria-label="Clear search"
-              className="absolute bottom-2 right-0 grid h-6 w-6 place-items-center text-bone-400 transition-colors hover:text-bone-50"
+              className="absolute bottom-1.5 right-0 grid h-6 w-6 place-items-center text-noir-500 transition-colors hover:text-noir-950"
             >
               <X className="h-3 w-3" strokeWidth={1.75} />
             </button>
@@ -117,12 +113,8 @@ const Filters = forwardRef(function Filters(
 
         <PriceSlider range={priceRange} onChange={onPriceChange} />
 
-        {/* Sort */}
         <div className="relative lg:w-52">
-          <label
-            htmlFor="fragrance-sort"
-            className="mb-3 block text-[9px] uppercase tracking-wider2 text-bone-500"
-          >
+          <label htmlFor="fragrance-sort" className="ticket mb-3 block text-noir-500">
             Sort
           </label>
           <select
@@ -130,24 +122,23 @@ const Filters = forwardRef(function Filters(
             value={sort}
             onChange={(event) => onSortChange(event.target.value)}
             aria-label="Sort fragrances"
-            className="w-full cursor-pointer appearance-none border-b hairline bg-transparent pb-2.5 pr-6 text-sm font-light text-bone-50 focus:border-bone-200 focus:outline-none focus:ring-0"
+            className="w-full cursor-pointer appearance-none border-b border-noir-950/25 bg-transparent pb-2 pr-6 font-sans text-[15px] font-light text-noir-950 focus:border-noir-950 focus:outline-none focus:ring-0"
           >
             {SORT_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value} className="bg-ink-850">
+              <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
           </select>
           <ChevronDown
-            className="pointer-events-none absolute bottom-3 right-0 h-3.5 w-3.5 text-bone-500"
+            className="pointer-events-none absolute bottom-2.5 right-0 h-3.5 w-3.5 text-noir-500"
             strokeWidth={1.25}
           />
         </div>
       </div>
 
-      {/* Scent families */}
-      <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
-        <span className="text-[9px] uppercase tracking-wider2 text-bone-500">Family</span>
+      <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
+        <span className="ticket text-noir-500">Family</span>
         {SCENT_FAMILIES.map((family) => {
           const active = families.includes(family)
           return (
@@ -157,14 +148,14 @@ const Filters = forwardRef(function Filters(
               onClick={() => onToggleFamily(family)}
               aria-pressed={active}
               className={classNames(
-                'relative py-1 text-[10px] uppercase tracking-wider2 transition-colors duration-300',
-                active ? 'text-bone-50' : 'text-bone-400 hover:text-bone-100',
+                'relative py-1 font-sans text-[10px] uppercase tracking-label transition-colors duration-300',
+                active ? 'text-oxblood-600' : 'text-noir-500 hover:text-noir-950',
               )}
             >
               {family}
               <span
                 className={classNames(
-                  'absolute -bottom-0.5 left-0 h-px bg-bone-100 transition-all duration-300',
+                  'absolute -bottom-0.5 left-0 h-px bg-oxblood-600 transition-all duration-300',
                   active ? 'w-full' : 'w-0',
                 )}
               />
@@ -173,15 +164,14 @@ const Filters = forwardRef(function Filters(
         })}
 
         <div className="flex w-full items-center justify-between gap-6 sm:ml-auto sm:w-auto">
-          <span className="text-[10px] tabular-nums text-bone-500">
-            {String(resultCount).padStart(2, '0')}{' '}
-            {resultCount === 1 ? 'fragrance' : 'fragrances'}
+          <span className="ticket text-noir-500">
+            {String(resultCount).padStart(2, '0')} of 12
           </span>
           {isFiltered && (
             <button
               type="button"
               onClick={onReset}
-              className="text-[10px] uppercase tracking-wider2 text-bone-200 underline underline-offset-4 transition-colors hover:text-bone-50"
+              className="font-sans text-[10px] uppercase tracking-label text-noir-950 underline underline-offset-4 transition-colors hover:text-oxblood-600"
             >
               Reset
             </button>

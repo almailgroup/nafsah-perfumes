@@ -5,15 +5,19 @@ import { useScrolled } from '../hooks/useOverlay'
 import { classNames } from '../lib/format'
 
 const LINKS = [
-  { label: 'Collection', href: '#collection' },
+  { label: 'Catalogue', href: '#collection' },
   { label: 'The House', href: '#house' },
   { label: 'Notes', href: '#notes' },
   { label: 'Contact', href: '#contact' },
 ]
 
+/**
+ * The bar sits over the noir hero at rest and inverts to paper once the
+ * catalogue scrolls under it.
+ */
 export default function Navbar({ onSearchFocus }) {
   const { totals, openCart, lastAddedAt } = useCart()
-  const scrolled = useScrolled(20)
+  const scrolled = useScrolled(120)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [pulse, setPulse] = useState(false)
 
@@ -24,18 +28,25 @@ export default function Navbar({ onSearchFocus }) {
     return () => clearTimeout(timer)
   }, [lastAddedAt])
 
+  const onPaper = scrolled
+
   return (
     <header
       className={classNames(
-        'fixed inset-x-0 top-0 z-40 transition-colors duration-500',
-        scrolled ? 'border-b hairline bg-ink-950/90 backdrop-blur-xl' : 'border-b border-transparent',
+        'fixed inset-x-0 top-0 z-40 border-b transition-colors duration-500',
+        onPaper ? 'border-noir-950/12 bg-paper-50/95 backdrop-blur-md' : 'border-transparent',
       )}
     >
-      <div className="mx-auto flex h-[70px] max-w-[1600px] items-center justify-between gap-6 px-6 sm:h-20 sm:px-10">
-        <a href="#top" aria-label="Nafsah home" className="shrink-0">
-          <span className="font-display text-[22px] leading-none tracking-[0.3em] text-bone-50 sm:text-2xl">
-            NAFSAH
-          </span>
+      <div className="mx-auto flex h-16 max-w-[1560px] items-center justify-between gap-6 px-5 sm:h-[76px] sm:px-9">
+        <a
+          href="#top"
+          aria-label="Nafsah home"
+          className={classNames(
+            'shrink-0 font-display text-[26px] font-medium leading-none tracking-[0.2em] transition-colors duration-500 sm:text-[28px]',
+            onPaper ? 'text-noir-950' : 'text-paper-50',
+          )}
+        >
+          NAFSAH
         </a>
 
         <nav className="hidden items-center gap-10 lg:flex">
@@ -43,20 +54,31 @@ export default function Navbar({ onSearchFocus }) {
             <a
               key={link.href}
               href={link.href}
-              className="group relative py-1 text-[10px] font-normal uppercase tracking-wider2 text-bone-300 transition-colors duration-300 hover:text-bone-50"
+              className={classNames(
+                'group relative t-label py-1 transition-colors duration-300',
+                onPaper ? 'text-noir-600 hover:text-noir-950' : 'text-paper-400 hover:text-paper-50',
+              )}
             >
               {link.label}
-              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-bone-100 transition-all duration-400 group-hover:w-full" />
+              <span
+                className={classNames(
+                  'absolute -bottom-0.5 left-0 h-px w-0 transition-all duration-400 group-hover:w-full',
+                  onPaper ? 'bg-noir-950' : 'bg-paper-50',
+                )}
+              />
             </a>
           ))}
         </nav>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <button
             type="button"
             onClick={onSearchFocus}
-            aria-label="Search the collection"
-            className="grid h-10 w-10 place-items-center text-bone-300 transition-colors duration-300 hover:text-bone-50"
+            aria-label="Search the catalogue"
+            className={classNames(
+              'grid h-10 w-10 place-items-center transition-colors duration-300',
+              onPaper ? 'text-noir-600 hover:text-noir-950' : 'text-paper-400 hover:text-paper-50',
+            )}
           >
             <Search className="h-[17px] w-[17px]" strokeWidth={1.25} />
           </button>
@@ -65,13 +87,16 @@ export default function Navbar({ onSearchFocus }) {
             type="button"
             onClick={openCart}
             aria-label={`Open cart, ${totals.count} item${totals.count === 1 ? '' : 's'}`}
-            className="relative grid h-10 w-10 place-items-center text-bone-200 transition-colors duration-300 hover:text-bone-50"
+            className={classNames(
+              'relative grid h-10 w-10 place-items-center transition-colors duration-300',
+              onPaper ? 'text-noir-800 hover:text-noir-950' : 'text-paper-200 hover:text-paper-50',
+            )}
           >
             <ShoppingBag className="h-[17px] w-[17px]" strokeWidth={1.25} />
             {totals.count > 0 && (
               <span
                 className={classNames(
-                  'absolute right-0.5 top-1 grid h-4 min-w-[16px] place-items-center rounded-full bg-bone-50 px-1 text-[9px] font-medium tabular-nums text-ink-950 transition-transform duration-300',
+                  'ticket absolute right-0 top-1.5 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-oxblood-600 px-1 text-[9px] leading-none text-paper-50 transition-transform duration-300',
                   pulse && 'scale-125',
                 )}
               >
@@ -85,7 +110,10 @@ export default function Navbar({ onSearchFocus }) {
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
-            className="grid h-10 w-10 place-items-center text-bone-200 transition-colors duration-300 lg:hidden"
+            className={classNames(
+              'grid h-10 w-10 place-items-center transition-colors duration-300 lg:hidden',
+              onPaper ? 'text-noir-800' : 'text-paper-200',
+            )}
           >
             {mobileOpen ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.25} />
@@ -99,17 +127,17 @@ export default function Navbar({ onSearchFocus }) {
       {/* Mobile navigation */}
       <div
         className={classNames(
-          'overflow-hidden border-t hairline bg-ink-950/97 backdrop-blur-xl transition-[max-height,opacity] duration-400 lg:hidden',
+          'overflow-hidden border-t border-noir-950/12 bg-paper-50 transition-[max-height,opacity] duration-400 lg:hidden',
           mobileOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0',
         )}
       >
-        <nav className="flex flex-col px-6 sm:px-10">
+        <nav className="flex flex-col px-5 sm:px-9">
           {LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="border-b hairline py-5 text-[10px] font-normal uppercase tracking-wider2 text-bone-200 last:border-b-0 hover:text-bone-50"
+              className="t-label border-b border-noir-950/10 py-5 text-noir-800 last:border-b-0"
             >
               {link.label}
             </a>

@@ -3,8 +3,6 @@
 A storefront for a fictional luxury perfume house, built with React, Tailwind CSS and Lucide
 icons. Dark, minimal and fully responsive: deep blacks, muted golds and warm off-whites.
 
-![Twelve fragrances across four scent families](https://img.shields.io/badge/catalogue-12%20fragrances-c9a961?style=flat-square)
-
 ## Getting started
 
 ```bash
@@ -97,34 +95,60 @@ src/
 
 ## Design system
 
-Palette and type scale live in `tailwind.config.js`.
+The system is **dual-tone**, and that follows directly from the typeface.
 
-| Token  | Role                                                                    |
-| ------ | ----------------------------------------------------------------------- |
-| `ink`  | Warm near-blacks, `#0a0a09` → `#3a3733`. Page, panels, rules.            |
-| `bone` | The workhorse, `#faf8f4` → `#625c54`. Text, primary buttons, active states. |
-| `sand` | Restrained accent, `#e0d5c4` → `#8b7c68`.                                |
+Cormorant Garamond's thinnest serifs are 12/1000em, and browsers composite
+antialiasing in gamma space rather than linear light. A serif covering 19% of a pixel
+delivers ~38% of full luminance contrast on white but only ~4% reversed out of near-black —
+a 9.5x asymmetry. The face literally loses its serifs on dark grounds at small sizes, and
+no amount of `font-weight` fixes it: the 300→700 axis thickens stems by 100% but hairlines
+by only 8%. So **warm paper is the primary reading surface** and noir is reserved for the
+hero, the cart drawer and the footer, where Cormorant is only ever set at display size.
 
-**The accent is rationed deliberately.** `sand` appears in exactly three places:
-section eyebrow labels, focus rings, and nothing else. Primary actions are paper-on-ink
-(`bone-50` background, `ink-950` text) rather than metallic, and the flacon chrome is
-achromatic graphite. The only real colour in the interface comes from the fragrances
-themselves, via each product's `palette`. An accent applied to headings, buttons, chips,
-badges, icons and borders at once stops reading as an accent and starts reading as the
-brand's material — which is how the first pass ended up looking like a gold merchant
-rather than a perfume house.
+| Token     | Role                                                                  |
+| --------- | --------------------------------------------------------------------- |
+| `paper`   | `#faf7f1` → `#c4b9a3`. Primary surface, tints and rules.               |
+| `noir`    | `#141210` → `#9c9384`. Text on paper, plus the immersive dark surfaces.|
+| `oxblood` | `#5c2230` → `#c98c98`. Sealing-wax accent. No metal anywhere.          |
 
-Type pairs **Bodoni Moda** (didone display, high stroke contrast, couture rather than
-wedding-invitation) with **Jost** (geometric sans for navigation, labels and body).
-Both load from Google Fonts with serif and sans fallbacks. Display text uses the
-`.display` class, which sets an `opsz` of 96 so the hairlines hold up at headline size.
+Every text pairing clears WCAG AA: `noir-950` on `paper-50` is 17.5:1, `noir-600` 7.4:1,
+`noir-500` 5.6:1, `oxblood-600` 9.4:1.
 
-Geometry is square throughout — hairline rules at `white/8%` do the structural work
-instead of borders and rounded cards. Radii survive only where a shape is inherently
-round: the cart badge, the slider thumbs and the checkout step markers.
+### Type
 
-Reusable classes — `.btn-primary`, `.btn-outline`, `.field`, `.eyebrow`, `.display`,
-`.hairline` — are defined in the `@layer components` block of `src/index.css`.
+Loaded from Google Fonts: Cormorant Garamond (400/500/600/700 + italic) and Jost
+(300/400/500). Jost is the closest x-height match available — 0.460 against Cormorant's
+0.386, where most modern sans-serifs sit at 0.72–0.77 and would tower over it.
+
+Cormorant's x-height is 0.386em, so it must be set ~1.35x a sans to match apparent size:
+Cormorant at 21px has the x-height of Inter at 15px. The ramp lives in `src/index.css` as
+`.t-display`, `.t-display-sm`, `.t-title`, `.t-deck`, `.t-body`, `.t-body-noir`, `.t-figure`.
+
+**Nothing in the Cormorant ramp drops below 20px.** Body is 21px / 500 / 1.38 leading /
++0.006em — reversed out it steps to weight 600 and +0.01em to counter halation. Tracking
+flips sign at ~40px: positive below, negative at display size. Leading is *tighter* than
+convention advises, because the 1.000em extender span already yields 65% more apparent
+leading than a normal face at any given multiplier.
+
+Every label, button, input and micro-string is Jost via `.t-label`, `.t-ui` and `.ticket`.
+Cormorant is never asked to do UI work.
+
+Two non-obvious rules the implementation depends on:
+
+- **`body` must not carry `antialiased`.** `-webkit-font-smoothing: antialiased` switches
+  macOS to grayscale AA and renders text thinner; on a face whose serifs already cover ~19%
+  of a pixel it is the most destructive line of CSS available.
+- **Figures need `lnum` + `tnum`** (the `.t-figure` class). Cormorant's default numerals are
+  proportional oldstyle — the 6 ascends above cap height, 3/5/7/9 descend, and advances vary
+  47% — so price columns jitter without them. `font-synthesis: none` is set globally because
+  Google's CDN strips `smcp`, which would otherwise silently synthesize thin fake small caps.
+
+### Geometry and signature
+
+Square throughout; hairline rules at 14% do the structural work. The signature device is the
+**apothecary catalogue**: every extrait carries a positional catalogue number (No. 01–12)
+printed on its plate header and on the vial's own paper label, and the flacon is drawn as a
+ground-glass vial with a wrapped label and an oxblood wax seal at the shoulder.
 
 ## Accessibility
 

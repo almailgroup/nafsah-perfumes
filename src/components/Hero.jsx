@@ -1,98 +1,99 @@
 import { ArrowRight } from 'lucide-react'
 import BottleVisual from './BottleVisual'
-import { PRODUCTS_BY_ID } from '../data/products'
+import { CATALOGUE_NUMBERS, PRODUCTS_BY_ID } from '../data/products'
 
 const HERO_FRAGRANCE = PRODUCTS_BY_ID['ambre-royale']
 
-const STATS = [
-  { value: '38', label: 'Raw materials' },
-  { value: '1974', label: 'Est. in Grasse' },
-  { value: '12', label: 'Extraits' },
-]
-
+/**
+ * The one full-noir surface above the fold. Cormorant is set at 44-100px here,
+ * well above the size where its hairlines survive being reversed out; every
+ * small string on this section is Jost.
+ */
 export default function Hero({ onShopNow }) {
   return (
-    <section id="top" className="relative overflow-hidden">
-      {/* Ambient background: a single warm wash from the featured fragrance,
-          plus a vignette. No grid, no metal. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-ink-950" />
+    <section id="top" className="relative overflow-hidden bg-noir-950">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div
-          className="absolute right-[-10%] top-[6%] h-[680px] w-[680px] rounded-full blur-[110px]"
+          className="absolute right-[-12%] top-[-8%] h-[720px] w-[720px] rounded-full blur-[120px]"
           style={{
-            background: `radial-gradient(circle at center, ${HERO_FRAGRANCE.palette.via}26, transparent 66%)`,
+            background: `radial-gradient(circle at center, ${HERO_FRAGRANCE.palette.via}2e, transparent 66%)`,
           }}
         />
-        <div className="absolute -left-40 bottom-[10%] h-[440px] w-[440px] rounded-full bg-[radial-gradient(circle_at_center,rgba(186,177,164,0.07),transparent_66%)] blur-[90px]" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-ink-950 to-transparent" />
+        <div className="absolute -left-52 bottom-0 h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle_at_center,rgba(196,185,163,0.08),transparent_66%)] blur-[100px]" />
       </div>
 
-      <div className="mx-auto grid max-w-[1600px] items-center gap-14 px-6 pb-16 pt-32 sm:px-10 sm:pt-36 lg:grid-cols-[1.08fr_0.92fr] lg:gap-10 lg:pb-24 lg:pt-44">
+      <div className="relative mx-auto grid max-w-[1560px] items-center gap-12 px-5 pb-20 pt-28 sm:px-9 sm:pb-24 sm:pt-36 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pb-28 lg:pt-40">
         <div className="animate-fade-up">
-          <p className="eyebrow">Maison de Parfum — Grasse</p>
+          <p className="t-label text-oxblood-300">Maison de Parfum — Grasse, 1974</p>
 
-          <h1 className="display mt-8 text-[clamp(3.1rem,8.4vw,7.2rem)]">
+          <h1 className="t-display mt-7 text-paper-50">
             Scent is the
             <br />
             last thing
             <br />
-            they <em className="font-display italic text-bone-200">forget</em>
+            they <em className="font-medium italic">forget</em>
           </h1>
 
-          <p className="mt-9 max-w-md text-[15px] font-light leading-[1.75] text-bone-300">
-            Extraits composed in small batches from oud, saffron, neroli and Damask rose — aged in
-            oak, decanted by hand, and never reformulated for volume.
+          <p className="t-body-noir mt-9 max-w-[30rem]">
+            Twelve extraits, composed in small batches from oud, saffron, neroli and Damask rose.
+            Aged in oak, decanted by hand, never reformulated for volume.
           </p>
 
           <div className="mt-11 flex flex-col gap-3 sm:flex-row">
-            <button type="button" onClick={onShopNow} className="btn-primary group">
-              Shop the Collection
+            <button type="button" onClick={onShopNow} className="btn-paper group">
+              View the Catalogue
               <ArrowRight
                 className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                strokeWidth={1.75}
+                strokeWidth={1.5}
               />
             </button>
-            <a href="#house" className="btn-outline">
+            <a
+              href="#house"
+              className="inline-flex items-center justify-center gap-2.5 border border-paper-50/25 px-8 py-3.5 font-sans text-[11px] uppercase tracking-label text-paper-100 transition-colors duration-300 hover:border-paper-50 hover:bg-paper-50 hover:text-noir-950"
+            >
               Our Craft
             </a>
           </div>
-
-          <dl className="mt-16 flex max-w-lg divide-x divide-white/[0.08] border-t hairline pt-8">
-            {STATS.map((stat) => (
-              <div key={stat.label} className="flex-1 pl-6 first:pl-0">
-                <dt className="sr-only">{stat.label}</dt>
-                <dd>
-                  <span className="block font-display text-[2rem] leading-none text-bone-50">
-                    {stat.value}
-                  </span>
-                  <span className="mt-2.5 block text-[9px] uppercase tracking-wider2 text-bone-400">
-                    {stat.label}
-                  </span>
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
-        {/* Hero flacon */}
-        <div className="relative flex items-center justify-center lg:justify-end lg:pr-6">
+        {/* Featured vial, presented as a catalogue plate */}
+        <div className="relative flex items-center justify-center lg:justify-end">
           <div className="animate-float">
             <BottleVisual
               palette={HERO_FRAGRANCE.palette}
-              fillLevel={0.8}
-              className="h-[320px] w-auto drop-shadow-[0_50px_70px_rgba(0,0,0,0.7)] sm:h-[440px] lg:h-[520px]"
+              catalogue={CATALOGUE_NUMBERS[HERO_FRAGRANCE.id]}
+              fillLevel={0.9}
+              onDark
+              className="h-[320px] w-auto drop-shadow-[0_44px_64px_rgba(0,0,0,0.6)] sm:h-[440px] lg:h-[520px]"
             />
           </div>
 
-          {/* Caption set like a gallery placard */}
-          <figure className="absolute bottom-2 left-0 max-w-[13rem] border-l hairline pl-5 sm:bottom-6">
+          <figure className="absolute bottom-0 left-0 max-w-[17rem] border-l border-paper-50/25 pl-5 sm:bottom-6">
             <figcaption>
-              <span className="block font-display text-lg text-bone-100">Ambre Royale</span>
-              <span className="mt-1.5 block text-[10px] uppercase tracking-wider2 text-bone-400">
-                Extrait · Saffron, Labdanum, Vanilla
+              <span className="ticket block text-oxblood-300">
+                No. {CATALOGUE_NUMBERS[HERO_FRAGRANCE.id]}
+              </span>
+              <span className="mt-2 block font-display text-[26px] font-medium leading-tight text-paper-50">
+                {HERO_FRAGRANCE.name}
+              </span>
+              <span className="t-label mt-2 block text-paper-400">
+                Saffron · Labdanum · Vanilla
               </span>
             </figcaption>
           </figure>
+        </div>
+      </div>
+
+      {/* Running header of the house's raw materials, set as a ruled ticker */}
+      <div className="relative border-t border-paper-50/15">
+        <div className="mx-auto flex max-w-[1560px] flex-wrap items-center justify-between gap-y-3 px-5 py-5 sm:px-9">
+          {['38 raw materials', 'Extrait concentration', 'Macerated four weeks', 'Never reformulated'].map(
+            (item) => (
+              <span key={item} className="t-label text-paper-400">
+                {item}
+              </span>
+            ),
+          )}
         </div>
       </div>
     </section>

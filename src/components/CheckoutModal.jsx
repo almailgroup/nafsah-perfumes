@@ -96,7 +96,7 @@ function Field({ id, label, error, className, ...props }) {
     <div className={className}>
       <label
         htmlFor={id}
-        className="mb-1.5 block text-[10px] font-medium uppercase tracking-wider2 text-bone-400"
+        className="ticket mb-2 block text-noir-500"
       >
         {label}
       </label>
@@ -183,59 +183,55 @@ export default function CheckoutModal() {
     <div className="fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-6">
       <div
         onClick={handleClose}
-        className="absolute inset-0 animate-fade-in bg-ink-950/85 backdrop-blur-md"
+        className="absolute inset-0 animate-fade-in bg-noir-950/60 backdrop-blur-sm"
       />
 
       <div ref={panelRef} role="dialog" aria-modal="true"
         tabIndex={-1} aria-labelledby="checkout-title"
-        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-white/[0.08] bg-ink-900 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.95)] sm:"
+        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-white/[0.08] bg-paper-50 border-noir-950/25 shadow-[0_40px_100px_-30px_rgba(20,18,16,0.5)] sm:"
       >
         <button type="button"
           onClick={handleClose} aria-label="Close checkout"
-          className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-bone-300 transition-colors hover:bg-white/5 hover:text-bone-50"
+          className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-noir-600 transition-colors hover:text-noir-950"
         >
           <X className="h-4 w-4" strokeWidth={1.5} />
         </button>
 
         {status === 'confirmed' && receipt ? (
           <div className="flex flex-col items-center px-6 py-16 text-center sm:px-12">
-            <span className="grid h-20 w-20 place-items-center rounded-full border border-bone-200/40 bg-bone-200/10">
-              <BadgeCheck className="h-9 w-9 text-bone-200" strokeWidth={1.25} />
+            <span className="grid h-20 w-20 place-items-center rounded-full border border-oxblood-600/40 bg-oxblood-600/[0.07]">
+              <BadgeCheck className="h-9 w-9 text-oxblood-600" strokeWidth={1.25} />
             </span>
-            <h2 id="checkout-title" className="mt-7 font-display text-4xl text-bone-50">
-              Thank you
-            </h2>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-bone-300">
+            <h2 id="checkout-title" className="t-display-sm mt-7">Thank you</h2>
+            <p className="t-deck mt-4 max-w-sm">
               Your order is confirmed. A receipt is on its way to{' '}
-              <span className="text-bone-100">{receipt.email}</span>, and your parcel ships within two
+              <span className="text-noir-950">{receipt.email}</span>, and your parcel ships within two
               business days.
             </p>
-            <div className="mt-8 w-full max-w-xs  border hairline bg-ink-850/70 p-5 text-left">
+            <div className="mt-8 w-full max-w-xs  border rule bg-paper-100/70 p-5 text-left">
               <div className="flex justify-between text-sm">
-                <span className="text-bone-400">Order</span>
-                <span className="font-medium tabular-nums text-bone-100">{receipt.reference}</span>
+                <span className="text-noir-500">Order</span>
+                <span className="t-figure text-noir-950">{receipt.reference}</span>
               </div>
               <div className="mt-2 flex justify-between text-sm">
-                <span className="text-bone-400">Items</span>
-                <span className="tabular-nums text-bone-100">{receipt.items}</span>
+                <span className="text-noir-500">Items</span>
+                <span className="t-figure text-noir-950">{receipt.items}</span>
               </div>
               <div className="mt-2 flex justify-between text-sm">
-                <span className="text-bone-400">Paid</span>
-                <span className="tabular-nums text-bone-100">
+                <span className="text-noir-500">Paid</span>
+                <span className="t-figure text-noir-950">
                   {formatPriceWithCents(receipt.total)}
                 </span>
               </div>
             </div>
-            <button type="button" onClick={handleClose} className="btn-primary mt-9">
+            <button type="button" onClick={handleClose} className="btn-ink mt-9">
               Continue Browsing
             </button>
           </div>
         ) : (
           <>
-            <header className="border-b hairline px-6 pb-5 pt-6 sm:px-10">
-              <h2 id="checkout-title" className="font-display text-3xl text-bone-50">
-                Checkout
-              </h2>
+            <header className="border-b rule px-6 pb-5 pt-6 sm:px-10">
+              <h2 id="checkout-title" className="t-display-sm">Order Form</h2>
 
               {/* Step rail */}
               <ol className="mt-6 flex items-center gap-2 sm:gap-3">
@@ -249,17 +245,17 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors duration-300',
-                            done && 'border-bone-200/50 bg-bone-200/15 text-bone-100',
-                            active && 'border-bone-200 bg-bone-200 text-ink-950',
-                            !done && !active && 'border-white/12 text-bone-400',
+                            done && 'border-oxblood-600 bg-oxblood-600 text-paper-50',
+                            active && 'border-noir-950 bg-noir-950 text-paper-50',
+                            !done && !active && 'border-noir-950/25 text-noir-500',
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
                         </span>
                         <span
                           className={classNames(
-                            'hidden text-[10px] font-medium uppercase tracking-wider2 transition-colors duration-300 sm:block',
-                            active ? 'text-bone-50' : 'text-bone-400',
+                            'hidden font-sans text-[10px] uppercase tracking-label transition-colors duration-300 sm:block',
+                            active ? 'text-noir-950' : 'text-noir-500',
                           )}
                         >
                           {entry.label}
@@ -269,7 +265,7 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'h-px flex-1 transition-colors duration-500',
-                            done ? 'bg-bone-200/50' : 'bg-white/10',
+                            done ? 'bg-oxblood-600/60' : 'bg-noir-950/15',
                           )}
                         />
                       )}
@@ -345,50 +341,46 @@ export default function CheckoutModal() {
                       autoComplete="cc-csc" value={form.cvc}
                       onChange={update('cvc')} error={errors.cvc}
                     />
-                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[11px] text-bone-400">
-                      <Lock className="h-3.5 w-3.5 text-bone-200" strokeWidth={1.5} />
+                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[11px] text-noir-500">
+                      <Lock className="h-3.5 w-3.5 text-noir-800" strokeWidth={1.5} />
                       Demonstration only — no card is charged and nothing is transmitted.
                     </p>
                   </div>
                 )}
 
                 {/* Order summary */}
-                <div className="mt-8  border hairline bg-ink-850/60 p-5">
-                  <h3 className="text-[10px] font-medium uppercase tracking-wider2 text-bone-400">
-                    Order summary
-                  </h3>
+                <div className="mt-8  border rule bg-paper-100/60 p-5">
+                  <h3 className="ticket text-oxblood-600">Order summary</h3>
                   <ul className="mt-4 space-y-2.5">
                     {lines.map((line) => (
                       <li key={line.id} className="flex justify-between gap-4 text-sm">
-                        <span className="min-w-0 truncate text-bone-200">
+                        <span className="min-w-0 truncate text-noir-800">
                           {line.product.name}
-                          <span className="text-bone-400">
+                          <span className="text-noir-500">
                             {' '}
                             · {line.ml}ml × {line.qty}
                           </span>
                         </span>
-                        <span className="shrink-0 tabular-nums text-bone-100">
+                        <span className="shrink-0 tabular-nums text-noir-950">
                           {formatPrice(line.subtotal)}
                         </span>
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-4 space-y-1.5 border-t hairline pt-4 text-sm">
-                    <div className="flex justify-between text-bone-300">
+                  <div className="mt-4 space-y-1.5 border-t rule pt-4 text-sm">
+                    <div className="flex justify-between text-noir-600">
                       <span>Shipping</span>
                       <span className="tabular-nums">
                         {totals.shipping === 0 ? 'Complimentary' : formatPrice(totals.shipping)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-bone-300">
+                    <div className="flex justify-between text-noir-600">
                       <span>Estimated tax</span>
                       <span className="tabular-nums">{formatPriceWithCents(totals.tax)}</span>
                     </div>
                     <div className="flex items-baseline justify-between pt-1.5">
-                      <span className="text-[11px] uppercase tracking-wider2 text-bone-200">
-                        Total
-                      </span>
-                      <span className="font-display text-2xl tabular-nums text-bone-50">
+                      <span className="ticket text-noir-950">Total</span>
+                      <span className="t-figure text-[1.75rem] text-noir-950">
                         {formatPriceWithCents(totals.total)}
                       </span>
                     </div>
@@ -397,10 +389,10 @@ export default function CheckoutModal() {
               </div>
             </div>
 
-            <footer className="flex items-center justify-between gap-3 border-t hairline bg-ink-850/40 px-6 py-5 sm:px-10">
+            <footer className="flex items-center justify-between gap-3 border-t rule bg-paper-100/40 px-6 py-5 sm:px-10">
               <button type="button"
                 onClick={() => (stepIndex === 0 ? handleClose() : setStepIndex((i) => i - 1))}
-                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider2 text-bone-300 transition-colors hover:text-bone-50"
+                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-noir-600 transition-colors hover:text-noir-950"
               >
                 <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                 {stepIndex === 0 ? 'Cancel' : STEPS[stepIndex - 1].label}
@@ -408,7 +400,7 @@ export default function CheckoutModal() {
 
               <button type="button"
                 onClick={handleNext} disabled={status === 'processing' || lines.length === 0}
-                className="btn-primary group"
+                className="btn-ink group"
               >
                 {status === 'processing' ? (
                   <>
