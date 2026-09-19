@@ -89,7 +89,9 @@
     font-size: clamp(2rem, 4.2vw, 3.25rem);
     font-weight: 400;
     line-height: 1.1;
-    letter-spacing: -0.006em;
+    /* Tracking flips sign at ~40px. This clamp spans 32-52px, so it straddles
+       the crossover; neutral is correct across the whole range. */
+    letter-spacing: 0;
   }
 
   /* Product names, section sub-heads. */
@@ -129,11 +131,25 @@
     letter-spacing: 0.01em;
   }
 
+  /* Compact serif values inside dense tables — note rows, example lists.
+     20px/600 is the floor the ramp comment sets, taken at the heavier weight
+     because this is the smallest Cormorant the design ships. */
+  .t-entry {
+    @apply font-display text-noir-800;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: 0.006em;
+  }
+
   /* Prices and any figure that sits in a column. Default figures are
      proportional oldstyle — the 6 ascends above cap height and 3/5/7/9
      descend, so a price column jitters without lnum+tnum. */
   .t-figure {
     @apply font-display;
+    /* Every call site sets its own size; this is a floor so the class can never
+       silently inherit a parent's 14px and render Cormorant below usable size. */
+    font-size: 1.0625rem;
     font-weight: 500;
     font-feature-settings: 'lnum', 'tnum';
     font-variant-numeric: lining-nums tabular-nums;
@@ -215,13 +231,13 @@
   appearance: none;
   pointer-events: none;
   background: transparent;
-  height: 20px;
+  height: 40px;
   margin: 0;
 }
 
 .range-input::-webkit-slider-runnable-track {
   background: transparent;
-  height: 20px;
+  height: 40px;
 }
 
 .range-input:focus-visible {
@@ -242,13 +258,14 @@
   -webkit-appearance: none;
   appearance: none;
   pointer-events: auto;
-  height: 13px;
-  width: 13px;
+  height: 40px;
+  width: 40px;
   border-radius: 9999px;
-  border: none;
+  border: 13px solid transparent;
   background: #141210;
+  background-clip: content-box;
   cursor: grab;
-  margin-top: 3.5px;
+  margin-top: 0;
   transition: transform 0.15s ease;
 }
 
@@ -259,17 +276,18 @@
 
 .range-input::-moz-range-thumb {
   pointer-events: auto;
-  height: 13px;
-  width: 13px;
+  height: 40px;
+  width: 40px;
   border-radius: 9999px;
-  border: none;
+  border: 13px solid transparent;
   background: #141210;
+  background-clip: content-box;
   cursor: grab;
 }
 
 .range-input::-moz-range-track {
   background: transparent;
-  height: 20px;
+  height: 40px;
 }
 
 input[type='search']::-webkit-search-cancel-button {

@@ -93,6 +93,10 @@ export function CartProvider({ children }) {
   const removeItem = useCallback((id) => dispatch({ type: 'remove', id }), [])
   const clearCart = useCallback(() => dispatch({ type: 'clear' }), [])
 
+  const openCart = useCallback(() => setCartOpen(true), [])
+  const closeCart = useCallback(() => setCartOpen(false), [])
+  const closeCheckout = useCallback(() => setCheckoutOpen(false), [])
+
   const openCheckout = useCallback(() => {
     setCartOpen(false)
     setCheckoutOpen(true)
@@ -129,9 +133,9 @@ export function CartProvider({ children }) {
       lastAddedAt,
       isCartOpen,
       isCheckoutOpen,
-      openCart: () => setCartOpen(true),
-      closeCart: () => setCartOpen(false),
-      closeCheckout: () => setCheckoutOpen(false),
+      openCart,
+      closeCart,
+      closeCheckout,
       openCheckout,
       addItem,
       setQty,
@@ -144,6 +148,9 @@ export function CartProvider({ children }) {
       lastAddedAt,
       isCartOpen,
       isCheckoutOpen,
+      openCart,
+      closeCart,
+      closeCheckout,
       openCheckout,
       addItem,
       setQty,

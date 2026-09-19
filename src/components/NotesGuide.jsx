@@ -59,7 +59,7 @@ export default function NotesGuide() {
                 {layer.examples.map((example) => (
                   <li
                     key={example}
-                    className="border-b border-noir-950/[0.08] py-2 font-display text-[1.0625rem] font-medium text-noir-800 last:border-b-0"
+                    className="t-entry border-b border-noir-950/[0.08] py-2 last:border-b-0"
                   >
                     {example}
                   </li>

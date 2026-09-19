@@ -26,6 +26,13 @@ export default {
           500: '#6a6355',
           400: '#9c9384',
         },
+        // Validation only. Distinct from oxblood (which is the brand accent)
+        // and dark enough to clear AA on every paper tint — Tailwind's default
+        // red-300 managed 1.8:1 here, i.e. invisible.
+        alert: {
+          600: '#9c3520',
+          100: '#e9cfc6',
+        },
         // Sealing-wax oxblood: the apothecary's label ink. Replaces metal
         // entirely — no gold, no bronze, no champagne.
         oxblood: {

@@ -101,10 +101,10 @@ function Field({ id, label, error, className, ...props }) {
         {label}
       </label>
       <input id={id}
-        className={classNames('field', error && 'border-red-400/60 focus:border-red-400/60')} aria-invalid={Boolean(error)}
+        className={classNames('field', error && 'border-alert-600 focus:border-alert-600')} aria-invalid={Boolean(error)}
         {...props}
       />
-      {error && <p className="mt-1.5 text-[11px] text-red-300">{error}</p>}
+      {error && <p className="mt-2 font-sans text-[12px] text-alert-600">{error}</p>}
     </div>
   )
 }
@@ -119,8 +119,31 @@ export default function CheckoutModal() {
   const [receipt, setReceipt] = useState(null)
 
   const panelRef = useRef(null)
+  /** Pending mock-authorisation timer, cancelled if the modal closes first. */
+  const payTimer = useRef(null)
 
   useOverlay(isCheckoutOpen, closeCheckout, panelRef)
+
+  // Cancel any in-flight authorisation whenever the modal closes — by button,
+  // by scrim, or by Escape (which reaches closeCheckout directly via
+  // useOverlay) — and on unmount. Otherwise the timer still fires and empties
+  // the cart behind an order the customer abandoned.
+  useEffect(() => {
+    if (isCheckoutOpen) return undefined
+    if (payTimer.current) {
+      clearTimeout(payTimer.current)
+      payTimer.current = null
+      setStatus('idle')
+    }
+    return undefined
+  }, [isCheckoutOpen])
+
+  useEffect(
+    () => () => {
+      if (payTimer.current) clearTimeout(payTimer.current)
+    },
+    [],
+  )
 
   // Reset the flow whenever the modal is re-opened for a new order.
   useEffect(() => {
@@ -165,7 +188,8 @@ export default function CheckoutModal() {
       total: totals.total,
       email: form.email,
     }
-    setTimeout(() => {
+    payTimer.current = setTimeout(() => {
+      payTimer.current = null
       setReceipt(snapshot)
       setStatus('confirmed')
       clearCart()
@@ -209,17 +233,17 @@ export default function CheckoutModal() {
               business days.
             </p>
             <div className="mt-8 w-full max-w-xs  border rule bg-paper-100/70 p-5 text-left">
-              <div className="flex justify-between text-sm">
-                <span className="text-noir-500">Order</span>
-                <span className="t-figure text-noir-950">{receipt.reference}</span>
+              <div className="flex items-baseline justify-between gap-4">
+                <span className="ticket text-noir-500">Order</span>
+                <span className="t-figure text-[1.25rem] text-noir-950">{receipt.reference}</span>
               </div>
-              <div className="mt-2 flex justify-between text-sm">
-                <span className="text-noir-500">Items</span>
-                <span className="t-figure text-noir-950">{receipt.items}</span>
+              <div className="mt-2.5 flex items-baseline justify-between gap-4">
+                <span className="ticket text-noir-500">Items</span>
+                <span className="t-figure text-[1.25rem] text-noir-950">{receipt.items}</span>
               </div>
-              <div className="mt-2 flex justify-between text-sm">
-                <span className="text-noir-500">Paid</span>
-                <span className="t-figure text-noir-950">
+              <div className="mt-2.5 flex items-baseline justify-between gap-4">
+                <span className="ticket text-noir-500">Paid</span>
+                <span className="t-figure text-[1.25rem] text-noir-950">
                   {formatPriceWithCents(receipt.total)}
                 </span>
               </div>

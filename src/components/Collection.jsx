@@ -119,7 +119,12 @@ export default function Collection({ searchRef }) {
         {results.length > 0 ? (
           <div className="mt-12 grid grid-cols-1 gap-7 sm:grid-cols-2 xl:grid-cols-3">
             {results.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={index}
+                priceRange={priceRange}
+              />
             ))}
           </div>
         ) : (

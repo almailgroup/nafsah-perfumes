@@ -78,7 +78,7 @@ export default function Footer() {
             <span className="font-display text-[28px] font-medium tracking-[0.2em] text-paper-50">
               NAFSAH
             </span>
-            <p className="mt-6 max-w-xs font-display text-[1.0625rem] font-medium leading-relaxed text-paper-400">
+            <p className="t-body-noir mt-6 max-w-xs text-paper-400">
               Maison de parfum, founded 1974. Composed in Grasse, bottled in small batches, shipped
               worldwide.
             </p>

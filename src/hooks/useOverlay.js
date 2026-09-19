@@ -1,10 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * Shared behaviour for the cart drawer and checkout modal: lock background
  * scrolling while open and close on Escape.
  */
 export function useOverlay(isOpen, onClose, panelRef) {
+  // Kept in a ref so an unstable `onClose` identity can never tear down and
+  // re-run the lock/focus effect while the overlay is still open.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  })
+
   useEffect(() => {
     if (!isOpen) return undefined
 
@@ -17,7 +24,7 @@ export function useOverlay(isOpen, onClose, panelRef) {
     if (gutter > 0) document.body.style.paddingRight = `${gutter}px`
 
     const onKeyDown = (event) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') onCloseRef.current()
     }
     window.addEventListener('keydown', onKeyDown)
 
@@ -38,7 +45,7 @@ export function useOverlay(isOpen, onClose, panelRef) {
         previouslyFocused.focus({ preventScroll: true })
       }
     }
-  }, [isOpen, onClose, panelRef])
+  }, [isOpen, panelRef])
 }
 
 /** Tracks whether the window has scrolled past `offset` pixels. */

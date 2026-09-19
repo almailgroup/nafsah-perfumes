@@ -69,7 +69,7 @@ export default function CartDrawer() {
               <ShoppingBag className="h-7 w-7 text-paper-400" strokeWidth={1} />
             </span>
             <h3 className="mt-6 font-display text-[1.75rem] font-medium text-paper-100">Your cart is empty</h3>
-            <p className="mt-3 max-w-xs font-display text-[1.0625rem] font-medium leading-relaxed text-paper-400">
+            <p className="t-body-noir mt-3 max-w-xs text-paper-400">
               Every Nafsah order arrives with two complimentary 2ml samples of your choosing.
             </p>
             <button type="button" onClick={closeCart} className="btn-paper mt-8">
@@ -102,7 +102,7 @@ export default function CartDrawer() {
               {lines.map((line) => (
                 <li key={line.id} className="flex animate-fade-in gap-4 py-5">
                   <div className="h-24 w-16 shrink-0 overflow-hidden  border border-white/[0.07] bg-noir-900">
-                    <BottleVisual palette={line.product.palette} glow={false} />
+                    <BottleVisual palette={line.product.palette} onDark />
                   </div>
 
                   <div className="min-w-0 flex-1">

@@ -34,7 +34,7 @@ export default function Navbar({ onSearchFocus }) {
     <header
       className={classNames(
         'fixed inset-x-0 top-0 z-40 border-b transition-colors duration-500',
-        onPaper ? 'border-noir-950/12 bg-paper-50/95 backdrop-blur-md' : 'border-transparent',
+        onPaper ? 'border-noir-950/[0.12] bg-paper-50/95 backdrop-blur-md' : 'border-transparent',
       )}
     >
       <div className="mx-auto flex h-16 max-w-[1560px] items-center justify-between gap-6 px-5 sm:h-[76px] sm:px-9">
@@ -127,7 +127,7 @@ export default function Navbar({ onSearchFocus }) {
       {/* Mobile navigation */}
       <div
         className={classNames(
-          'overflow-hidden border-t border-noir-950/12 bg-paper-50 transition-[max-height,opacity] duration-400 lg:hidden',
+          'overflow-hidden border-t border-noir-950/[0.12] bg-paper-50 transition-[max-height,opacity] duration-400 lg:hidden',
           mobileOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0',
         )}
       >

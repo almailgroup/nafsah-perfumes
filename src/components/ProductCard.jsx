@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, Plus } from 'lucide-react'
 import BottleVisual from './BottleVisual'
 import { useCart } from '../context/cart-context'
@@ -16,10 +16,26 @@ const NOTE_ROWS = [
  * ground, then the entry set as a small ruled table. Every control is Jost —
  * Cormorant is unusable at button and label size.
  */
-export default function ProductCard({ product, index = 0 }) {
+export default function ProductCard({ product, index = 0, priceRange }) {
   const { addItem } = useCart()
-  const [selectedMl, setSelectedMl] = useState(product.sizes[0].ml)
   const [justAdded, setJustAdded] = useState(false)
+
+  // A product qualifies for the price filter if ANY of its sizes is in range,
+  // so the card must open on a size that is actually inside that range —
+  // otherwise it advertises a price the shopper filtered out.
+  const inRange = priceRange
+    ? product.sizes.filter((s) => s.price >= priceRange[0] && s.price <= priceRange[1])
+    : product.sizes
+  const preferredMl = (inRange[0] ?? product.sizes[0]).ml
+
+  const [selectedMl, setSelectedMl] = useState(preferredMl)
+
+  useEffect(() => {
+    setSelectedMl((current) =>
+      inRange.length > 0 && !inRange.some((s) => s.ml === current) ? inRange[0].ml : current,
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preferredMl, inRange.length])
 
   const size = product.sizes.find((entry) => entry.ml === selectedMl) ?? product.sizes[0]
   const catalogue = CATALOGUE_NUMBERS[product.id]
@@ -62,7 +78,7 @@ export default function ProductCard({ product, index = 0 }) {
           </span>
         </div>
 
-        <p className="mt-2.5 font-display text-[1.0625rem] font-medium italic leading-snug text-noir-600">
+        <p className="t-body mt-2.5 italic">
           {product.tagline}
         </p>
 
@@ -75,10 +91,10 @@ export default function ProductCard({ product, index = 0 }) {
           {NOTE_ROWS.map((row) => (
             <div
               key={row.key}
-              className="flex gap-4 border-b border-noir-950/[0.08] py-2.5 last:border-b-0"
+              className="flex items-baseline gap-4 border-b border-noir-950/[0.08] py-2.5 last:border-b-0"
             >
-              <dt className="ticket w-12 shrink-0 pt-1 text-noir-500">{row.label}</dt>
-              <dd className="font-display text-[1.0625rem] font-medium leading-snug text-noir-800">
+              <dt className="ticket w-12 shrink-0 text-noir-500">{row.label}</dt>
+              <dd className="t-entry">
                 {product.notes[row.key].join(', ')}
               </dd>
             </div>
@@ -101,7 +117,7 @@ export default function ProductCard({ product, index = 0 }) {
                 className={classNames(
                   'flex-1 py-2.5 font-sans text-[10px] uppercase tracking-label transition-colors duration-300',
                   option.ml === selectedMl
-                    ? 'bg-noir-950 text-paper-50'
+                    ? 'bg-paper-200 text-noir-950'
                     : 'text-noir-500 hover:text-noir-950',
                 )}
               >
@@ -118,7 +134,7 @@ export default function ProductCard({ product, index = 0 }) {
               'mt-2 flex w-full items-center justify-center gap-2.5 border py-3 font-sans text-[10px] uppercase tracking-label transition-colors duration-300',
               justAdded
                 ? 'border-oxblood-600 bg-oxblood-600 text-paper-50'
-                : 'border-noir-950/25 text-noir-950 hover:border-noir-950 hover:bg-noir-950 hover:text-paper-50',
+                : 'border-noir-950 bg-noir-950 text-paper-50 hover:border-oxblood-700 hover:bg-oxblood-700',
             )}
           >
             {justAdded ? (

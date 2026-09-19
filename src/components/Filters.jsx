@@ -31,7 +31,7 @@ function PriceSlider({ range, onChange }) {
         </span>
       </div>
 
-      <div className="relative h-5">
+      <div className="relative h-10">
         <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-noir-950/20" />
         <div
           className="absolute top-1/2 h-px -translate-y-1/2 bg-noir-950"
@@ -45,7 +45,7 @@ function PriceSlider({ range, onChange }) {
           value={range[0]}
           onChange={(event) => setMin(event.target.value)}
           aria-label="Minimum price"
-          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2"
+          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2 touch-none"
         />
         <input
           type="range"
@@ -55,7 +55,7 @@ function PriceSlider({ range, onChange }) {
           value={range[1]}
           onChange={(event) => setMax(event.target.value)}
           aria-label="Maximum price"
-          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2"
+          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2 touch-none"
         />
       </div>
     </div>
