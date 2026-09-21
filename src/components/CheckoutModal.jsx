@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useCart } from '../context/cart-context'
 import { useOverlay } from '../hooks/useOverlay'
-import { classNames, formatPrice, formatPriceWithCents } from '../lib/format'
+import { classNames, formatPrice } from '../lib/format'
 
 const STEPS = [
   { id: 'contact', label: 'Contact', icon: User },
@@ -244,7 +244,7 @@ export default function CheckoutModal() {
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
                 <span className="ticket text-noir-500">Paid</span>
                 <span className="t-figure text-[1.25rem] text-noir-950">
-                  {formatPriceWithCents(receipt.total)}
+                  {formatPrice(receipt.total)}
                 </span>
               </div>
             </div>
@@ -398,14 +398,10 @@ export default function CheckoutModal() {
                         {totals.shipping === 0 ? 'Complimentary' : formatPrice(totals.shipping)}
                       </span>
                     </div>
-                    <div className="flex justify-between text-noir-600">
-                      <span>Estimated tax</span>
-                      <span className="tabular-nums">{formatPriceWithCents(totals.tax)}</span>
-                    </div>
                     <div className="flex items-baseline justify-between pt-1.5">
                       <span className="ticket text-noir-950">Total</span>
                       <span className="t-figure text-[1.75rem] text-noir-950">
-                        {formatPriceWithCents(totals.total)}
+                        {formatPrice(totals.total)}
                       </span>
                     </div>
                   </div>
@@ -433,7 +429,7 @@ export default function CheckoutModal() {
                   </>
                 ) : (
                   <>
-                    {isLast ? `Pay ${formatPriceWithCents(totals.total)}` : 'Continue'}
+                    {isLast ? `Pay ${formatPrice(totals.total)}` : 'Continue'}
                     <ArrowRight
                       className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                       strokeWidth={2}

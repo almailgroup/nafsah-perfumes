@@ -11,7 +11,7 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
 ]
 
-const STEP = 5
+const STEP = 1
 
 function PriceSlider({ range, onChange }) {
   const { min: floor, max: ceiling } = PRICE_BOUNDS

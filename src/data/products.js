@@ -26,8 +26,8 @@ export const PRODUCTS = [
       base: ['Sandalwood', 'Leather', 'Vetiver'],
     },
     sizes: [
-      { ml: 50, price: 245 },
-      { ml: 100, price: 395 },
+      { ml: 50, price: 75.000 },
+      { ml: 100, price: 119.000 },
     ],
     palette: { from: '#4a2c1a', via: '#8a5a2b', to: '#c9a961', glass: '#241611' },
     description:
@@ -50,8 +50,8 @@ export const PRODUCTS = [
       base: ['White Musk', 'Cashmere Wood'],
     },
     sizes: [
-      { ml: 50, price: 210 },
-      { ml: 100, price: 340 },
+      { ml: 50, price: 65.000 },
+      { ml: 100, price: 105.000 },
     ],
     palette: { from: '#5c2438', via: '#b06a7d', to: '#f0cdd4', glass: '#2a1520' },
     description:
@@ -73,8 +73,8 @@ export const PRODUCTS = [
       base: ['Driftwood', 'Ambrette'],
     },
     sizes: [
-      { ml: 50, price: 165 },
-      { ml: 100, price: 265 },
+      { ml: 50, price: 49.500 },
+      { ml: 100, price: 79.500 },
     ],
     palette: { from: '#1c4a4a', via: '#57a6a0', to: '#e6d98a', glass: '#10262a' },
     description:
@@ -97,8 +97,8 @@ export const PRODUCTS = [
       base: ['Madagascan Vanilla', 'Benzoin', 'Tonka Bean'],
     },
     sizes: [
-      { ml: 50, price: 290 },
-      { ml: 100, price: 445 },
+      { ml: 50, price: 89.000 },
+      { ml: 100, price: 135.000 },
     ],
     palette: { from: '#5a2f10', via: '#c07c2a', to: '#f2d79a', glass: '#2c1a08' },
     description:
@@ -120,8 +120,8 @@ export const PRODUCTS = [
       base: ['Cedar', 'Tonka Bean', 'Musk'],
     },
     sizes: [
-      { ml: 50, price: 195 },
-      { ml: 100, price: 310 },
+      { ml: 50, price: 59.000 },
+      { ml: 100, price: 95.000 },
     ],
     palette: { from: '#4c4132', via: '#a2907a', to: '#e8dcc6', glass: '#241f18' },
     description:
@@ -144,8 +144,8 @@ export const PRODUCTS = [
       base: ['Sandalwood', 'Vanilla Orchid'],
     },
     sizes: [
-      { ml: 50, price: 260 },
-      { ml: 100, price: 410 },
+      { ml: 50, price: 79.000 },
+      { ml: 100, price: 125.000 },
     ],
     palette: { from: '#2b2350', via: '#6f6bb0', to: '#e9e2f5', glass: '#161238' },
     description:
@@ -167,8 +167,8 @@ export const PRODUCTS = [
       base: ['Amberwood', 'White Musk'],
     },
     sizes: [
-      { ml: 50, price: 175 },
-      { ml: 100, price: 280 },
+      { ml: 50, price: 53.000 },
+      { ml: 100, price: 85.000 },
     ],
     palette: { from: '#6b4a10', via: '#d9a32c', to: '#f7e6a8', glass: '#2e2109' },
     description:
@@ -190,8 +190,8 @@ export const PRODUCTS = [
       base: ['Oud', 'Amber', 'Patchouli'],
     },
     sizes: [
-      { ml: 50, price: 275 },
-      { ml: 100, price: 420 },
+      { ml: 50, price: 83.000 },
+      { ml: 100, price: 129.000 },
     ],
     palette: { from: '#63200f', via: '#c2502a', to: '#f0b169', glass: '#2d0f08' },
     description:
@@ -214,8 +214,8 @@ export const PRODUCTS = [
       base: ['Vetiver', 'Oakmoss', 'Grey Amber'],
     },
     sizes: [
-      { ml: 50, price: 185 },
-      { ml: 100, price: 295 },
+      { ml: 50, price: 55.500 },
+      { ml: 100, price: 89.500 },
     ],
     palette: { from: '#23302a', via: '#5e7361', to: '#c3cbb8', glass: '#141c18' },
     description:
@@ -237,8 +237,8 @@ export const PRODUCTS = [
       base: ['White Musk', 'Blond Woods'],
     },
     sizes: [
-      { ml: 50, price: 160 },
-      { ml: 100, price: 255 },
+      { ml: 50, price: 48.000 },
+      { ml: 100, price: 77.000 },
     ],
     palette: { from: '#4a4a22', via: '#a8b06a', to: '#f4efd0', glass: '#22240f' },
     description:
@@ -261,8 +261,8 @@ export const PRODUCTS = [
       base: ['White Musk', 'Ambrette Seed', 'Vanilla'],
     },
     sizes: [
-      { ml: 50, price: 190 },
-      { ml: 100, price: 300 },
+      { ml: 50, price: 57.500 },
+      { ml: 100, price: 91.000 },
     ],
     palette: { from: '#3d3a3c', via: '#8f8a8c', to: '#efe9e6', glass: '#1c1a1b' },
     description:
@@ -284,8 +284,8 @@ export const PRODUCTS = [
       base: ['Guaiac Wood', 'Tobacco Leaf', 'Ambergris'],
     },
     sizes: [
-      { ml: 50, price: 220 },
-      { ml: 100, price: 355 },
+      { ml: 50, price: 67.000 },
+      { ml: 100, price: 108.000 },
     ],
     palette: { from: '#1f3326', via: '#4f7a52', to: '#cfd9b4', glass: '#0f1c14' },
     description:

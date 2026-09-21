@@ -2,10 +2,10 @@ import { useRef } from 'react'
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react'
 import BottleVisual from './BottleVisual'
 import { useCart } from '../context/cart-context'
+import { FREE_SHIPPING_KD } from '../context/CartProvider'
 import { useOverlay } from '../hooks/useOverlay'
-import { classNames, formatPrice, formatPriceWithCents } from '../lib/format'
+import { classNames, formatPrice } from '../lib/format'
 
-const FREE_SHIPPING_THRESHOLD = 250
 
 export default function CartDrawer() {
   const { lines, totals, maxQty, isCartOpen, closeCart, setQty, removeItem, openCheckout } =
@@ -19,8 +19,8 @@ export default function CartDrawer() {
   // order and the accessibility tree without disturbing its slide transition.
   const inertWhenClosed = isCartOpen ? {} : { inert: '' }
 
-  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - totals.subtotal)
-  const progress = Math.min(100, (totals.subtotal / FREE_SHIPPING_THRESHOLD) * 100)
+  const remaining = Math.max(0, FREE_SHIPPING_KD - totals.subtotal)
+  const progress = Math.min(100, (totals.subtotal / FREE_SHIPPING_KD) * 100)
 
   return (
     <div
@@ -169,16 +169,10 @@ export default function CartDrawer() {
                     )}
                   </dd>
                 </div>
-                <div className="flex justify-between text-paper-400">
-                  <dt>Estimated tax</dt>
-                  <dd className="tabular-nums text-paper-100">
-                    {formatPriceWithCents(totals.tax)}
-                  </dd>
-                </div>
                 <div className="flex items-baseline justify-between border-t rule-noir pt-3">
                   <dt className="ticket text-paper-200">Total</dt>
                   <dd className="t-figure text-[2rem] leading-none text-paper-50">
-                    {formatPriceWithCents(totals.total)}
+                    {formatPrice(totals.total)}
                   </dd>
                 </div>
               </dl>

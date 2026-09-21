@@ -5,6 +5,8 @@ import { lineId } from '../lib/format'
 
 const STORAGE_KEY = 'nafsah.cart.v1'
 const MAX_QTY = 10
+/** Order value above which express shipping is complimentary, in KD. */
+export const FREE_SHIPPING_KD = 75
 
 /**
  * Lines are stored as the minimum needed to rebuild a cart row
@@ -119,10 +121,11 @@ export function CartProvider({ children }) {
   const totals = useMemo(() => {
     const subtotal = detailedLines.reduce((sum, line) => sum + line.subtotal, 0)
     const count = detailedLines.reduce((sum, line) => sum + line.qty, 0)
-    // Complimentary express shipping above the house threshold.
-    const shipping = subtotal === 0 || subtotal >= 250 ? 0 : 18
-    const tax = Math.round(subtotal * 0.08 * 100) / 100
-    return { subtotal, count, shipping, tax, total: subtotal + shipping + tax }
+    // Complimentary express shipping above the house threshold, in dinar.
+    const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_KD ? 0 : 5.5
+    // No sales tax line: Kuwait has not implemented VAT, and its 2026-2030
+    // fiscal plan excludes it before 2028.
+    return { subtotal, count, shipping, total: subtotal + shipping }
   }, [detailedLines])
 
   const value = useMemo(
