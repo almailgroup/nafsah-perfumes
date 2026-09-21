@@ -114,7 +114,19 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-paper-50/15 pt-8 sm:flex-row">
+        <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-3 border-t border-paper-50/15 pt-8">
+          <span className="ticket mr-2 text-paper-400">We accept</span>
+          {['KNET', 'Visa', 'Mastercard', 'Amex', 'Apple Pay'].map((method) => (
+            <span
+              key={method}
+              className="border border-paper-50/25 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-paper-200"
+            >
+              {method}
+            </span>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-paper-50/15 pt-8 sm:flex-row">
           <p className="ticket text-paper-400">
             © {new Date().getFullYear()} Nafsah — A demonstration storefront
           </p>

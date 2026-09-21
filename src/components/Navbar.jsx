@@ -1,25 +1,26 @@
-import { useEffect, useState } from 'react'
-import { Menu, Search, ShoppingBag, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import { useCart } from '../context/cart-context'
-import { useScrolled } from '../hooks/useOverlay'
+import { SCENT_FAMILIES } from '../data/products'
 import { classNames } from '../lib/format'
 
 const LINKS = [
-  { label: 'Catalogue', href: '#collection' },
   { label: 'The House', href: '#house' },
   { label: 'Notes', href: '#notes' },
   { label: 'Contact', href: '#contact' },
 ]
 
 /**
- * The bar sits over the noir hero at rest and inverts to paper once the
- * catalogue scrolls under it.
+ * Retail header: wordmark, a real search field, account and cart, with the
+ * scent families as a category nav row beneath. Sticky as one block so the
+ * categories stay reachable while browsing.
  */
-export default function Navbar({ onSearchFocus }) {
+export default function Navbar({ query, onQueryChange, families, onSelectFamily, onSubmitSearch }) {
   const { totals, openCart, lastAddedAt } = useCart()
-  const scrolled = useScrolled(120)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [pulse, setPulse] = useState(false)
+  const inputRef = useRef(null)
+  const mobileInputRef = useRef(null)
 
   useEffect(() => {
     if (!lastAddedAt) return undefined
@@ -28,71 +29,74 @@ export default function Navbar({ onSearchFocus }) {
     return () => clearTimeout(timer)
   }, [lastAddedAt])
 
-  const onPaper = scrolled
+  const submit = (event) => {
+    event.preventDefault()
+    inputRef.current?.blur()
+    onSubmitSearch()
+  }
 
   return (
-    <header
-      className={classNames(
-        'fixed inset-x-0 top-0 z-40 border-b transition-colors duration-500',
-        onPaper ? 'border-noir-950/[0.12] bg-paper-50/95 backdrop-blur-md' : 'border-transparent',
-      )}
-    >
-      <div className="mx-auto flex h-16 max-w-[1560px] items-center justify-between gap-6 px-5 sm:h-[76px] sm:px-9">
+    <header className="sticky top-0 z-40 border-b border-noir-950/[0.12] bg-paper-50">
+      <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
         <a
           href="#top"
           aria-label="Nafsah home"
-          className={classNames(
-            'shrink-0 font-display text-[26px] font-medium leading-none tracking-[0.2em] transition-colors duration-500 sm:text-[28px]',
-            onPaper ? 'text-noir-950' : 'text-paper-50',
-          )}
+          className="shrink-0 font-display text-[24px] font-medium leading-none tracking-[0.2em] text-noir-950 sm:text-[28px]"
         >
           NAFSAH
         </a>
 
-        <nav className="hidden items-center gap-10 lg:flex">
-          {LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={classNames(
-                'group relative t-label py-1 transition-colors duration-300',
-                onPaper ? 'text-noir-600 hover:text-noir-950' : 'text-paper-400 hover:text-paper-50',
-              )}
-            >
-              {link.label}
-              <span
-                className={classNames(
-                  'absolute -bottom-0.5 left-0 h-px w-0 transition-all duration-400 group-hover:w-full',
-                  onPaper ? 'bg-noir-950' : 'bg-paper-50',
-                )}
-              />
-            </a>
-          ))}
-        </nav>
+        {/* Search is the primary affordance in a retail header */}
+        <form onSubmit={submit} role="search" className="relative hidden flex-1 md:block">
+          <label htmlFor="header-search" className="sr-only">
+            Search the catalogue
+          </label>
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-500"
+            strokeWidth={1.25}
+          />
+          <input
+            id="header-search"
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Search by name, note or family…"
+            className="w-full border border-noir-950/20 bg-paper-100 py-2.5 pl-11 pr-4 font-sans text-[14px] font-light text-noir-950 placeholder:text-noir-500 focus:border-noir-950 focus:outline-none focus:ring-0"
+          />
+        </form>
 
-        <div className="flex items-center gap-0.5">
+        <div className="ml-auto flex items-center gap-0.5 md:ml-0">
+          <span className="ticket mr-3 hidden text-noir-500 lg:inline">EN | ع</span>
+
           <button
             type="button"
-            onClick={onSearchFocus}
             aria-label="Search the catalogue"
-            className={classNames(
-              'grid h-10 w-10 place-items-center transition-colors duration-300',
-              onPaper ? 'text-noir-600 hover:text-noir-950' : 'text-paper-400 hover:text-paper-50',
-            )}
+            aria-expanded={mobileOpen}
+            onClick={() => {
+              setMobileOpen(true)
+              setTimeout(() => mobileInputRef.current?.focus({ preventScroll: true }), 220)
+            }}
+            className="grid h-10 w-10 place-items-center text-noir-600 transition-colors hover:text-noir-950 md:hidden"
           >
-            <Search className="h-[17px] w-[17px]" strokeWidth={1.25} />
+            <Search className="h-[18px] w-[18px]" strokeWidth={1.25} />
+          </button>
+
+          <button
+            type="button"
+            aria-label="Account"
+            className="hidden h-10 w-10 place-items-center text-noir-600 transition-colors hover:text-noir-950 sm:grid"
+          >
+            <User className="h-[18px] w-[18px]" strokeWidth={1.25} />
           </button>
 
           <button
             type="button"
             onClick={openCart}
             aria-label={`Open cart, ${totals.count} item${totals.count === 1 ? '' : 's'}`}
-            className={classNames(
-              'relative grid h-10 w-10 place-items-center transition-colors duration-300',
-              onPaper ? 'text-noir-800 hover:text-noir-950' : 'text-paper-200 hover:text-paper-50',
-            )}
+            className="relative grid h-10 w-10 place-items-center text-noir-800 transition-colors hover:text-noir-950"
           >
-            <ShoppingBag className="h-[17px] w-[17px]" strokeWidth={1.25} />
+            <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.25} />
             {totals.count > 0 && (
               <span
                 className={classNames(
@@ -110,10 +114,7 @@ export default function Navbar({ onSearchFocus }) {
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileOpen}
-            className={classNames(
-              'grid h-10 w-10 place-items-center transition-colors duration-300 lg:hidden',
-              onPaper ? 'text-noir-800' : 'text-paper-200',
-            )}
+            className="grid h-10 w-10 place-items-center text-noir-800 lg:hidden"
           >
             {mobileOpen ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.25} />
@@ -124,25 +125,111 @@ export default function Navbar({ onSearchFocus }) {
         </div>
       </div>
 
-      {/* Mobile navigation */}
+      {/* Category nav */}
+      <nav className="hidden border-t border-noir-950/[0.08] lg:block">
+        <div className="mx-auto flex max-w-[1560px] items-center gap-9 px-9">
+          <button
+            type="button"
+            onClick={() => onSelectFamily(null)}
+            className={classNames(
+              't-label py-3 transition-colors duration-300',
+              families.length === 0 ? 'text-oxblood-600' : 'text-noir-600 hover:text-noir-950',
+            )}
+          >
+            All Perfumes
+          </button>
+          {SCENT_FAMILIES.map((family) => (
+            <button
+              key={family}
+              type="button"
+              onClick={() => onSelectFamily(family)}
+              className={classNames(
+                't-label py-3 transition-colors duration-300',
+                families.includes(family)
+                  ? 'text-oxblood-600'
+                  : 'text-noir-600 hover:text-noir-950',
+              )}
+            >
+              {family}
+            </button>
+          ))}
+          <span className="ml-auto flex items-center gap-9">
+            {LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="t-label py-3 text-noir-600 transition-colors duration-300 hover:text-noir-950"
+              >
+                {link.label}
+              </a>
+            ))}
+          </span>
+        </div>
+      </nav>
+
+      {/* Mobile drawer: search plus the same categories */}
       <div
         className={classNames(
-          'overflow-hidden border-t border-noir-950/[0.12] bg-paper-50 transition-[max-height,opacity] duration-400 lg:hidden',
-          mobileOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0',
+          'overflow-hidden border-t border-noir-950/[0.08] bg-paper-50 transition-[max-height,opacity] duration-400 lg:hidden',
+          mobileOpen ? 'max-h-[30rem] opacity-100' : 'max-h-0 opacity-0',
         )}
       >
-        <nav className="flex flex-col px-5 sm:px-9">
-          {LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="t-label border-b border-noir-950/10 py-5 text-noir-800 last:border-b-0"
+        <div className="px-5 py-4 sm:px-9">
+          <form onSubmit={submit} role="search" className="relative md:hidden">
+            <label htmlFor="mobile-search" className="sr-only">
+              Search the catalogue
+            </label>
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-500"
+              strokeWidth={1.25}
+            />
+            <input
+              id="mobile-search"
+              ref={mobileInputRef}
+              type="search"
+              value={query}
+              onChange={(event) => onQueryChange(event.target.value)}
+              placeholder="Search by name or note…"
+              className="w-full border border-noir-950/20 bg-paper-100 py-3 pl-11 pr-4 font-sans text-[14px] font-light text-noir-950 placeholder:text-noir-500 focus:border-noir-950 focus:outline-none"
+            />
+          </form>
+
+          <nav className="mt-2 flex flex-col">
+            <button
+              type="button"
+              onClick={() => {
+                onSelectFamily(null)
+                setMobileOpen(false)
+              }}
+              className="t-label border-b border-noir-950/[0.08] py-4 text-left text-noir-800"
             >
-              {link.label}
-            </a>
-          ))}
-        </nav>
+              All Perfumes
+            </button>
+            {SCENT_FAMILIES.map((family) => (
+              <button
+                key={family}
+                type="button"
+                onClick={() => {
+                  onSelectFamily(family)
+                  setMobileOpen(false)
+                }}
+                className="t-label border-b border-noir-950/[0.08] py-4 text-left text-noir-800"
+              >
+                {family}
+              </button>
+            ))}
+            {LINKS.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="t-label border-b border-noir-950/[0.08] py-4 text-noir-600 last:border-b-0"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+        </div>
       </div>
     </header>
   )

@@ -16,7 +16,7 @@ const NOTE_ROWS = [
  * ground, then the entry set as a small ruled table. Every control is Jost —
  * Cormorant is unusable at button and label size.
  */
-export default function ProductCard({ product, index = 0, priceRange }) {
+export default function ProductCard({ product, index = 0, priceRange, compact = false }) {
   const { addItem } = useCart()
   const [justAdded, setJustAdded] = useState(false)
 
@@ -64,7 +64,12 @@ export default function ProductCard({ product, index = 0, priceRange }) {
             {product.isNew ? 'New' : 'Bestseller'}
           </span>
         )}
-        <div className="relative mx-auto h-[18.5rem] py-8 transition-transform duration-[900ms] ease-out group-hover:scale-[1.035]">
+        <div
+          className={classNames(
+            'relative mx-auto py-8 transition-transform duration-[900ms] ease-out group-hover:scale-[1.035]',
+            compact ? 'h-[15rem]' : 'h-[18.5rem]',
+          )}
+        >
           <BottleVisual palette={product.palette} catalogue={catalogue} />
         </div>
       </div>
@@ -86,8 +91,9 @@ export default function ProductCard({ product, index = 0, priceRange }) {
           {product.concentration} · {product.intensity}
         </p>
 
-        {/* Fragrance pyramid, set as a ruled table */}
-        <dl className="mt-5 border-t border-noir-950/[0.14]">
+        {/* Fragrance pyramid, set as a ruled table. Omitted on the compact
+            merchandised rows, where four cards share a row. */}
+        <dl className={classNames('mt-5 border-t border-noir-950/[0.14]', compact && 'hidden')}>
           {NOTE_ROWS.map((row) => (
             <div
               key={row.key}

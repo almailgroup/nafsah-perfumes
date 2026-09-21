@@ -1,123 +1,58 @@
-import { useMemo, useState } from 'react'
 import { SearchX } from 'lucide-react'
 import Filters from './Filters'
 import ProductCard from './ProductCard'
-import { PRICE_BOUNDS, PRODUCTS } from '../data/products'
 
-const DEFAULT_RANGE = [PRICE_BOUNDS.min, PRICE_BOUNDS.max]
-
-/** Everything a fragrance can be matched against by the search box. */
-const searchIndex = (product) =>
-  [
-    product.name,
-    product.tagline,
-    product.family,
-    product.concentration,
-    product.description,
-    ...product.notes.top,
-    ...product.notes.heart,
-    ...product.notes.base,
-  ]
-    .join(' ')
-    .toLowerCase()
-
-const INDEX = Object.fromEntries(PRODUCTS.map((product) => [product.id, searchIndex(product)]))
-
-export default function Collection({ searchRef }) {
-  const [query, setQuery] = useState('')
-  const [families, setFamilies] = useState([])
-  const [priceRange, setPriceRange] = useState(DEFAULT_RANGE)
-  const [sort, setSort] = useState('featured')
-
-  const toggleFamily = (family) =>
-    setFamilies((current) =>
-      current.includes(family) ? current.filter((item) => item !== family) : [...current, family],
-    )
-
-  const reset = () => {
-    setQuery('')
-    setFamilies([])
-    setPriceRange(DEFAULT_RANGE)
-    setSort('featured')
-  }
-
-  const isFiltered =
-    query.trim() !== '' ||
-    families.length > 0 ||
-    priceRange[0] !== DEFAULT_RANGE[0] ||
-    priceRange[1] !== DEFAULT_RANGE[1] ||
-    sort !== 'featured'
-
-  const results = useMemo(() => {
-    const needle = query.trim().toLowerCase()
-
-    const matched = PRODUCTS.filter((product) => {
-      if (families.length > 0 && !families.includes(product.family)) return false
-
-      // A fragrance qualifies if any of its sizes falls inside the range.
-      const inRange = product.sizes.some(
-        (size) => size.price >= priceRange[0] && size.price <= priceRange[1],
-      )
-      if (!inRange) return false
-
-      if (needle && !INDEX[product.id].includes(needle)) return false
-
-      return true
-    })
-
-    const cheapest = (product) => Math.min(...product.sizes.map((size) => size.price))
-
-    const sorters = {
-      'price-asc': (a, b) => cheapest(a) - cheapest(b),
-      'price-desc': (a, b) => cheapest(b) - cheapest(a),
-      rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews,
-      newest: (a, b) => b.year - a.year || b.rating - a.rating,
-      featured: (a, b) =>
-        Number(Boolean(b.bestseller)) - Number(Boolean(a.bestseller)) ||
-        Number(Boolean(b.isNew)) - Number(Boolean(a.isNew)) ||
-        b.rating - a.rating,
-    }
-
-    return [...matched].sort(sorters[sort] ?? sorters.featured)
-  }, [query, families, priceRange, sort])
+/**
+ * The full, filterable catalogue. Filter state lives in useCatalogue so the
+ * header search and the category tiles drive the same query.
+ */
+export default function Collection({ catalogue, searchRef }) {
+  const {
+    query,
+    setQuery,
+    families,
+    toggleFamily,
+    priceRange,
+    setPriceRange,
+    sort,
+    setSort,
+    reset,
+    isFiltered,
+    results,
+  } = catalogue
 
   return (
-    <section id="collection" className="relative scroll-mt-24 bg-paper-50 py-20 sm:py-28">
+    <section id="collection" className="relative scroll-mt-32 bg-paper-50 py-14 sm:py-16">
       <div className="mx-auto max-w-[1560px] px-5 sm:px-9">
-        <header className="flex flex-col gap-6 pb-2 lg:flex-row lg:items-end lg:justify-between">
+        <header className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="ticket text-oxblood-600">The Catalogue</p>
-            <h2 className="t-display-sm mt-5">
-              Twelve compositions,
-              <br />
-              <em className="font-medium italic">no compromises</em>
+            <h2 className="mt-4 font-display text-[2rem] font-normal leading-none text-noir-950 sm:text-[2.5rem]">
+              All Perfumes
             </h2>
           </div>
-          <p className="t-deck max-w-sm lg:pb-2">
-            Filter by scent family or price, or search any single note — bergamot, oud, iris — to
-            find the composition that carries it.
+          <p className="font-sans text-[13px] font-light text-noir-600 sm:pb-1">
+            Twelve extraits · 50ml and 100ml · shipped from Kuwait
           </p>
         </header>
 
-        <div className="mt-8">
-          <Filters
-            ref={searchRef}
-            query={query}
-            onQueryChange={setQuery}
-            families={families}
-            onToggleFamily={toggleFamily}
-            priceRange={priceRange}
-            onPriceChange={setPriceRange}
-            sort={sort}
-            onSortChange={setSort}
-            resultCount={results.length}
-            onReset={reset}
-            isFiltered={isFiltered}
-          />
-        </div>
+        <Filters
+          ref={searchRef}
+          query={query}
+          onQueryChange={setQuery}
+          families={families}
+          onToggleFamily={toggleFamily}
+          priceRange={priceRange}
+          onPriceChange={setPriceRange}
+          sort={sort}
+          onSortChange={setSort}
+          resultCount={results.length}
+          onReset={reset}
+          isFiltered={isFiltered}
+        />
 
         {results.length > 0 ? (
-          <div className="mt-12 grid grid-cols-1 gap-7 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {results.map((product, index) => (
               <ProductCard
                 key={product.id}
@@ -128,7 +63,7 @@ export default function Collection({ searchRef }) {
             ))}
           </div>
         ) : (
-          <div className="mt-12 flex animate-fade-in flex-col items-center border border-dashed border-noir-950/20 px-6 py-24 text-center">
+          <div className="mt-10 flex animate-fade-in flex-col items-center border border-dashed border-noir-950/20 px-6 py-24 text-center">
             <SearchX className="h-7 w-7 text-noir-500" strokeWidth={1} />
             <h3 className="t-title mt-6">Nothing matches that yet</h3>
             <p className="t-deck mt-3 max-w-sm">
