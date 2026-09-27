@@ -95,60 +95,62 @@ src/
 
 ## Design system
 
-The system is **dual-tone**, and that follows directly from the typeface.
+A bilingual Gulf identity. The house is named Nafsah, ships from Kuwait and prices in
+dinar, so the design says so: Arabic and English are peers, not a translation layer bolted
+on afterwards.
 
-Cormorant Garamond's thinnest serifs are 12/1000em, and browsers composite
-antialiasing in gamma space rather than linear light. A serif covering 19% of a pixel
-delivers ~38% of full luminance contrast on white but only ~4% reversed out of near-black —
-a 9.5x asymmetry. The face literally loses its serifs on dark grounds at small sizes, and
-no amount of `font-weight` fixes it: the 300→700 axis thickens stems by 100% but hairlines
-by only 8%. So **warm paper is the primary reading surface** and noir is reserved for the
-hero, the cart drawer and the footer, where Cormorant is only ever set at display size.
+### Colour
 
-| Token     | Role                                                                  |
-| --------- | --------------------------------------------------------------------- |
-| `paper`   | `#faf7f1` → `#c4b9a3`. Primary surface, tints and rules.               |
-| `noir`    | `#141210` → `#9c9384`. Text on paper, plus the immersive dark surfaces.|
-| `oxblood` | `#5c2230` → `#c98c98`. Sealing-wax accent. No metal anywhere.          |
+| Token      | Role                                                                   |
+| ---------- | ---------------------------------------------------------------------- |
+| `midnight` | `#08130f` → `#2b5144`. Deep green-black ground, panels and rules.       |
+| `pearl`    | `#f6f2e9` → `#8b8e85`. All text.                                        |
+| `jade`     | `#b6e3d2` → `#1f6f5c`. The accent: actions, active states, badges.      |
+| `saffron`  | `#e4b35f`, `#c8862a`. Rationed to eyebrow labels and the vial's seal.   |
+| `lapis`    | Decorative only — 3.8:1 on the ground, so never used for text.          |
+| `alert`    | Validation only.                                                        |
 
-Every text pairing clears WCAG AA: `noir-950` on `paper-50` is 17.5:1, `noir-600` 7.4:1,
-`noir-500` 5.6:1, `oxblood-600` 9.4:1.
+Jade rather than gold is deliberate: this brand was already rejected once for looking like
+a gold merchant, and a green ground lets the warm note stay a fragrance reference rather
+than a metal.
 
-### Type
+### Type — four faces, two scripts
 
-Loaded from Google Fonts: Cormorant Garamond (400/500/600/700 + italic) and Jost
-(300/400/500). Jost is the closest x-height match available — 0.460 against Cormorant's
-0.386, where most modern sans-serifs sit at 0.72–0.77 and would tower over it.
+Latin display is **Cormorant Garamond**, as requested by name. Its thinnest serifs are
+12/1000em and effectively vanish reversed out of a dark ground below ~24px, so on this
+palette it is **display only** — every body string, label, button and input is a sans.
+That single constraint is what makes a dark site possible with this face at all.
 
-Cormorant's x-height is 0.386em, so it must be set ~1.35x a sans to match apparent size:
-Cormorant at 21px has the x-height of Inter at 15px. The ramp lives in `src/index.css` as
-`.t-display`, `.t-display-sm`, `.t-title`, `.t-deck`, `.t-body`, `.t-body-noir`, `.t-figure`.
+Arabic display is **Reem Kufi**, a geometric Kufi drawn from the same shape language as the
+mashrabiya lattice. Arabic UI is **IBM Plex Sans Arabic**, which holds up small on dark
+where Cormorant cannot. Latin UI stays **Jost**.
 
-**Nothing in the Cormorant ramp drops below 20px.** Body is 21px / 500 / 1.38 leading /
-+0.006em — reversed out it steps to weight 600 and +0.01em to counter halation. Tracking
-flips sign at ~40px: positive below, negative at display size. Leading is *tighter* than
-convention advises, because the 1.000em extender span already yields 65% more apparent
-leading than a normal face at any given multiplier.
+Arabic sits lower and wider than Latin at the same nominal size, so the ramp does not reuse
+the Latin numbers: every `.t-*` class in `src/index.css` has a `[dir="rtl"]` block that
+re-tunes size and leading. Arabic has no case, so `uppercase` and wide tracking are dropped
+under RTL — applied to Arabic they break joined letterforms.
 
-Every label, button, input and micro-string is Jost via `.t-label`, `.t-ui` and `.ticket`.
-Cormorant is never asked to do UI work.
+### Direction
 
-Two non-obvious rules the implementation depends on:
+`LocaleProvider` sets `lang` and `dir` on the document element and persists the choice.
+Layout is written in **logical properties** (`ms/me`, `ps/pe`, `start/end`, `border-s/e`)
+rather than left/right, so the whole page mirrors from that one attribute. Directional
+glyphs — carousel chevrons, the arrow in a button — carry `rtl:rotate-180` or a swapped
+icon. The price rail's fill is computed per direction, since it is drawn from the logical
+start.
 
-- **`body` must not carry `antialiased`.** `-webkit-font-smoothing: antialiased` switches
-  macOS to grayscale AA and renders text thinner; on a face whose serifs already cover ~19%
-  of a pixel it is the most destructive line of CSS available.
-- **Figures need `lnum` + `tnum`** (the `.t-figure` class). Cormorant's default numerals are
-  proportional oldstyle — the 6 ascends above cap height, 3/5/7/9 descend, and advances vary
-  47% — so price columns jitter without them. `font-synthesis: none` is set globally because
-  Google's CDN strips `smcp`, which would otherwise silently synthesize thin fake small caps.
+Numbers follow the script: `formatPrice` gives `KD 75.000` in English and `‏٧٥٫٠٠٠ د.ك` in
+Arabic, and catalogue numbers render as `04` or `٠٤`.
 
-### Geometry and signature
+### Signature
 
-Square throughout; hairline rules at 14% do the structural work. The signature device is the
-**apothecary catalogue**: every extrait carries a positional catalogue number (No. 01–12)
-printed on its plate header and on the vial's own paper label, and the flacon is drawn as a
-ground-glass vial with a wrapped label and an oxblood wax seal at the shoulder.
+The **mashrabiya** — the eight-point khatim star, two overlapping squares on a 56px tile —
+replaces the hairline rule as the structural motif. It appears as a masked 5% watermark on
+panels and bands, never behind body copy.
+
+Every UI string lives in `src/i18n/strings.js` with full key parity between the two
+languages; product names, taglines and all fragrance notes carry an `ar` counterpart in
+`src/data/products.js` so the two can never drift apart.
 
 ## Accessibility
 

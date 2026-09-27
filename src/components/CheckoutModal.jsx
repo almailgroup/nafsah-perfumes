@@ -12,13 +12,14 @@ import {
   X,
 } from 'lucide-react'
 import { useCart } from '../context/cart-context'
+import { useLocale } from '../i18n/locale-context'
 import { useOverlay } from '../hooks/useOverlay'
-import { classNames, formatPrice } from '../lib/format'
+import { classNames, formatNumber, formatPrice } from '../lib/format'
 
 const STEPS = [
-  { id: 'contact', label: 'Contact', icon: User },
-  { id: 'shipping', label: 'Shipping', icon: MapPin },
-  { id: 'payment', label: 'Payment', icon: CreditCard },
+  { id: 'contact', label: 'contactStep', icon: User },
+  { id: 'shipping', label: 'shippingStep', icon: MapPin },
+  { id: 'payment', label: 'paymentStep', icon: CreditCard },
 ]
 
 const EMPTY_FORM = {
@@ -96,21 +97,22 @@ function Field({ id, label, error, className, ...props }) {
     <div className={className}>
       <label
         htmlFor={id}
-        className="ticket mb-2 block text-noir-500"
+        className="ticket mb-2 block text-pearl-400"
       >
         {label}
       </label>
       <input id={id}
-        className={classNames('field', error && 'border-alert-600 focus:border-alert-600')} aria-invalid={Boolean(error)}
+        className={classNames('field', error && 'border-alert-400 focus:border-alert-400')} aria-invalid={Boolean(error)}
         {...props}
       />
-      {error && <p className="mt-2 font-sans text-[12px] text-alert-600">{error}</p>}
+      {error && <p className="mt-2 font-sans text-[12px] text-alert-400">{error}</p>}
     </div>
   )
 }
 
 export default function CheckoutModal() {
   const { lines, totals, isCheckoutOpen, closeCheckout, clearCart } = useCart()
+  const { lang, t, pick } = useLocale()
   const [stepIndex, setStepIndex] = useState(0)
   const [form, setForm] = useState(EMPTY_FORM)
   const [errors, setErrors] = useState({})
@@ -207,55 +209,53 @@ export default function CheckoutModal() {
     <div className="fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-6">
       <div
         onClick={handleClose}
-        className="absolute inset-0 animate-fade-in bg-noir-950/60 backdrop-blur-sm"
+        className="absolute inset-0 animate-fade-in bg-pearl-50/60 backdrop-blur-sm"
       />
 
       <div ref={panelRef} role="dialog" aria-modal="true"
         tabIndex={-1} aria-labelledby="checkout-title"
-        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-white/[0.08] bg-paper-50 border-noir-950/25 shadow-[0_40px_100px_-30px_rgba(20,18,16,0.5)] sm:"
+        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-white/[0.08] bg-midnight-950 border-pearl-50/15 bg-midnight-900 shadow-[0_40px_100px_-30px_rgba(20,18,16,0.5)] sm:"
       >
         <button type="button"
-          onClick={handleClose} aria-label="Close checkout"
-          className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-noir-600 transition-colors hover:text-noir-950"
+          onClick={handleClose} aria-label={t('closeCheckout')}
+          className="absolute end-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-pearl-300 transition-colors hover:text-pearl-50"
         >
           <X className="h-4 w-4" strokeWidth={1.5} />
         </button>
 
         {status === 'confirmed' && receipt ? (
           <div className="flex flex-col items-center px-6 py-16 text-center sm:px-12">
-            <span className="grid h-20 w-20 place-items-center rounded-full border border-oxblood-600/40 bg-oxblood-600/[0.07]">
-              <BadgeCheck className="h-9 w-9 text-oxblood-600" strokeWidth={1.25} />
+            <span className="grid h-20 w-20 place-items-center rounded-full border border-jade-500/40 bg-jade-500/[0.07]">
+              <BadgeCheck className="h-9 w-9 text-jade-300" strokeWidth={1.25} />
             </span>
-            <h2 id="checkout-title" className="t-display-sm mt-7">Thank you</h2>
+            <h2 id="checkout-title" className="t-display-sm mt-7">{t('thankYou')}</h2>
             <p className="t-deck mt-4 max-w-sm">
-              Your order is confirmed. A receipt is on its way to{' '}
-              <span className="text-noir-950">{receipt.email}</span>, and your parcel ships within two
-              business days.
+              {t('confirmedBody', { email: receipt.email })}
             </p>
-            <div className="mt-8 w-full max-w-xs  border rule bg-paper-100/70 p-5 text-left">
+            <div className="mt-8 w-full max-w-xs  border rule bg-midnight-900/70 p-5 text-left">
               <div className="flex items-baseline justify-between gap-4">
-                <span className="ticket text-noir-500">Order</span>
-                <span className="t-figure text-[1.25rem] text-noir-950">{receipt.reference}</span>
+                <span className="ticket text-pearl-400">{t('order')}</span>
+                <span className="t-figure text-[1.25rem] text-pearl-50">{receipt.reference}</span>
               </div>
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
-                <span className="ticket text-noir-500">Items</span>
-                <span className="t-figure text-[1.25rem] text-noir-950">{receipt.items}</span>
+                <span className="ticket text-pearl-400">{t('items')}</span>
+                <span className="t-figure text-[1.25rem] text-pearl-50">{formatNumber(receipt.items, lang)}</span>
               </div>
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
-                <span className="ticket text-noir-500">Paid</span>
-                <span className="t-figure text-[1.25rem] text-noir-950">
-                  {formatPrice(receipt.total)}
+                <span className="ticket text-pearl-400">{t('paid')}</span>
+                <span className="t-figure text-[1.25rem] text-pearl-50">
+                  {formatPrice(receipt.total, lang)}
                 </span>
               </div>
             </div>
-            <button type="button" onClick={handleClose} className="btn-ink mt-9">
-              Continue Browsing
+            <button type="button" onClick={handleClose} className="btn-jade mt-9">
+              {t('continueBrowsing')}
             </button>
           </div>
         ) : (
           <>
             <header className="border-b rule px-6 pb-5 pt-6 sm:px-10">
-              <h2 id="checkout-title" className="t-display-sm">Order Form</h2>
+              <h2 id="checkout-title" className="t-display-sm">{t('orderForm')}</h2>
 
               {/* Step rail */}
               <ol className="mt-6 flex items-center gap-2 sm:gap-3">
@@ -269,9 +269,9 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors duration-300',
-                            done && 'border-oxblood-600 bg-oxblood-600 text-paper-50',
-                            active && 'border-noir-950 bg-noir-950 text-paper-50',
-                            !done && !active && 'border-noir-950/25 text-noir-500',
+                            done && 'border-jade-500 bg-jade-500 text-midnight-950',
+                            active && 'border-pearl-50 bg-pearl-50 text-midnight-950',
+                            !done && !active && 'border-pearl-50/25 text-pearl-400',
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -279,17 +279,17 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'hidden font-sans text-[10px] uppercase tracking-label transition-colors duration-300 sm:block',
-                            active ? 'text-noir-950' : 'text-noir-500',
+                            active ? 'text-pearl-50' : 'text-pearl-400',
                           )}
                         >
-                          {entry.label}
+                          {t(entry.label)}
                         </span>
                       </div>
                       {index < STEPS.length - 1 && (
                         <span
                           className={classNames(
                             'h-px flex-1 transition-colors duration-500',
-                            done ? 'bg-oxblood-600/60' : 'bg-noir-950/15',
+                            done ? 'bg-jade-500/60' : 'bg-pearl-50/15',
                           )}
                         />
                       )}
@@ -365,43 +365,43 @@ export default function CheckoutModal() {
                       autoComplete="cc-csc" value={form.cvc}
                       onChange={update('cvc')} error={errors.cvc}
                     />
-                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[11px] text-noir-500">
-                      <Lock className="h-3.5 w-3.5 text-noir-800" strokeWidth={1.5} />
-                      Demonstration only — no card is charged and nothing is transmitted.
+                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[11px] text-pearl-400">
+                      <Lock className="h-3.5 w-3.5 text-pearl-100" strokeWidth={1.5} />
+                      {t('demoOnly')}
                     </p>
                   </div>
                 )}
 
                 {/* Order summary */}
-                <div className="mt-8  border rule bg-paper-100/60 p-5">
-                  <h3 className="ticket text-oxblood-600">Order summary</h3>
+                <div className="mt-8  border rule bg-midnight-900/60 p-5">
+                  <h3 className="ticket text-jade-300">{t('orderSummary')}</h3>
                   <ul className="mt-4 space-y-2.5">
                     {lines.map((line) => (
                       <li key={line.id} className="flex justify-between gap-4 text-sm">
-                        <span className="min-w-0 truncate text-noir-800">
-                          {line.product.name}
-                          <span className="text-noir-500">
+                        <span className="min-w-0 truncate text-pearl-100">
+                          {pick(line.product.name, line.product.ar.name)}
+                          <span className="text-pearl-400">
                             {' '}
-                            · {line.ml}ml × {line.qty}
+                            · {line.ml}{lang === 'ar' ? ' مل' : 'ml'} × {formatNumber(line.qty, lang)}
                           </span>
                         </span>
-                        <span className="shrink-0 tabular-nums text-noir-950">
-                          {formatPrice(line.subtotal)}
+                        <span className="shrink-0 tabular-nums text-pearl-50">
+                          {formatPrice(line.subtotal, lang)}
                         </span>
                       </li>
                     ))}
                   </ul>
                   <div className="mt-4 space-y-1.5 border-t rule pt-4 text-sm">
-                    <div className="flex justify-between text-noir-600">
-                      <span>Shipping</span>
+                    <div className="flex justify-between text-pearl-300">
+                      <span>{t('shipping')}</span>
                       <span className="tabular-nums">
-                        {totals.shipping === 0 ? 'Complimentary' : formatPrice(totals.shipping)}
+                        {totals.shipping === 0 ? t('complimentary') : formatPrice(totals.shipping, lang)}
                       </span>
                     </div>
                     <div className="flex items-baseline justify-between pt-1.5">
-                      <span className="ticket text-noir-950">Total</span>
-                      <span className="t-figure text-[1.75rem] text-noir-950">
-                        {formatPrice(totals.total)}
+                      <span className="ticket text-pearl-50">{t('total')}</span>
+                      <span className="t-figure text-[1.75rem] text-pearl-50">
+                        {formatPrice(totals.total, lang)}
                       </span>
                     </div>
                   </div>
@@ -409,27 +409,27 @@ export default function CheckoutModal() {
               </div>
             </div>
 
-            <footer className="flex items-center justify-between gap-3 border-t rule bg-paper-100/40 px-6 py-5 sm:px-10">
+            <footer className="flex items-center justify-between gap-3 border-t rule bg-midnight-900/40 px-6 py-5 sm:px-10">
               <button type="button"
                 onClick={() => (stepIndex === 0 ? handleClose() : setStepIndex((i) => i - 1))}
-                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-noir-600 transition-colors hover:text-noir-950"
+                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-pearl-300 transition-colors hover:text-pearl-50"
               >
                 <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
-                {stepIndex === 0 ? 'Cancel' : STEPS[stepIndex - 1].label}
+                {stepIndex === 0 ? t('cancel') : t(STEPS[stepIndex - 1].label)}
               </button>
 
               <button type="button"
                 onClick={handleNext} disabled={status === 'processing' || lines.length === 0}
-                className="btn-ink group"
+                className="btn-jade group"
               >
                 {status === 'processing' ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" strokeWidth={2} />
-                    Processing
+                    {t('processing')}
                   </>
                 ) : (
                   <>
-                    {isLast ? `Pay ${formatPrice(totals.total)}` : 'Continue'}
+                    {isLast ? `${t('pay')} ${formatPrice(totals.total, lang)}` : t('continue')}
                     <ArrowRight
                       className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                       strokeWidth={2}

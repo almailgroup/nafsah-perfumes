@@ -12,6 +12,8 @@ import ProductRow from './components/ProductRow'
 import Story from './components/Story'
 import TrustBadges from './components/TrustBadges'
 import { CartProvider } from './context/CartProvider'
+import { LocaleProvider } from './i18n/LocaleProvider'
+import { useLocale } from './i18n/locale-context'
 import { PRODUCTS } from './data/products'
 import { useCatalogue } from './hooks/useCatalogue'
 
@@ -29,7 +31,8 @@ const NEW_ARRIVALS = topUp(
   (a, b) => b.year - a.year || b.rating - a.rating,
 )
 
-export default function App() {
+function Storefront() {
+  const { t } = useLocale()
   const catalogue = useCatalogue()
   const searchRef = useRef(null)
 
@@ -60,9 +63,9 @@ export default function App() {
     <CartProvider>
       <a
         href="#collection"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-noir-950 focus:px-6 focus:py-3 focus:font-sans focus:text-[10px] focus:uppercase focus:tracking-label focus:text-paper-50"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-jade-600 focus:px-6 focus:py-3 focus:font-sans focus:text-[10px] focus:uppercase focus:tracking-label focus:text-pearl-50"
       >
-        Skip to catalogue
+        {t('skipToCatalogue')}
       </a>
 
       <AnnouncementBar />
@@ -78,15 +81,15 @@ export default function App() {
         <HeroSlider onShopNow={scrollToCatalogue} />
         <CategoryTiles onSelectFamily={selectFamily} />
         <ProductRow
-          title="Bestsellers"
-          caption="Most worn this season"
+          title={t('bestsellers')}
+          caption={t('bestsellersCaption')}
           products={BESTSELLERS}
           onViewAll={() => viewAll('rating')}
           tone="tint"
         />
         <ProductRow
-          title="New Arrivals"
-          caption="Latest from the atelier"
+          title={t('newArrivals')}
+          caption={t('newArrivalsCaption')}
           products={NEW_ARRIVALS}
           onViewAll={() => viewAll('newest')}
         />
@@ -101,5 +104,13 @@ export default function App() {
       <CartDrawer />
       <CheckoutModal />
     </CartProvider>
+  )
+}
+
+export default function App() {
+  return (
+    <LocaleProvider>
+      <Storefront />
+    </LocaleProvider>
   )
 }

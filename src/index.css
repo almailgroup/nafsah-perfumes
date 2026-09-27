@@ -3,24 +3,26 @@
 @tailwind utilities;
 
 /*
- * TYPE SYSTEM — Cormorant Garamond
+ * BILINGUAL TYPE SYSTEM
  *
- * Measured constraints this ramp is built around:
- *   x-height 0.386em (cap 0.625) — CG must be set ~1.35x a sans to match
- *     apparent size. CG 21px has the x-height of Inter 15px.
- *   Thinnest serif 12/1000em, and the weight axis is a STEM axis: 300->700
- *     thickens stems 100% but hairlines only 8%. You cannot bold your way out
- *     of a vanishing serif — you can only raise the size.
- *   Weight 600 is the effective "regular"; 400 is functionally a Light.
- *   Body floor is 20px. Below 18px the face is not usable at all, which is why
- *     every small label, input and button here is Jost, never Cormorant.
- *   Tracking sign flips at ~40px: positive below, zero to negative above.
- *   line-height: normal is 1.211 and always needs overriding.
+ * Latin display is Cormorant Garamond, whose thinnest serifs are 12/1000em
+ * and effectively vanish reversed out of a dark ground below ~24px. On this
+ * dark jewel palette it is therefore DISPLAY ONLY — every body string, label,
+ * button and input is a sans. That constraint is what makes a dark site
+ * possible with this face at all.
+ *
+ * Arabic display is Reem Kufi, a geometric Kufi whose shape language is the
+ * same one the mashrabiya lattice is drawn from. Arabic UI is IBM Plex Sans
+ * Arabic, which holds up small on dark where Cormorant cannot.
+ *
+ * Arabic sits lower and larger than Latin at the same nominal size, so the
+ * [dir="rtl"] blocks below re-tune size and leading rather than reusing the
+ * Latin numbers.
  */
 
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   html {
@@ -28,29 +30,27 @@
   }
 
   body {
-    @apply bg-paper-50 font-sans text-noir-600;
+    @apply bg-midnight-950 font-sans text-pearl-300;
     font-weight: 300;
-    /*
-     * Deliberately NOT `antialiased`. -webkit-font-smoothing: antialiased
-     * switches macOS from subpixel to grayscale AA and renders text measurably
-     * thinner. On a face whose serifs already cover ~19% of a pixel that is the
-     * single most destructive line of CSS available.
-     */
+    /* Never `antialiased`: grayscale AA renders this face thinner still. */
   }
 
-  /* Google's CDN strips smcp/c2sc, so font-variant: small-caps would silently
-     synthesize thin fake caps. Make that failure loud instead of quiet. */
+  [dir='rtl'] body {
+    @apply font-sans-ar;
+  }
+
+  /* Google's CDN strips smcp, so small-caps would be synthesized thin. */
   * {
     font-synthesis: none;
   }
 
   ::selection {
-    @apply bg-oxblood-600 text-paper-50;
+    @apply bg-jade-600 text-pearl-50;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #dcd3c1 transparent;
+    scrollbar-color: #1e3a2f transparent;
   }
 
   *::-webkit-scrollbar {
@@ -59,7 +59,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    @apply bg-paper-300;
+    @apply bg-midnight-700;
   }
 
   *::-webkit-scrollbar-track {
@@ -67,122 +67,85 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-oxblood-600 ring-offset-2 ring-offset-paper-50;
+    @apply outline-none ring-2 ring-jade-400 ring-offset-2 ring-offset-midnight-950;
   }
 }
 
 @layer components {
-  /* ---- Cormorant ramp. Nothing here drops below 20px. ---- */
+  /* ---- Display. Cormorant never appears below 24px on this ground. ---- */
 
-  /* 48-120px is what this face was drawn for. Negative tracking at display
-     size preserves the tight colour it was fitted for. */
   .t-display {
-    @apply font-display text-noir-950;
-    font-size: clamp(2.75rem, 7.2vw, 6.25rem);
-    font-weight: 400;
-    line-height: 1.04;
-    letter-spacing: -0.012em;
+    @apply font-display text-pearl-50;
+    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
+    font-weight: 500;
+    line-height: 1.06;
+    letter-spacing: -0.01em;
   }
 
-  .t-display-sm {
-    @apply font-display text-noir-950;
-    font-size: clamp(2rem, 4.2vw, 3.25rem);
-    font-weight: 400;
-    line-height: 1.1;
-    /* Tracking flips sign at ~40px. This clamp spans 32-52px, so it straddles
-       the crossover; neutral is correct across the whole range. */
+  [dir='rtl'] .t-display {
+    @apply font-display-ar;
+    font-size: clamp(2.1rem, 5.4vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.32;
     letter-spacing: 0;
   }
 
-  /* Product names, section sub-heads. */
-  .t-title {
-    @apply font-display text-noir-950;
-    font-size: 1.75rem;
+  .t-h2 {
+    @apply font-display text-pearl-50;
+    font-size: clamp(1.9rem, 3.4vw, 2.75rem);
     font-weight: 500;
-    line-height: 1.16;
-    letter-spacing: 0;
+    line-height: 1.12;
   }
 
-  /* Decks and pull quotes — still comfortably above the 24px "good" band. */
-  .t-deck {
-    @apply font-display text-noir-600;
-    font-size: clamp(1.25rem, 1.9vw, 1.5rem);
-    font-weight: 400;
-    line-height: 1.34;
-    letter-spacing: 0.002em;
-  }
-
-  /* The validated body setting: 21px / 500 / 1.38 / +0.006em on light ground. */
-  .t-body {
-    @apply font-display text-noir-600;
-    font-size: 1.3125rem;
-    font-weight: 500;
-    line-height: 1.38;
-    letter-spacing: 0.006em;
-  }
-
-  /* Reversed out, one weight step up and a touch more tracking to counter
-     halation closing up the counters. Never below 20px on dark. */
-  .t-body-noir {
-    @apply font-display text-paper-100;
-    font-size: 1.3125rem;
-    font-weight: 600;
+  [dir='rtl'] .t-h2 {
+    @apply font-display-ar;
+    font-size: clamp(1.6rem, 2.9vw, 2.25rem);
     line-height: 1.4;
-    letter-spacing: 0.01em;
   }
 
-  /* Compact serif values inside dense tables — note rows, example lists.
-     20px/600 is the floor the ramp comment sets, taken at the heavier weight
-     because this is the smallest Cormorant the design ships. */
-  .t-entry {
-    @apply font-display text-noir-800;
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: 0.006em;
-  }
-
-  /* Prices and any figure that sits in a column. Default figures are
-     proportional oldstyle — the 6 ascends above cap height and 3/5/7/9
-     descend, so a price column jitters without lnum+tnum. */
-  .t-figure {
-    @apply font-display;
-    /* Every call site sets its own size; this is a floor so the class can never
-       silently inherit a parent's 14px and render Cormorant below usable size. */
-    font-size: 1.0625rem;
+  .t-title {
+    @apply font-display text-pearl-50;
+    font-size: 1.625rem;
     font-weight: 500;
-    font-feature-settings: 'lnum', 'tnum';
-    font-variant-numeric: lining-nums tabular-nums;
+    line-height: 1.18;
   }
 
-  /* ---- Jost. Everything Cormorant cannot do. ---- */
+  [dir='rtl'] .t-title {
+    @apply font-display-ar;
+    font-size: 1.375rem;
+    line-height: 1.5;
+  }
+
+  /* ---- Body and UI. Sans in both scripts. ---- */
+
+  .t-body {
+    @apply font-sans text-pearl-300;
+    font-size: 0.9375rem;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  [dir='rtl'] .t-body {
+    @apply font-sans-ar;
+    font-size: 0.9375rem;
+    line-height: 1.95;
+  }
 
   .t-label {
     @apply font-sans uppercase;
     font-size: 0.6875rem;
     font-weight: 400;
-    line-height: 1.2;
     letter-spacing: 0.16em;
   }
 
-  .t-ui {
-    @apply font-sans;
-    font-size: 0.875rem;
-    font-weight: 300;
-    line-height: 1.5;
+  /* Arabic has no case, so uppercase and wide tracking are meaningless and
+     actively break joined letterforms. */
+  [dir='rtl'] .t-label {
+    @apply font-sans-ar normal-case;
+    font-size: 0.8125rem;
+    letter-spacing: 0;
   }
 
-  /* ---- Structure ---- */
-
-  .rule {
-    @apply border-noir-950/[0.14];
-  }
-
-  .rule-noir {
-    @apply border-paper-50/[0.16];
-  }
-
-  /* Catalogue numbering — the signature device, set as a ruled ticket. */
   .ticket {
     @apply font-sans uppercase;
     font-size: 0.625rem;
@@ -191,41 +154,95 @@
     font-feature-settings: 'lnum', 'tnum';
   }
 
-  /* ---- Controls. All Jost: Cormorant is unusable at button/input size. ---- */
+  [dir='rtl'] .ticket {
+    @apply font-sans-ar normal-case;
+    font-size: 0.75rem;
+    letter-spacing: 0;
+  }
 
-  .btn-ink {
-    @apply inline-flex items-center justify-center gap-2.5 bg-noir-950 px-8 py-3.5 font-sans text-[11px]
-           font-normal uppercase tracking-label text-paper-50 transition-colors duration-300
-           hover:bg-oxblood-700 disabled:cursor-not-allowed disabled:bg-noir-400;
+  /* Prices. Cormorant's default figures are proportional oldstyle, so a
+     column jitters without lnum+tnum. */
+  .t-figure {
+    @apply font-display;
+    font-size: 1.0625rem;
+    font-weight: 500;
+    font-feature-settings: 'lnum', 'tnum';
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  [dir='rtl'] .t-figure {
+    @apply font-sans-ar;
+    font-weight: 400;
+  }
+
+  /* ---- Structure ---- */
+
+  .rule {
+    @apply border-pearl-50/[0.14];
+  }
+
+  /*
+   * Mashrabiya: the eight-point khatim star, drawn as two overlapping squares
+   * on a repeating tile. It replaces the hairline rule as the structural
+   * motif — used as a low-opacity ground, never behind body copy.
+   */
+  .mashrabiya {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%237fc9b0' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 56px 56px;
+  }
+
+  /* Texture, not wallpaper: low enough to read as a watermark, and masked so
+     it fades out rather than tiling hard to every edge. */
+  .mashrabiya-band {
+    @apply mashrabiya;
+    opacity: 0.05;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+    mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+  }
+
+  /* ---- Controls. Sans in both scripts, never Cormorant. ---- */
+
+  .btn-jade {
+    @apply inline-flex items-center justify-center gap-2.5 bg-jade-600 px-8 py-3.5 font-sans text-[11px]
+           font-normal uppercase tracking-label text-pearl-50 transition-colors duration-300
+           hover:bg-jade-500 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
+  }
+
+  .btn-pearl {
+    @apply inline-flex items-center justify-center gap-2.5 bg-pearl-50 px-8 py-3.5 font-sans text-[11px]
+           font-normal uppercase tracking-label text-midnight-950 transition-colors duration-300
+           hover:bg-pearl-200 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2.5 border border-noir-950/25 px-8 py-3.5 font-sans
-           text-[11px] font-normal uppercase tracking-label text-noir-950 transition-colors duration-300
-           hover:border-noir-950 hover:bg-noir-950 hover:text-paper-50;
+    @apply inline-flex items-center justify-center gap-2.5 border border-pearl-50/25 px-8 py-3.5 font-sans
+           text-[11px] font-normal uppercase tracking-label text-pearl-100 transition-colors duration-300
+           hover:border-jade-400 hover:bg-jade-600 hover:text-pearl-50;
   }
 
-  .btn-paper {
-    @apply inline-flex items-center justify-center gap-2.5 bg-paper-50 px-8 py-3.5 font-sans text-[11px]
-           font-normal uppercase tracking-label text-noir-950 transition-colors duration-300
-           hover:bg-paper-200 disabled:cursor-not-allowed disabled:bg-noir-700 disabled:text-noir-400;
+  [dir='rtl'] .btn-jade,
+  [dir='rtl'] .btn-pearl,
+  [dir='rtl'] .btn-outline {
+    @apply font-sans-ar normal-case;
+    font-size: 0.8125rem;
+    letter-spacing: 0;
   }
 
   .field {
-    @apply w-full border border-noir-950/20 bg-transparent px-4 py-3 font-sans text-[15px] font-light
-           text-noir-950 placeholder:text-noir-500 transition-colors duration-200 focus:border-noir-950
+    @apply w-full border border-pearl-50/20 bg-midnight-900 px-4 py-3 font-sans text-[15px] font-light
+           text-pearl-50 placeholder:text-pearl-400 transition-colors duration-200 focus:border-jade-400
            focus:outline-none focus:ring-0;
   }
 
-  .field-noir {
-    @apply w-full border border-paper-50/20 bg-transparent px-4 py-3 font-sans text-[15px] font-light
-           text-paper-50 placeholder:text-noir-400 transition-colors duration-200 focus:border-paper-200
-           focus:outline-none focus:ring-0;
+  [dir='rtl'] .field {
+    @apply font-sans-ar;
   }
 }
 
 /* Dual-thumb price slider: two stacked native range inputs whose tracks are
-   transparent, so only the thumbs are interactive over a shared rail. */
+   transparent, so only the thumbs are interactive over a shared rail. The
+   thumb carries a transparent border to inflate its hit box to 40px while the
+   visible dot stays small. */
 .range-input {
   -webkit-appearance: none;
   appearance: none;
@@ -247,11 +264,11 @@
 }
 
 .range-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(110, 44, 60, 0.28);
+  box-shadow: 0 0 0 4px rgba(126, 201, 176, 0.35);
 }
 
 .range-input:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(110, 44, 60, 0.28);
+  box-shadow: 0 0 0 4px rgba(126, 201, 176, 0.35);
 }
 
 .range-input::-webkit-slider-thumb {
@@ -262,7 +279,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #141210;
+  background: #7fc9b0;
   background-clip: content-box;
   cursor: grab;
   margin-top: 0;
@@ -270,7 +287,7 @@
 }
 
 .range-input::-webkit-slider-thumb:active {
-  transform: scale(1.18);
+  transform: scale(1.15);
   cursor: grabbing;
 }
 
@@ -280,7 +297,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #141210;
+  background: #7fc9b0;
   background-clip: content-box;
   cursor: grab;
 }

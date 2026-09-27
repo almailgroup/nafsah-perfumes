@@ -8,6 +8,13 @@
 
 export const SCENT_FAMILIES = ['Woody', 'Floral', 'Citrus', 'Oriental']
 
+/** Arabic labels for the enumerated fields, keyed by their English value. */
+export const FAMILY_AR = {"Woody": "خشبية", "Floral": "زهرية", "Citrus": "حمضية", "Oriental": "شرقية"}
+
+export const CONCENTRATION_AR = {"Extrait de Parfum": "عطر مركّز", "Eau de Parfum": "ماء عطر"}
+
+export const INTENSITY_AR = {"Intense": "قوي", "Moderate": "متوسط", "Fresh": "منعش", "Soft": "ناعم"}
+
 export const PRODUCTS = [
   {
     id: 'oud-noir',
@@ -30,6 +37,15 @@ export const PRODUCTS = [
       { ml: 100, price: 119.000 },
     ],
     palette: { from: '#4a2c1a', via: '#8a5a2b', to: '#c9a961', glass: '#241611' },
+    ar: {
+      name: 'العود الأسود',
+      tagline: 'عود مدخّن، حالك وغير متعجّل',
+      notes: {
+        top: ['برغموت', 'فلفل وردي'],
+        heart: ['عود كمبودي', 'وردة دمشقية'],
+        base: ['خشب الصندل', 'جلد', 'نجيل الهند'],
+      },
+    },
     description:
       'A resinous oud aged eighteen months and lifted by rose absolute. Worn close to the skin it reads like warm leather in a dark room.',
   },
@@ -54,6 +70,15 @@ export const PRODUCTS = [
       { ml: 100, price: 105.000 },
     ],
     palette: { from: '#5c2438', via: '#b06a7d', to: '#f0cdd4', glass: '#2a1520' },
+    ar: {
+      name: 'الوردة الإمبراطورية',
+      tagline: 'وردة دمشقية عند أول الضوء',
+      notes: {
+        top: ['ليتشي', 'حبّ الفلفل الوردي'],
+        heart: ['وردة دمشقية', 'فاوانيا', 'ورق البنفسج'],
+        base: ['مسك أبيض', 'خشب الكشمير'],
+      },
+    },
     description:
       'Three thousand Damask roses distilled for a single flacon. Dewy and translucent at the top, powdery and quiet by the fourth hour.',
   },
@@ -77,6 +102,15 @@ export const PRODUCTS = [
       { ml: 100, price: 79.500 },
     ],
     palette: { from: '#1c4a4a', via: '#57a6a0', to: '#e6d98a', glass: '#10262a' },
+    ar: {
+      name: 'ليمون البحر',
+      tagline: 'ليمون صقلي فوق هواء مالح بارد',
+      notes: {
+        top: ['ليمون صقلي', 'يوزو', 'ملح البحر'],
+        heart: ['زهر النارنج', 'أكورد بحري'],
+        base: ['خشب الطافي', 'حبّ المسك'],
+      },
+    },
     description:
       'Built for heat. Cold-pressed lemon and yuzu snap against a mineral salt accord, then settle into sun-bleached driftwood.',
   },
@@ -101,6 +135,15 @@ export const PRODUCTS = [
       { ml: 100, price: 135.000 },
     ],
     palette: { from: '#5a2f10', via: '#c07c2a', to: '#f2d79a', glass: '#2c1a08' },
+    ar: {
+      name: 'العنبر الملكي',
+      tagline: 'عنبر وفانيلا وراتنج بطيء الاحتراق',
+      notes: {
+        top: ['زعفران', 'هيل'],
+        heart: ['راتنج العنبر', 'لادن', 'ياسمين'],
+        base: ['فانيلا مدغشقرية', 'بنزوين', 'حبّ التونكا'],
+      },
+    },
     description:
       'The house signature. Saffron and cardamom open onto a bed of labdanum and vanilla that lingers on wool for days.',
   },
@@ -124,6 +167,15 @@ export const PRODUCTS = [
       { ml: 100, price: 95.000 },
     ],
     palette: { from: '#4c4132', via: '#a2907a', to: '#e8dcc6', glass: '#241f18' },
+    ar: {
+      name: 'الصندل الأبيض',
+      tagline: 'صندل كريمي يُلبس كالكتّان',
+      notes: {
+        top: ['ورق البنفسج', 'هيل'],
+        heart: ['صندل ميسور', 'سوسن'],
+        base: ['أرز', 'حبّ التونكا', 'مسك'],
+      },
+    },
     description:
       'Sandalwood without the smoke. Iris gives it a powdery softness that makes it read closer to skin than to wood.',
   },
@@ -148,6 +200,15 @@ export const PRODUCTS = [
       { ml: 100, price: 125.000 },
     ],
     palette: { from: '#2b2350', via: '#6f6bb0', to: '#e9e2f5', glass: '#161238' },
+    ar: {
+      name: 'ليلة الياسمين',
+      tagline: 'ياسمين ليلي ومسك الروم',
+      notes: {
+        top: ['يوسفي', 'تين أخضر'],
+        heart: ['ياسمين سمبك', 'مسك الروم', 'يلانغ يلانغ'],
+        base: ['خشب الصندل', 'سحلب الفانيلا'],
+      },
+    },
     description:
       'Jasmine picked between midnight and dawn, when the flower gives up its most indolic facets. Unapologetically nocturnal.',
   },
@@ -171,6 +232,15 @@ export const PRODUCTS = [
       { ml: 100, price: 85.000 },
     ],
     palette: { from: '#6b4a10', via: '#d9a32c', to: '#f7e6a8', glass: '#2e2109' },
+    ar: {
+      name: 'البرغموت الذهبي',
+      tagline: 'برغموت مذهّب بنهاية عسلية',
+      notes: {
+        top: ['برغموت كالابري', 'برتقال دموي'],
+        heart: ['زهر البرتقال', 'أكورد العسل'],
+        base: ['خشب العنبر', 'مسك أبيض'],
+      },
+    },
     description:
       'Calabrian bergamot rounded with a raw honey accord so the citrus never turns thin. Bright for an hour, golden for six.',
   },
@@ -194,6 +264,15 @@ export const PRODUCTS = [
       { ml: 100, price: 129.000 },
     ],
     palette: { from: '#63200f', via: '#c2502a', to: '#f0b169', glass: '#2d0f08' },
+    ar: {
+      name: 'الزعفران الإمبراطوري',
+      tagline: 'خيوط زعفران فوق توابل دافئة',
+      notes: {
+        top: ['زعفران', 'جوزة الطيب', 'فلفل وردي'],
+        heart: ['مطلق الورد', 'لحاء القرفة'],
+        base: ['عود', 'عنبر', 'باتشولي'],
+      },
+    },
     description:
       'Saffron at full strength, tempered by rose absolute and cinnamon bark. A cold-weather fragrance with a long, dry finish.',
   },
@@ -218,6 +297,15 @@ export const PRODUCTS = [
       { ml: 100, price: 89.500 },
     ],
     palette: { from: '#23302a', via: '#5e7361', to: '#c3cbb8', glass: '#141c18' },
+    ar: {
+      name: 'الأرز المدخّن',
+      tagline: 'أرز أطلسي مسحوب عبر دخان الحطب',
+      notes: {
+        top: ['عرعر', 'فلفل أسود'],
+        heart: ['أرز أطلسي', 'سرو', 'قطران البتولا'],
+        base: ['نجيل الهند', 'أشنة البلوط', 'عنبر رمادي'],
+      },
+    },
     description:
       'Birch tar gives the cedar its smoke; oakmoss keeps it damp rather than ashen. Closer to a forest floor than a fireplace.',
   },
@@ -241,6 +329,15 @@ export const PRODUCTS = [
       { ml: 100, price: 77.000 },
     ],
     palette: { from: '#4a4a22', via: '#a8b06a', to: '#f4efd0', glass: '#22240f' },
+    ar: {
+      name: 'زهرة النيرولي',
+      tagline: 'زهر البرتقال في شمس كاملة',
+      notes: {
+        top: ['بتيتغرين', 'يوسفي أخضر'],
+        heart: ['نيرولي', 'زهر البرتقال', 'زهر العسل'],
+        base: ['مسك أبيض', 'أخشاب فاتحة'],
+      },
+    },
     description:
       'Neroli distilled from Tunisian bitter orange flowers. Green and slightly bitter up top, soft and sunlit underneath.',
   },
@@ -265,6 +362,15 @@ export const PRODUCTS = [
       { ml: 100, price: 91.000 },
     ],
     palette: { from: '#3d3a3c', via: '#8f8a8c', to: '#efe9e6', glass: '#1c1a1b' },
+    ar: {
+      name: 'المسك الأبيض',
+      tagline: 'مسك البشرة والكشمير والسوسن النقي',
+      notes: {
+        top: ['ألدهيدات', 'برغموت'],
+        heart: ['سوسن باليدا', 'كشميران'],
+        base: ['مسك أبيض', 'حبّ المسك', 'فانيلا'],
+      },
+    },
     description:
       'A second-skin musk built on ambrette and iris. Quiet enough for close quarters, persistent enough to notice at the end of the day.',
   },
@@ -288,6 +394,15 @@ export const PRODUCTS = [
       { ml: 100, price: 108.000 },
     ],
     palette: { from: '#1f3326', via: '#4f7a52', to: '#cfd9b4', glass: '#0f1c14' },
+    ar: {
+      name: 'النجيل الأسود',
+      tagline: 'نجيل هايتي، ندي التراب وأخضر',
+      notes: {
+        top: ['جريب فروت', 'هيل أخضر'],
+        heart: ['نجيل هايتي', 'جذر السوسن'],
+        base: ['خشب الغاياك', 'ورق التبغ', 'عنبر'],
+      },
+    },
     description:
       'Vetiver kept rooty and green rather than smoked. Tobacco leaf and ambergris carry it into a dry, resinous close.',
   },

@@ -2,32 +2,29 @@ import { useEffect, useState } from 'react'
 import { Check, Plus } from 'lucide-react'
 import BottleVisual from './BottleVisual'
 import { useCart } from '../context/cart-context'
-import { CATALOGUE_NUMBERS } from '../data/products'
-import { classNames, formatPrice } from '../lib/format'
+import { CATALOGUE_NUMBERS, CONCENTRATION_AR, FAMILY_AR, INTENSITY_AR } from '../data/products'
+import { useLocale } from '../i18n/locale-context'
+import { classNames, formatOrdinal, formatPrice } from '../lib/format'
 
-const NOTE_ROWS = [
-  { key: 'top', label: 'Top' },
-  { key: 'heart', label: 'Heart' },
-  { key: 'base', label: 'Base' },
-]
+const NOTE_ROWS = ['top', 'heart', 'base']
 
 /**
- * A catalogue plate: ruled frame, catalogue number, the vial on a tinted
- * ground, then the entry set as a small ruled table. Every control is Jost —
- * Cormorant is unusable at button and label size.
+ * A catalogue plate framed in the mashrabiya lattice: catalogue number, the
+ * vial on a tinted ground, then the entry as a ruled table. Controls are sans
+ * in both scripts — Cormorant is display-only on this dark ground.
  */
 export default function ProductCard({ product, index = 0, priceRange, compact = false }) {
   const { addItem } = useCart()
+  const { lang, t, pick } = useLocale()
   const [justAdded, setJustAdded] = useState(false)
 
-  // A product qualifies for the price filter if ANY of its sizes is in range,
-  // so the card must open on a size that is actually inside that range —
-  // otherwise it advertises a price the shopper filtered out.
+  // A product qualifies for the price filter if ANY size is in range, so the
+  // card must open on a size inside that range or it advertises a price the
+  // shopper just filtered out.
   const inRange = priceRange
     ? product.sizes.filter((s) => s.price >= priceRange[0] && s.price <= priceRange[1])
     : product.sizes
   const preferredMl = (inRange[0] ?? product.sizes[0]).ml
-
   const [selectedMl, setSelectedMl] = useState(preferredMl)
 
   useEffect(() => {
@@ -46,22 +43,25 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
     setTimeout(() => setJustAdded(false), 1400)
   }
 
+  const name = pick(product.name, product.ar.name)
+
   return (
     <article
-      className="group flex animate-fade-up flex-col border border-noir-950/[0.14] bg-paper-50 transition-colors duration-500 hover:border-noir-950/35"
+      className="group flex animate-fade-up flex-col border border-pearl-50/[0.14] bg-midnight-850 transition-colors duration-500 hover:border-jade-500/50"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
-      {/* Plate header: catalogue number and family, as on a specimen card */}
-      <div className="flex items-center justify-between border-b border-noir-950/[0.14] px-5 py-3">
-        <span className="ticket text-oxblood-600">No. {catalogue}</span>
-        <span className="ticket text-noir-500">{product.family}</span>
+      <div className="flex items-center justify-between border-b border-pearl-50/[0.14] px-5 py-3">
+        <span className="ticket text-saffron-300">
+          {lang === 'ar' ? 'رقم' : 'No.'} {formatOrdinal(catalogue, lang)}
+        </span>
+        <span className="ticket text-pearl-400">{pick(product.family, FAMILY_AR[product.family])}</span>
       </div>
 
-      {/* The vial on a tinted ground */}
-      <div className="relative overflow-hidden bg-paper-100">
+      <div className="relative overflow-hidden bg-midnight-800">
+        <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
         {(product.isNew || product.bestseller) && (
-          <span className="ticket absolute left-5 top-4 z-10 text-noir-600">
-            {product.isNew ? 'New' : 'Bestseller'}
+          <span className="ticket absolute start-5 top-4 z-10 text-jade-300">
+            {product.isNew ? t('newBadge') : t('bestsellerBadge')}
           </span>
         )}
         <div
@@ -74,34 +74,31 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         </div>
       </div>
 
-      {/* Entry */}
-      <div className="flex flex-1 flex-col border-t border-noir-950/[0.14] px-5 pb-5 pt-5">
+      <div className="flex flex-1 flex-col border-t border-pearl-50/[0.14] px-5 pb-5 pt-5">
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="t-title">{product.name}</h3>
-          <span className="t-figure text-[1.4rem] leading-none text-noir-950">
-            {formatPrice(size.price)}
+          <h3 className="t-title">{name}</h3>
+          <span className="t-figure shrink-0 text-[1.3rem] leading-none text-pearl-50">
+            {formatPrice(size.price, lang)}
           </span>
         </div>
 
-        <p className="t-body mt-2.5 italic">
-          {product.tagline}
+        <p className="t-body mt-2.5">{pick(product.tagline, product.ar.tagline)}</p>
+
+        <p className="ticket mt-4 text-pearl-400">
+          {pick(product.concentration, CONCENTRATION_AR[product.concentration])} ·{' '}
+          {pick(product.intensity, INTENSITY_AR[product.intensity])}
         </p>
 
-        <p className="t-label mt-4 text-noir-500">
-          {product.concentration} · {product.intensity}
-        </p>
-
-        {/* Fragrance pyramid, set as a ruled table. Omitted on the compact
-            merchandised rows, where four cards share a row. */}
-        <dl className={classNames('mt-5 border-t border-noir-950/[0.14]', compact && 'hidden')}>
-          {NOTE_ROWS.map((row) => (
+        {/* Pyramid, omitted on the compact merchandised rows. */}
+        <dl className={classNames('mt-5 border-t border-pearl-50/[0.14]', compact && 'hidden')}>
+          {NOTE_ROWS.map((key) => (
             <div
-              key={row.key}
-              className="flex items-baseline gap-4 border-b border-noir-950/[0.08] py-2.5 last:border-b-0"
+              key={key}
+              className="flex items-baseline gap-4 border-b border-pearl-50/[0.08] py-2.5 last:border-b-0"
             >
-              <dt className="ticket w-12 shrink-0 text-noir-500">{row.label}</dt>
-              <dd className="t-entry">
-                {product.notes[row.key].join(', ')}
+              <dt className="ticket w-14 shrink-0 text-pearl-400">{t(key)}</dt>
+              <dd className="t-body text-pearl-100">
+                {pick(product.notes[key], product.ar.notes[key]).join(lang === 'ar' ? '، ' : ', ')}
               </dd>
             </div>
           ))}
@@ -110,8 +107,8 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         <div className="mt-auto pt-6">
           <div
             role="radiogroup"
-            aria-label={`Size for ${product.name}`}
-            className="flex border border-noir-950/20"
+            aria-label={`${name} — ${t('price')}`}
+            className="flex border border-pearl-50/20"
           >
             {product.sizes.map((option) => (
               <button
@@ -121,13 +118,13 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
                 aria-checked={option.ml === selectedMl}
                 onClick={() => setSelectedMl(option.ml)}
                 className={classNames(
-                  'flex-1 py-2.5 font-sans text-[10px] uppercase tracking-label transition-colors duration-300',
+                  'flex-1 py-2.5 font-sans text-[11px] tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:tracking-normal',
                   option.ml === selectedMl
-                    ? 'bg-paper-200 text-noir-950'
-                    : 'text-noir-500 hover:text-noir-950',
+                    ? 'bg-midnight-700 text-pearl-50'
+                    : 'text-pearl-400 hover:text-pearl-100',
                 )}
               >
-                {option.ml} ml
+                {option.ml} {lang === 'ar' ? 'مل' : 'ml'}
               </button>
             ))}
           </div>
@@ -135,23 +132,23 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
           <button
             type="button"
             onClick={handleAdd}
-            aria-label={`Add ${product.name} ${size.ml}ml to cart`}
+            aria-label={`${t('addToCart')} — ${name}`}
             className={classNames(
-              'mt-2 flex w-full items-center justify-center gap-2.5 border py-3 font-sans text-[10px] uppercase tracking-label transition-colors duration-300',
+              'mt-2 flex w-full items-center justify-center gap-2.5 py-3 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:normal-case rtl:tracking-normal',
               justAdded
-                ? 'border-oxblood-600 bg-oxblood-600 text-paper-50'
-                : 'border-noir-950 bg-noir-950 text-paper-50 hover:border-oxblood-700 hover:bg-oxblood-700',
+                ? 'bg-jade-400 text-midnight-950'
+                : 'bg-jade-600 text-pearl-50 hover:bg-jade-500',
             )}
           >
             {justAdded ? (
               <>
                 <Check className="h-3.5 w-3.5" strokeWidth={1.75} />
-                Added
+                {t('added')}
               </>
             ) : (
               <>
                 <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
-                Add to Cart
+                {t('addToCart')}
               </>
             )}
           </button>

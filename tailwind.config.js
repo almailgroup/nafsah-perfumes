@@ -4,54 +4,57 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary reading surface. Cormorant Garamond's serifs are 12/1000em
-        // and survive on light grounds but wash out reversed on dark, so paper
-        // is the default and noir is the punctuating surface, not the reverse.
-        paper: {
-          50: '#faf7f1',
-          100: '#f4efe5',
-          200: '#ebe4d6',
-          300: '#dcd3c1',
-          400: '#c4b9a3',
+        // Deep green-black. Gulf perfumery packaging lives in this register,
+        // and it lets the accent be jade rather than metal — the failure mode
+        // this brand has already been through once.
+        midnight: {
+          950: '#08130f',
+          900: '#0c1a15',
+          850: '#10211b',
+          800: '#152a22',
+          700: '#1e3a2f',
+          600: '#2b5144',
         },
-        // Immersive surfaces: hero, cart drawer, checkout. Warm, never pure
-        // black — #f2efe9 on a warm near-black nearly doubles hairline survival
-        // versus #fff on #000.
-        noir: {
-          950: '#141210',
-          900: '#1c1916',
-          800: '#26221d',
-          700: '#3a352e',
-          600: '#575046',
-          500: '#6a6355',
-          400: '#9c9384',
+        jade: {
+          200: '#b6e3d2',
+          300: '#7fc9b0',
+          400: '#4ea88c',
+          500: '#2f8a6e',
+          600: '#1f6f5c',
         },
-        // Validation only. Distinct from oxblood (which is the brand accent)
-        // and dark enough to clear AA on every paper tint — Tailwind's default
-        // red-300 managed 1.8:1 here, i.e. invisible.
+        // Decorative only — 3.8:1 on the ground, so never used for text.
+        lapis: {
+          400: '#4a6fb5',
+          600: '#26467f',
+        },
+        // The warm note, rationed hard. Saffron is a fragrance in the
+        // catalogue, not a metal.
+        saffron: {
+          300: '#e4b35f',
+          500: '#c8862a',
+        },
+        pearl: {
+          50: '#f6f2e9',
+          100: '#ebe5d8',
+          200: '#d6cfbe',
+          300: '#a9a696',
+          400: '#8b8e85',
+        },
         alert: {
-          600: '#9c3520',
-          100: '#e9cfc6',
-        },
-        // Sealing-wax oxblood: the apothecary's label ink. Replaces metal
-        // entirely — no gold, no bronze, no champagne.
-        oxblood: {
-          700: '#5c2230',
-          600: '#6e2c3c',
-          500: '#8a3a4c',
-          300: '#c98c98',
+          400: '#e98c7a',
+          600: '#c2503a',
         },
       },
       fontFamily: {
-        // Display only, never below 20px. See src/index.css for the ramp.
+        // Latin display stays Cormorant Garamond, as asked for by name.
         display: ['"Cormorant Garamond"', 'Garamond', 'Georgia', 'serif'],
-        // x-height 0.460 against Cormorant's 0.386 — the closest match on
-        // Google Fonts, so the two do not fight at adjacent sizes.
+        // Geometric Kufi: the Arabic counterpart to a display serif, and the
+        // shape language the mashrabiya lattice is drawn from.
+        'display-ar': ['"Reem Kufi"', '"Noto Kufi Arabic"', 'serif'],
         sans: ['Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
+        'sans-ar': ['"IBM Plex Sans Arabic"', '"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
-        // Cormorant's caps are fitted for lowercase-adjacent use and need
-        // opening up; below 0.08em all-caps settings read cramped.
         label: '0.16em',
         wide2: '0.1em',
       },
