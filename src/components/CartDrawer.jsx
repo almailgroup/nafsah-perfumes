@@ -12,7 +12,7 @@ import { classNames, formatNumber, formatPrice } from '../lib/format'
 export default function CartDrawer() {
   const { lines, totals, maxQty, isCartOpen, closeCart, setQty, removeItem, openCheckout } =
     useCart()
-  const { lang, t, pick } = useLocale()
+  const { lang, t, pick, switching } = useLocale()
 
   const panelRef = useRef(null)
 
@@ -45,7 +45,16 @@ export default function CartDrawer() {
         tabIndex={-1}
         {...inertWhenClosed}
         className={classNames(
-          'absolute end-0 top-0 flex h-full w-full max-w-md flex-col border-s border-white/[0.07] bg-midnight-900 shadow-[0_0_70px_-20px_rgba(0,0,0,0.9)] transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          'absolute end-0 top-0 flex h-full w-full max-w-md flex-col border-s border-white/[0.07] bg-midnight-900 shadow-[0_0_70px_-20px_rgba(0,0,0,0.9)]',
+          // A direction flip moves the side the closed drawer is parked on,
+          // from translateX(+100%) off the right to -100% off the left. With
+          // the transition armed that is animated, so the panel sweeps the
+          // full width of the viewport on every language switch. Cut the
+          // transition while the scripts swap; the transform has settled by
+          // the time it is re-armed, so nothing animates.
+          switching
+            ? 'transition-none'
+            : 'transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]',
           isCartOpen ? 'translate-x-0' : 'translate-x-full rtl:-translate-x-full',
         )}
       >
