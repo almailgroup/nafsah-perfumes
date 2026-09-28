@@ -3,21 +3,20 @@
 @tailwind utilities;
 
 /*
- * BILINGUAL TYPE SYSTEM
+ * BILINGUAL TYPE SYSTEM — tuned for legibility
  *
- * Latin display is Cormorant Garamond, whose thinnest serifs are 12/1000em
- * and effectively vanish reversed out of a dark ground below ~24px. On this
- * dark jewel palette it is therefore DISPLAY ONLY — every body string, label,
- * button and input is a sans. That constraint is what makes a dark site
- * possible with this face at all.
+ * Latin display is Marcellus: Roman inscriptional capitals, x-height 0.466
+ * against Cormorant Garamond's 0.386, which is 21% more apparent size at the
+ * same nominal setting with far sturdier strokes. One weight, no italic.
  *
- * Arabic display is Reem Kufi, a geometric Kufi whose shape language is the
- * same one the mashrabiya lattice is drawn from. Arabic UI is IBM Plex Sans
- * Arabic, which holds up small on dark where Cormorant cannot.
+ * Latin UI and body is Inter, x-height 0.546 against Jost's 0.460 and drawn
+ * specifically for interface legibility. Body weight is 400, not 300 — a
+ * hairline body weight on a dark ground is the other half of "hard to read".
  *
- * Arabic sits lower and larger than Latin at the same nominal size, so the
- * [dir="rtl"] blocks below re-tune size and leading rather than reusing the
- * Latin numbers.
+ * Arabic display is Reem Kufi, sharing the mashrabiya's geometry; Arabic UI is
+ * IBM Plex Sans Arabic. Arabic sits lower and wider than Latin at the same
+ * nominal size, so the [dir="rtl"] blocks re-tune size and leading rather than
+ * reusing the Latin numbers.
  */
 
 @layer base {
@@ -30,9 +29,8 @@
   }
 
   body {
-    @apply bg-midnight-950 font-sans text-pearl-300;
-    font-weight: 300;
-    /* Never `antialiased`: grayscale AA renders this face thinner still. */
+    @apply bg-midnight-950 font-sans text-pearl-200;
+    font-weight: 400;
   }
 
   [dir='rtl'] body {
@@ -76,10 +74,10 @@
 
   .t-display {
     @apply font-display text-pearl-50;
-    font-size: clamp(2.5rem, 6.4vw, 5.5rem);
-    font-weight: 500;
-    line-height: 1.06;
-    letter-spacing: -0.01em;
+    font-size: clamp(2.25rem, 5.6vw, 4.75rem);
+    font-weight: 400;
+    line-height: 1.12;
+    letter-spacing: -0.005em;
   }
 
   [dir='rtl'] .t-display {
@@ -92,9 +90,9 @@
 
   .t-h2 {
     @apply font-display text-pearl-50;
-    font-size: clamp(1.9rem, 3.4vw, 2.75rem);
-    font-weight: 500;
-    line-height: 1.12;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.18;
   }
 
   [dir='rtl'] .t-h2 {
@@ -105,9 +103,9 @@
 
   .t-title {
     @apply font-display text-pearl-50;
-    font-size: 1.625rem;
-    font-weight: 500;
-    line-height: 1.18;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.25;
   }
 
   [dir='rtl'] .t-title {
@@ -119,10 +117,11 @@
   /* ---- Body and UI. Sans in both scripts. ---- */
 
   .t-body {
-    @apply font-sans text-pearl-300;
+    @apply font-sans text-pearl-200;
     font-size: 0.9375rem;
-    font-weight: 300;
-    line-height: 1.7;
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: -0.003em;
   }
 
   [dir='rtl'] .t-body {
@@ -134,8 +133,8 @@
   .t-label {
     @apply font-sans uppercase;
     font-size: 0.6875rem;
-    font-weight: 400;
-    letter-spacing: 0.16em;
+    font-weight: 500;
+    letter-spacing: 0.1em;
   }
 
   /* Arabic has no case, so uppercase and wide tracking are meaningless and
@@ -148,9 +147,9 @@
 
   .ticket {
     @apply font-sans uppercase;
-    font-size: 0.625rem;
-    font-weight: 400;
-    letter-spacing: 0.16em;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
     font-feature-settings: 'lnum', 'tnum';
   }
 
@@ -163,7 +162,7 @@
   /* Prices. Cormorant's default figures are proportional oldstyle, so a
      column jitters without lnum+tnum. */
   .t-figure {
-    @apply font-display;
+    @apply font-sans;
     font-size: 1.0625rem;
     font-weight: 500;
     font-feature-settings: 'lnum', 'tnum';
@@ -172,7 +171,7 @@
 
   [dir='rtl'] .t-figure {
     @apply font-sans-ar;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   /* ---- Structure ---- */
@@ -205,19 +204,19 @@
   /* Arab Green #006039 as the action fill — the brand value used exactly. */
   .btn-green {
     @apply inline-flex items-center justify-center gap-2.5 bg-green-600 px-8 py-3.5 font-sans text-[11px]
-           font-normal uppercase tracking-label text-pearl-50 transition-colors duration-300
+           font-medium uppercase tracking-wide2 text-pearl-50 transition-colors duration-300
            hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
   }
 
   .btn-pearl {
     @apply inline-flex items-center justify-center gap-2.5 bg-pearl-50 px-8 py-3.5 font-sans text-[11px]
-           font-normal uppercase tracking-label text-midnight-950 transition-colors duration-300
+           font-medium uppercase tracking-wide2 text-midnight-950 transition-colors duration-300
            hover:bg-pearl-200 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2.5 border border-gold-500 px-8 py-3.5 font-sans
-           text-[11px] font-normal uppercase tracking-label text-gold-300 transition-colors duration-300
+           text-[11px] font-medium uppercase tracking-wide2 text-gold-300 transition-colors duration-300
            hover:bg-gold-500 hover:text-midnight-950;
   }
 

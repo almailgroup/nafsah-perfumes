@@ -131,19 +131,40 @@ green does the structural work and gold stays a punctuation mark.
 
 ### Type — four faces, two scripts
 
-Latin display is **Cormorant Garamond**, as requested by name. Its thinnest serifs are
-12/1000em and effectively vanish reversed out of a dark ground below ~24px, so on this
-palette it is **display only** — every body string, label, button and input is a sans.
-That single constraint is what makes a dark site possible with this face at all.
+Chosen for legibility, measured rather than assumed. The ratio that matters is
+x-height over cap-height: it governs how large a face *looks* at a given nominal size.
 
-Arabic display is **Reem Kufi**, a geometric Kufi drawn from the same shape language as the
-mashrabiya lattice. Arabic UI is **IBM Plex Sans Arabic**, which holds up small on dark
-where Cormorant cannot. Latin UI stays **Jost**.
+| Role         | Face                    | x/cap | Replaces                  |
+| ------------ | ----------------------- | ----- | ------------------------- |
+| Latin display| **Marcellus**           | 0.666 | Cormorant Garamond (0.618)|
+| Latin UI/body| **Inter**               | 0.751 | Jost (0.657)              |
+| Arabic display| **Reem Kufi**          | —     | —                         |
+| Arabic UI    | **IBM Plex Sans Arabic**| —     | —                         |
 
-Arabic sits lower and wider than Latin at the same nominal size, so the ramp does not reuse
-the Latin numbers: every `.t-*` class in `src/index.css` has a `[dir="rtl"]` block that
-re-tunes size and leading. Arabic has no case, so `uppercase` and wide tracking are dropped
-under RTL — applied to Arabic they break joined letterforms.
+Marcellus is Roman inscriptional — luxurious, but with an x-height 21% larger than
+Cormorant's and far sturdier strokes, so it survives sizes where Cormorant disintegrated.
+It has one weight and no italic, which the ramp treats as a discipline rather than a gap.
+Inter is drawn specifically for interface legibility and is 19% larger on the eye than Jost
+at the same setting.
+
+Body weight is **400, not 300**. A hairline body weight reversed out of a dark ground was
+the other half of why the previous type was hard to read. Prices use Inter rather than a
+serif, with `lnum`/`tnum` so columns align.
+
+Arabic sits lower and wider than Latin at the same nominal size, so every `.t-*` class in
+`src/index.css` has a `[dir="rtl"]` block that re-tunes size and leading. Arabic has no
+case, so `uppercase` and wide tracking are dropped under RTL — applied to Arabic they break
+joined letterforms.
+
+### Chrome — the white header
+
+An Arab Green announcement strip sits above a warm-white header (`snow-50` `#fbfaf7`,
+never pure white), closed with a Boy Gold hairline, over the dark page.
+
+The inversion changes what the brand colours can do. On the dark ground Arab Green is
+`2.45:1` and cannot carry text; **on white it is `7.36:1`**, so the header uses it directly
+for the active category. Boy Gold runs the other way: `4.99:1` on dark but only `3.61:1` on
+white, so on the header it is the hairline rule and nothing else — never small text.
 
 ### Direction
 

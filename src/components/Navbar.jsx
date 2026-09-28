@@ -37,12 +37,12 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   ]
 
   return (
-    <header className="sticky top-0 z-40 border-b border-pearl-50/[0.12] bg-midnight-950/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
       <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
         <a href="#top" aria-label={t('brand')} className="shrink-0 leading-none">
           <span
             className={classNames(
-              'block text-pearl-50',
+              'block text-midnight-950',
               lang === 'ar'
                 ? 'font-display-ar text-[26px] font-medium sm:text-[30px]'
                 : 'font-display text-[24px] font-medium tracking-[0.2em] sm:text-[28px]',
@@ -57,7 +57,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             {t('search')}
           </label>
           <Search
-            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-pearl-400"
+            className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-snow-600"
             strokeWidth={1.25}
           />
           <input
@@ -67,7 +67,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full border border-pearl-50/20 bg-midnight-900 py-2.5 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border border-snow-300 bg-snow-100 py-2.5 pe-4 ps-11 font-sans text-[14px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
         </form>
 
@@ -79,7 +79,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               setMobileOpen(true)
               setTimeout(() => mobileInputRef.current?.focus({ preventScroll: true }), 220)
             }}
-            className="grid h-10 w-10 place-items-center text-pearl-300 transition-colors hover:text-pearl-50 md:hidden"
+            className="grid h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-midnight-950 md:hidden"
           >
             <Search className="h-[18px] w-[18px]" strokeWidth={1.25} />
           </button>
@@ -87,7 +87,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
           <button
             type="button"
             aria-label={t('account')}
-            className="hidden h-10 w-10 place-items-center text-pearl-300 transition-colors hover:text-pearl-50 sm:grid"
+            className="hidden h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-midnight-950 sm:grid"
           >
             <User className="h-[18px] w-[18px]" strokeWidth={1.25} />
           </button>
@@ -96,7 +96,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             type="button"
             onClick={openCart}
             aria-label={`${t('openCart')} — ${formatNumber(totals.count, lang)}`}
-            className="relative grid h-10 w-10 place-items-center text-pearl-200 transition-colors hover:text-pearl-50"
+            className="relative grid h-10 w-10 place-items-center text-midnight-700 transition-colors hover:text-midnight-950"
           >
             <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.25} />
             {totals.count > 0 && (
@@ -116,7 +116,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? t('closeMenu') : t('openMenu')}
             aria-expanded={mobileOpen}
-            className="grid h-10 w-10 place-items-center text-pearl-200 lg:hidden"
+            className="grid h-10 w-10 place-items-center text-midnight-700 lg:hidden"
           >
             {mobileOpen ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.25} />
@@ -127,14 +127,14 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
         </div>
       </div>
 
-      <nav className="hidden border-t border-pearl-50/[0.08] lg:block">
+      <nav className="hidden border-t border-snow-200 lg:block">
         <div className="mx-auto flex max-w-[1560px] items-center gap-9 px-9">
           <button
             type="button"
             onClick={() => onSelectFamily(null)}
             className={classNames(
               't-label py-3 transition-colors duration-300',
-              families.length === 0 ? 'text-green-300' : 'text-pearl-300 hover:text-pearl-50',
+              families.length === 0 ? 'text-green-600' : 'text-snow-600 hover:text-midnight-950',
             )}
           >
             {t('allPerfumes')}
@@ -146,7 +146,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               onClick={() => onSelectFamily(family)}
               className={classNames(
                 't-label py-3 transition-colors duration-300',
-                families.includes(family) ? 'text-green-300' : 'text-pearl-300 hover:text-pearl-50',
+                families.includes(family) ? 'text-green-600' : 'text-snow-600 hover:text-midnight-950',
               )}
             >
               {pick(family, FAMILY_AR[family])}
@@ -157,7 +157,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               <a
                 key={link.href}
                 href={link.href}
-                className="t-label py-3 text-pearl-300 transition-colors duration-300 hover:text-pearl-50"
+                className="t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
               >
                 {link.label}
               </a>
@@ -168,7 +168,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
 
       <div
         className={classNames(
-          'overflow-hidden border-t border-pearl-50/[0.08] bg-midnight-950 transition-[max-height,opacity] duration-400 lg:hidden',
+          'overflow-hidden border-t border-snow-200 bg-snow-50 transition-[max-height,opacity] duration-400 lg:hidden',
           mobileOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0',
         )}
       >
@@ -178,7 +178,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               {t('search')}
             </label>
             <Search
-              className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-pearl-400"
+              className="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-snow-600"
               strokeWidth={1.25}
             />
             <input
@@ -188,7 +188,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder={t('searchShort')}
-              className="w-full border border-pearl-50/20 bg-midnight-900 py-3 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none rtl:font-sans-ar"
+              className="w-full border border-snow-300 bg-snow-100 py-3 pe-4 ps-11 font-sans text-[14px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none rtl:font-sans-ar"
             />
           </form>
 
@@ -199,7 +199,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                 onSelectFamily(null)
                 setMobileOpen(false)
               }}
-              className="t-label border-b border-pearl-50/[0.08] py-4 text-start text-pearl-100"
+              className="t-label border-b border-snow-200 py-4 text-start text-midnight-950"
             >
               {t('allPerfumes')}
             </button>
@@ -211,7 +211,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                   onSelectFamily(family)
                   setMobileOpen(false)
                 }}
-                className="t-label border-b border-pearl-50/[0.08] py-4 text-start text-pearl-100"
+                className="t-label border-b border-snow-200 py-4 text-start text-midnight-950"
               >
                 {pick(family, FAMILY_AR[family])}
               </button>
@@ -221,7 +221,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="t-label border-b border-pearl-50/[0.08] py-4 text-pearl-300 last:border-b-0"
+                className="t-label border-b border-snow-200 py-4 text-snow-600 last:border-b-0"
               >
                 {link.label}
               </a>

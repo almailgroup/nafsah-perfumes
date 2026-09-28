@@ -35,6 +35,15 @@ export default {
           400: '#cda347',
           500: '#a37e2c',
         },
+        // The white header surface. Warm, never pure #fff — pure white next to
+        // a near-black page reads as a hole rather than as paper.
+        snow: {
+          50: '#fbfaf7',
+          100: '#f3f1ea',
+          200: '#e6e2d8',
+          300: '#cfcabb',
+          600: '#4a5550',
+        },
         pearl: {
           50: '#f6f2e9',
           100: '#ebe5d8',
@@ -48,12 +57,16 @@ export default {
         },
       },
       fontFamily: {
-        // Latin display stays Cormorant Garamond, as asked for by name.
-        display: ['"Cormorant Garamond"', 'Garamond', 'Georgia', 'serif'],
+        // Marcellus: Roman inscriptional capitals. x-height 0.466 against
+        // Cormorant's 0.386 — 21% more apparent size at the same setting, with
+        // far sturdier strokes. One weight, no italic, which is a discipline.
+        display: ['Marcellus', 'Optima', 'Georgia', 'serif'],
         // Geometric Kufi: the Arabic counterpart to a display serif, and the
         // shape language the mashrabiya lattice is drawn from.
         'display-ar': ['"Reem Kufi"', '"Noto Kufi Arabic"', 'serif'],
-        sans: ['Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
+        // Inter: x-height 0.546 against Jost's 0.460, and drawn specifically
+        // for interface legibility. This is the "user friendly" half.
+        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
         'sans-ar': ['"IBM Plex Sans Arabic"', '"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
