@@ -175,25 +175,62 @@
   }
 
   /*
-   * Header nav underline. The rule wipes IN from the logical start on hover
-   * and collapses OUT toward the logical end on leave, which reads as one
-   * continuous gesture rather than a line blinking on and off.
+   * Nav underline, shared by the header links and the footer links. The rule
+   * wipes IN from the logical start on hover and collapses OUT toward the
+   * logical end on leave, which reads as one continuous gesture rather than a
+   * line blinking on and off.
    *
    * scaleX on a full-width rule rather than animating width: transform is
    * compositor-driven, so it stays smooth, and currentColor means the rule
    * inherits whichever state colour the link already has.
+   *
+   * --nav-rule-bottom is the offset from the link's padding-box bottom, so
+   * the rule can sit the same short distance under the text whatever padding
+   * the link carries. The default suits a link with none (the footer); the
+   * header row carries py-3 and sets its own.
    */
   .nav-link {
-    @apply relative;
+    @apply relative inline-block;
+    --nav-rule-bottom: -2px;
+  }
+
+  /*
+   * Offsets per context, measured in the browser rather than guessed. The
+   * value is the distance from the link's padding-box bottom, so it has to
+   * absorb both the padding the link carries and how its type class sets the
+   * line box. Each type class re-tunes its size and leading for Arabic, and
+   * Arabic descends below the baseline where Latin small caps do not, so RTL
+   * needs its own number. All six land the rule ~4.5px clear of the lowest
+   * ink, which is what makes the gap look equal across the site.
+   */
+  .nav-link-label {
+    --nav-rule-bottom: 10px; /* t-label 11px + py-3, header row */
+  }
+  [dir='rtl'] .nav-link-label {
+    --nav-rule-bottom: 8px;
+  }
+
+  .nav-link-body {
+    --nav-rule-bottom: -3px; /* t-body 13px, footer columns */
+  }
+  [dir='rtl'] .nav-link-body {
+    --nav-rule-bottom: 0px;
+  }
+
+  .nav-link-ticket {
+    --nav-rule-bottom: -2px; /* ticket 11px, footer policy row */
+  }
+  [dir='rtl'] .nav-link-ticket {
+    --nav-rule-bottom: -4px;
   }
 
   .nav-link::after {
     content: '';
     position: absolute;
     inset-inline-start: 0;
-    bottom: 0.35rem;
+    bottom: var(--nav-rule-bottom);
     width: 100%;
-    height: 1px;
+    height: 2px;
     background-color: currentColor;
     transform: scaleX(0);
     transform-origin: right center;
@@ -225,6 +262,7 @@
   [dir='rtl'] .nav-link-active::after {
     transform-origin: right center;
   }
+
 
   /* ---- Structure ---- */
 

@@ -133,7 +133,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             type="button"
             onClick={() => onSelectFamily(null)}
             className={classNames(
-              'nav-link t-label py-3 transition-colors duration-300',
+              'nav-link nav-link-label t-label py-3 transition-colors duration-300',
               families.length === 0
                 ? 'nav-link-active text-green-600'
                 : 'text-snow-600 hover:text-midnight-950',
@@ -147,7 +147,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               type="button"
               onClick={() => onSelectFamily(family)}
               className={classNames(
-                'nav-link t-label py-3 transition-colors duration-300',
+                'nav-link nav-link-label t-label py-3 transition-colors duration-300',
                 families.includes(family)
                   ? 'nav-link-active text-green-600'
                   : 'text-snow-600 hover:text-midnight-950',
@@ -161,7 +161,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               <a
                 key={link.href}
                 href={link.href}
-                className="nav-link t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
+                className="nav-link nav-link-label t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
               >
                 {link.label}
               </a>

@@ -112,7 +112,10 @@ export default function Footer() {
               <ul className="mt-5 space-y-3">
                 {pick(column.links.en, column.links.ar).map((link) => (
                   <li key={link}>
-                    <a href="#collection" className="t-body text-[13px] transition-colors duration-300 hover:text-green-300">
+                    <a
+                      href="#collection"
+                      className="nav-link nav-link-body t-body text-[13px] transition-colors duration-300 hover:text-green-300"
+                    >
                       {link}
                     </a>
                   </li>
@@ -136,8 +139,18 @@ export default function Footer() {
             {t('rights', { year: formatNumber(new Date().getFullYear(), lang).replace(/[,٬]/g, '') })}
           </p>
           <div className="flex items-center gap-6">
-            <a href="#collection" className="ticket text-pearl-400 hover:text-green-300">{t('privacy')}</a>
-            <a href="#collection" className="ticket text-pearl-400 hover:text-green-300">{t('terms')}</a>
+            <a
+              href="#collection"
+              className="nav-link nav-link-ticket ticket text-pearl-400 transition-colors duration-300 hover:text-green-300"
+            >
+              {t('privacy')}
+            </a>
+            <a
+              href="#collection"
+              className="nav-link nav-link-ticket ticket text-pearl-400 transition-colors duration-300 hover:text-green-300"
+            >
+              {t('terms')}
+            </a>
           </div>
         </div>
       </div>
