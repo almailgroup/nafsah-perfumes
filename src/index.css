@@ -233,6 +233,15 @@
     --nav-rule-bottom: 8px;
   }
 
+  /* The language switcher is the one link whose script is the opposite of the
+     page's, so it takes the label offsets with the two directions swapped. */
+  .nav-link-swap {
+    --nav-rule-bottom: 8px; /* Arabic label inside an LTR page */
+  }
+  [dir='rtl'] .nav-link-swap {
+    --nav-rule-bottom: 10px; /* Latin label inside an RTL page */
+  }
+
   .nav-link-body {
     --nav-rule-bottom: -3px; /* t-body 13px, footer columns */
   }
@@ -286,6 +295,30 @@
     transform-origin: right center;
   }
 
+
+  /*
+   * Language switch veil. A fixed pane that blurs what is behind it, rather
+   * than a filter on the content itself: a filter makes its element the
+   * containing block for every fixed and sticky descendant, so blurring a
+   * wrapper would drop the sticky header and any open overlay out of place
+   * the instant the transition started.
+   */
+  .lang-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    opacity: 0;
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    transition: opacity 0.18s ease;
+  }
+
+  .lang-veil-on {
+    opacity: 1;
+    /* Swallow clicks while the scripts swap, so the toggle cannot re-fire. */
+    pointer-events: auto;
+  }
 
   /* ---- Structure ---- */
 

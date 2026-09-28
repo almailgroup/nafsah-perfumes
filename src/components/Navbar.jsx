@@ -11,7 +11,7 @@ import { classNames, formatNumber } from '../lib/format'
  */
 export default function Navbar({ query, onQueryChange, families, onSelectFamily, onSubmitSearch }) {
   const { totals, openCart, lastAddedAt } = useCart()
-  const { lang, t, pick } = useLocale()
+  const { lang, t, pick, toggle } = useLocale()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [pulse, setPulse] = useState(false)
   const inputRef = useRef(null)
@@ -30,11 +30,22 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
     onSubmitSearch()
   }
 
-  const LINKS = [
-    { label: t('theHouse'), href: '#house' },
-    { label: t('notes'), href: '#notes' },
-    { label: t('contact'), href: '#contact' },
-  ]
+  const LINKS = [{ label: t('contact'), href: '#contact' }]
+
+  /**
+   * The switcher always names the language you are moving TO, so its label is
+   * in the script the page is not currently in. That inverts every type
+   * decision the surrounding row makes: face, size, casing and tracking all
+   * have to follow the label's script, not the document's.
+   */
+  const swapClass = classNames(
+    'nav-link nav-link-swap py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950',
+    lang === 'en'
+      // Arabic inside an LTR page. 0.16em tracking would pull joined
+      // letterforms apart, and 11px is too small for this script.
+      ? 'font-sans-ar text-[13px] normal-case tracking-normal'
+      : 'font-sans text-[11px] font-medium uppercase tracking-wide2',
+  )
 
   return (
     <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
@@ -157,6 +168,9 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             </button>
           ))}
           <span className="ms-auto flex items-center gap-9">
+            <button type="button" onClick={toggle} lang={lang === 'en' ? 'ar' : 'en'} className={swapClass}>
+              {t('switchTo')}
+            </button>
             {LINKS.map((link) => (
               <a
                 key={link.href}
@@ -220,6 +234,22 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                 {pick(family, FAMILY_AR[family])}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                toggle()
+                setMobileOpen(false)
+              }}
+              lang={lang === 'en' ? 'ar' : 'en'}
+              className={classNames(
+                'border-b border-snow-200 py-4 text-start text-midnight-950',
+                lang === 'en'
+                  ? 'font-sans-ar text-[15px] normal-case tracking-normal'
+                  : 'font-sans text-[11px] font-medium uppercase tracking-wide2',
+              )}
+            >
+              {t('switchTo')}
+            </button>
             {LINKS.map((link) => (
               <a
                 key={link.href}
