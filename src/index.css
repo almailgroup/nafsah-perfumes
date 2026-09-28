@@ -174,6 +174,58 @@
     font-weight: 500;
   }
 
+  /*
+   * Header nav underline. The rule wipes IN from the logical start on hover
+   * and collapses OUT toward the logical end on leave, which reads as one
+   * continuous gesture rather than a line blinking on and off.
+   *
+   * scaleX on a full-width rule rather than animating width: transform is
+   * compositor-driven, so it stays smooth, and currentColor means the rule
+   * inherits whichever state colour the link already has.
+   */
+  .nav-link {
+    @apply relative;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: 0.35rem;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [dir='rtl'] .nav-link::after {
+    transform-origin: left center;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  [dir='rtl'] .nav-link:hover::after,
+  [dir='rtl'] .nav-link:focus-visible::after {
+    transform-origin: right center;
+  }
+
+  /* The selected category keeps its rule, so hovering a sibling reads as a
+     preview of a state the active item is already in. */
+  .nav-link-active::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  [dir='rtl'] .nav-link-active::after {
+    transform-origin: right center;
+  }
+
   /* ---- Structure ---- */
 
   .rule {

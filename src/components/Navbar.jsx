@@ -133,8 +133,10 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             type="button"
             onClick={() => onSelectFamily(null)}
             className={classNames(
-              't-label py-3 transition-colors duration-300',
-              families.length === 0 ? 'text-green-600' : 'text-snow-600 hover:text-midnight-950',
+              'nav-link t-label py-3 transition-colors duration-300',
+              families.length === 0
+                ? 'nav-link-active text-green-600'
+                : 'text-snow-600 hover:text-midnight-950',
             )}
           >
             {t('allPerfumes')}
@@ -145,8 +147,10 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               type="button"
               onClick={() => onSelectFamily(family)}
               className={classNames(
-                't-label py-3 transition-colors duration-300',
-                families.includes(family) ? 'text-green-600' : 'text-snow-600 hover:text-midnight-950',
+                'nav-link t-label py-3 transition-colors duration-300',
+                families.includes(family)
+                  ? 'nav-link-active text-green-600'
+                  : 'text-snow-600 hover:text-midnight-950',
               )}
             >
               {pick(family, FAMILY_AR[family])}
@@ -157,7 +161,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               <a
                 key={link.href}
                 href={link.href}
-                className="t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
+                className="nav-link t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
               >
                 {link.label}
               </a>
