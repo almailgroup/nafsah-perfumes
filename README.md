@@ -18,16 +18,27 @@ Node 18+ is required. The dev server is served under `/nafsah-perfumes/` rather 
 
 ## Deployment
 
-Published to GitHub Pages at **https://almailgroup.github.io/nafsah-perfumes/** by
-`.github/workflows/deploy.yml`, which builds and deploys on every push to `main`. The repository's
-Pages source must be set to **GitHub Actions** (Settings → Pages → Source), not "Deploy from a
-branch" — the repo root holds Vite's source `index.html`, which a browser cannot execute.
+Published to **https://nafsah.com** by `.github/workflows/deploy.yml`, which builds and
+deploys on every push to `main`. The repository's Pages source is **GitHub Actions**
+(Settings → Pages → Source), not "Deploy from a branch" — the repo root holds Vite's source
+`index.html`, which a browser cannot execute.
 
-Because this is a *project* page rather than a user page, `vite.config.js` sets
-`base: '/nafsah-perfumes/'` so assets resolve under that prefix. Renaming the repository means
-updating that value to match.
+Two things the custom domain depends on:
 
-Only `dist/` is published; build output is never committed. A deploy can also be re-run by hand
+- **`vite.config.js` sets `base: '/'`.** The site is served from the root of an apex
+  domain. While it lived at the Pages project URL this was `'/nafsah-perfumes/'`; leaving
+  that prefix on a custom domain makes every asset request `nafsah.com/nafsah-perfumes/…`,
+  which 404s, so the bundle never loads and the page renders blank white.
+- **`public/CNAME` contains `nafsah.com`.** Actions deploys a static artifact rather than a
+  branch, so the domain is declared in the published output and cannot be dropped by a
+  deploy.
+
+DNS for the apex domain needs A records pointing at GitHub Pages
+(`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`), with `www`
+as a CNAME to `almailgroup.github.io`. HTTPS only becomes available once GitHub has
+provisioned a certificate for the domain, after which *Enforce HTTPS* can be enabled.
+
+Only `dist/` is published; build output is never committed. A deploy can be re-run by hand
 from the Actions tab via `workflow_dispatch`.
 
 ## Features

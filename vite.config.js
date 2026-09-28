@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Deployed as a GitHub Pages *project* site at /nafsah-perfumes/, so assets
-// must be requested relative to that prefix rather than the domain root.
+// Served from the root of the custom domain nafsah.com, so assets are
+// root-relative. This was '/nafsah-perfumes/' while the site lived at the
+// GitHub Pages project URL; on an apex domain that prefix makes every asset
+// 404 and the page renders blank.
 export default defineConfig({
-  base: '/nafsah-perfumes/',
+  base: '/',
   plugins: [react()],
 })
