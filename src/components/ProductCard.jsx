@@ -13,7 +13,7 @@ const NOTE_ROWS = ['top', 'heart', 'base']
  * vial on a tinted ground, then the entry as a ruled table. Controls are sans
  * in both scripts — Cormorant is display-only on this dark ground.
  */
-export default function ProductCard({ product, index = 0, priceRange, compact = false }) {
+export default function ProductCard({ product, index = 0, priceRange, compact = false, onOpen }) {
   const { addItem } = useCart()
   const { lang, t, pick } = useLocale()
   const [justAdded, setJustAdded] = useState(false)
@@ -57,7 +57,12 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         <span className="ticket text-pearl-400">{pick(product.family, FAMILY_AR[product.family])}</span>
       </div>
 
-      <div className="relative overflow-hidden bg-midnight-800">
+      <button
+        type="button"
+        onClick={() => onOpen?.(product)}
+        aria-label={`${t('viewDetails')} — ${name}`}
+        className="relative block w-full overflow-hidden bg-midnight-800 text-start"
+      >
         <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
         {(product.isNew || product.bestseller) && (
           <span className="ticket absolute start-5 top-4 z-10 text-green-300">
@@ -72,11 +77,25 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         >
           <BottleVisual palette={product.palette} catalogue={catalogue} />
         </div>
-      </div>
+        <span
+          aria-hidden="true"
+          className="ticket pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center bg-gradient-to-t from-midnight-950/90 to-transparent pb-4 pt-12 text-pearl-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
+        >
+          {t('viewDetails')}
+        </span>
+      </button>
 
       <div className="flex flex-1 flex-col border-t border-pearl-50/[0.14] px-5 pb-5 pt-5">
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="t-title">{name}</h3>
+          <h3 className="t-title">
+            <button
+              type="button"
+              onClick={() => onOpen?.(product)}
+              className="text-start transition-colors duration-300 hover:text-green-300"
+            >
+              {name}
+            </button>
+          </h3>
           <span className="t-figure shrink-0 text-[1.3rem] leading-none text-pearl-50">
             {formatPrice(size.price, lang)}
           </span>

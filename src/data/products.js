@@ -45,6 +45,8 @@ export const PRODUCTS = [
         heart: ['عود كمبودي', 'وردة دمشقية'],
         base: ['خشب الصندل', 'جلد', 'نجيل الهند'],
       },
+      description:
+        'عود راتنجي مُعتَّق ثمانية عشر شهراً، يرفعه مطلق الورد. على البشرة مباشرةً يُقرأ كجلدٍ دافئ في غرفة معتمة.',
     },
     description:
       'A resinous oud aged eighteen months and lifted by rose absolute. Worn close to the skin it reads like warm leather in a dark room.',
@@ -78,6 +80,8 @@ export const PRODUCTS = [
         heart: ['وردة دمشقية', 'فاوانيا', 'ورق البنفسج'],
         base: ['مسك أبيض', 'خشب الكشمير'],
       },
+      description:
+        'ثلاثة آلاف وردة دمشقية تُقطَّر لقارورة واحدة. نديٌّ شفيف في مطلعه، بودريٌّ هادئ عند الساعة الرابعة.',
     },
     description:
       'Three thousand Damask roses distilled for a single flacon. Dewy and translucent at the top, powdery and quiet by the fourth hour.',
@@ -110,6 +114,8 @@ export const PRODUCTS = [
         heart: ['زهر النارنج', 'أكورد بحري'],
         base: ['خشب الطافي', 'حبّ المسك'],
       },
+      description:
+        'صُنع للحرّ. ليمون معصور على البارد ويوزو ينقدحان على أكورد ملحي معدني، ثم يستقرّان على خشبٍ طافٍ بهتته الشمس.',
     },
     description:
       'Built for heat. Cold-pressed lemon and yuzu snap against a mineral salt accord, then settle into sun-bleached driftwood.',
@@ -143,6 +149,8 @@ export const PRODUCTS = [
         heart: ['راتنج العنبر', 'لادن', 'ياسمين'],
         base: ['فانيلا مدغشقرية', 'بنزوين', 'حبّ التونكا'],
       },
+      description:
+        'توقيع الدار. زعفران وهيل ينفتحان على فراش من اللادن والفانيلا يبقى على الصوف أياماً.',
     },
     description:
       'The house signature. Saffron and cardamom open onto a bed of labdanum and vanilla that lingers on wool for days.',
@@ -175,6 +183,8 @@ export const PRODUCTS = [
         heart: ['صندل ميسور', 'سوسن'],
         base: ['أرز', 'حبّ التونكا', 'مسك'],
       },
+      description:
+        'خشب صندل بلا دخان. السوسن يمنحه نعومة بودرية تجعله أقرب إلى البشرة منه إلى الخشب.',
     },
     description:
       'Sandalwood without the smoke. Iris gives it a powdery softness that makes it read closer to skin than to wood.',
@@ -208,6 +218,8 @@ export const PRODUCTS = [
         heart: ['ياسمين سمبك', 'مسك الروم', 'يلانغ يلانغ'],
         base: ['خشب الصندل', 'سحلب الفانيلا'],
       },
+      description:
+        'ياسمين يُقطف بين منتصف الليل والفجر، حين تمنح الزهرة أكثر أوجهها عمقاً. ليليٌّ بلا اعتذار.',
     },
     description:
       'Jasmine picked between midnight and dawn, when the flower gives up its most indolic facets. Unapologetically nocturnal.',
@@ -240,6 +252,8 @@ export const PRODUCTS = [
         heart: ['زهر البرتقال', 'أكورد العسل'],
         base: ['خشب العنبر', 'مسك أبيض'],
       },
+      description:
+        'برغموت كالابري يُدوَّر بأكورد عسل خام كي لا يرقّ الحمضي أبداً. ساطع لساعة، ذهبيّ لستّ.',
     },
     description:
       'Calabrian bergamot rounded with a raw honey accord so the citrus never turns thin. Bright for an hour, golden for six.',
@@ -272,6 +286,8 @@ export const PRODUCTS = [
         heart: ['مطلق الورد', 'لحاء القرفة'],
         base: ['عود', 'عنبر', 'باتشولي'],
       },
+      description:
+        'زعفران بكامل قوّته، يلطّفه مطلق الورد ولحاء القرفة. عطر للطقس البارد بخاتمة جافّة طويلة.',
     },
     description:
       'Saffron at full strength, tempered by rose absolute and cinnamon bark. A cold-weather fragrance with a long, dry finish.',
@@ -305,6 +321,8 @@ export const PRODUCTS = [
         heart: ['أرز أطلسي', 'سرو', 'قطران البتولا'],
         base: ['نجيل الهند', 'أشنة البلوط', 'عنبر رمادي'],
       },
+      description:
+        'قطران البتولا يمنح الأرز دخانه، وطحلب البلوط يبقيه رطباً لا رمادياً. أقرب إلى أرض الغابة منه إلى الموقد.',
     },
     description:
       'Birch tar gives the cedar its smoke; oakmoss keeps it damp rather than ashen. Closer to a forest floor than a fireplace.',
@@ -337,6 +355,8 @@ export const PRODUCTS = [
         heart: ['نيرولي', 'زهر البرتقال', 'زهر العسل'],
         base: ['مسك أبيض', 'أخشاب فاتحة'],
       },
+      description:
+        'نيرولي مُقطَّر من زهر النارنج التونسي. أخضر ومرٌّ قليلاً في أعلاه، ناعم مشمس تحته.',
     },
     description:
       'Neroli distilled from Tunisian bitter orange flowers. Green and slightly bitter up top, soft and sunlit underneath.',
@@ -370,6 +390,8 @@ export const PRODUCTS = [
         heart: ['سوسن باليدا', 'كشميران'],
         base: ['مسك أبيض', 'حبّ المسك', 'فانيلا'],
       },
+      description:
+        'مسك كبشرة ثانية، مبنيٌّ على حبّ المسك والسوسن. هادئ بما يكفي للأماكن الضيّقة، وثابت بما يكفي ليُلاحَظ في آخر اليوم.',
     },
     description:
       'A second-skin musk built on ambrette and iris. Quiet enough for close quarters, persistent enough to notice at the end of the day.',
@@ -402,6 +424,8 @@ export const PRODUCTS = [
         heart: ['نجيل هايتي', 'جذر السوسن'],
         base: ['خشب الغاياك', 'ورق التبغ', 'عنبر'],
       },
+      description:
+        'نجيل الهند يبقى جذرياً أخضر لا مدخّناً. ورق التبغ والعنبر الخام يحملانه إلى خاتمة جافّة راتنجية.',
     },
     description:
       'Vetiver kept rooty and green rather than smoked. Tobacco leaf and ambergris carry it into a dry, resinous close.',

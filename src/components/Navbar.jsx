@@ -6,6 +6,16 @@ import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
 
 /**
+ * "#top" is the top of the page, not a section anyone would deep-link to, so
+ * it has no business in the address bar. Section anchors like #collection and
+ * #contact are real destinations and are left alone.
+ */
+function stripTopHash() {
+  if (window.location.hash !== '#top') return
+  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+}
+
+/**
  * Retail header. Layout is expressed in logical properties (ms/me/ps/pe/start)
  * so it mirrors wholesale when the document direction flips to RTL.
  */
@@ -16,6 +26,10 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   const [pulse, setPulse] = useState(false)
   const inputRef = useRef(null)
   const mobileInputRef = useRef(null)
+
+  useEffect(() => {
+    stripTopHash()
+  }, [])
 
   useEffect(() => {
     if (!lastAddedAt) return undefined
@@ -50,7 +64,16 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   return (
     <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
       <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
-        <a href="#top" aria-label={t('brand')} className="shrink-0 leading-none">
+        <a
+          href="#top"
+          aria-label={t('brand')}
+          onClick={(event) => {
+            event.preventDefault()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            stripTopHash()
+          }}
+          className="shrink-0 leading-none"
+        >
           <span
             className={classNames(
               'block text-midnight-950',

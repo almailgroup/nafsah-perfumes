@@ -2,7 +2,7 @@ import ProductCard from './ProductCard'
 import { useLocale } from '../i18n/locale-context'
 
 /** A merchandised row: heading, "view all", and four compact cards. */
-export default function ProductRow({ title, caption, products, onViewAll, tone = 'base' }) {
+export default function ProductRow({ title, caption, products, onViewAll, onOpenProduct, tone = 'base' }) {
   const { t } = useLocale()
   if (products.length === 0) return null
 
@@ -25,7 +25,13 @@ export default function ProductRow({ title, caption, products, onViewAll, tone =
 
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {products.slice(0, 4).map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} compact />
+            <ProductCard
+              key={product.id}
+              product={product}
+              index={index}
+              onOpen={onOpenProduct}
+              compact
+            />
           ))}
         </div>
       </div>

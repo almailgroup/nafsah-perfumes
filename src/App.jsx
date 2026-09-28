@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import AnnouncementBar from './components/AnnouncementBar'
 import CartDrawer from './components/CartDrawer'
 import CategoryTiles from './components/CategoryTiles'
@@ -8,6 +8,7 @@ import Footer from './components/Footer'
 import HeroSlider from './components/HeroSlider'
 import Navbar from './components/Navbar'
 import NotesGuide from './components/NotesGuide'
+import ProductModal from './components/ProductModal'
 import ProductRow from './components/ProductRow'
 import Story from './components/Story'
 import TrustBadges from './components/TrustBadges'
@@ -35,6 +36,9 @@ function Storefront() {
   const { t } = useLocale()
   const catalogue = useCatalogue()
   const searchRef = useRef(null)
+  // The fragrance whose page is open. There is no route for it — the overlay
+  // is the product page.
+  const [openProduct, setOpenProduct] = useState(null)
 
   const scrollToCatalogue = useCallback(() => {
     document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -85,6 +89,7 @@ function Storefront() {
           caption={t('bestsellersCaption')}
           products={BESTSELLERS}
           onViewAll={() => viewAll('rating')}
+          onOpenProduct={setOpenProduct}
           tone="tint"
         />
         <ProductRow
@@ -92,15 +97,17 @@ function Storefront() {
           caption={t('newArrivalsCaption')}
           products={NEW_ARRIVALS}
           onViewAll={() => viewAll('newest')}
+          onOpenProduct={setOpenProduct}
         />
         <TrustBadges />
-        <Collection catalogue={catalogue} searchRef={searchRef} />
+        <Collection catalogue={catalogue} searchRef={searchRef} onOpenProduct={setOpenProduct} />
         <Story />
         <NotesGuide />
       </main>
 
       <Footer />
 
+      <ProductModal product={openProduct} onClose={() => setOpenProduct(null)} />
       <CartDrawer />
       <CheckoutModal />
     </CartProvider>

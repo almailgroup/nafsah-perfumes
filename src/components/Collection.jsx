@@ -4,7 +4,7 @@ import ProductCard from './ProductCard'
 import { useLocale } from '../i18n/locale-context'
 
 /** The full, filterable catalogue. State lives in useCatalogue. */
-export default function Collection({ catalogue, searchRef }) {
+export default function Collection({ catalogue, searchRef, onOpenProduct }) {
   const { t } = useLocale()
   const {
     query, setQuery, families, toggleFamily, priceRange, setPriceRange,
@@ -34,7 +34,13 @@ export default function Collection({ catalogue, searchRef }) {
         {results.length > 0 ? (
           <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
             {results.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} priceRange={priceRange} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                index={index}
+                priceRange={priceRange}
+                onOpen={onOpenProduct}
+              />
             ))}
           </div>
         ) : (
