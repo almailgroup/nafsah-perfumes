@@ -32,7 +32,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
 
   const contour = '#f6f2e9'
   const contourOpacity = 0.32
-  const stopperFill = '#1e3a2f'
+  const stopperFill = '#233e33'
   const labelFill = '#f6f2e9'
 
   return (
@@ -89,8 +89,8 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
       <path d={SILHOUETTE} fill="none" stroke={contour} strokeOpacity={contourOpacity} strokeWidth="1.2" />
 
       {/* Wax seal at the neck — the one spot of oxblood on the product */}
-      <circle cx="100" cy="80" r="7.5" fill="#a86f20" />
-      <circle cx="100" cy="80" r="7.5" fill="none" stroke="#08130f" strokeOpacity="0.3" strokeWidth="0.8" />
+      <circle cx="100" cy="80" r="7.5" fill="#a37e2c" />
+      <circle cx="100" cy="80" r="7.5" fill="none" stroke="#08140f" strokeOpacity="0.3" strokeWidth="0.8" />
       <circle cx="97.4" cy="77.4" r="2.1" fill="#ffffff" opacity="0.18" />
 
       {/* Wrapped paper label carrying the catalogue number */}
@@ -101,7 +101,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         width="64"
         height="56"
         fill="none"
-        stroke="#08130f"
+        stroke="#08140f"
         strokeOpacity="0.3"
         strokeWidth="0.8"
       />
@@ -111,7 +111,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         width="59"
         height="51"
         fill="none"
-        stroke="#08130f"
+        stroke="#08140f"
         strokeOpacity="0.18"
         strokeWidth="0.5"
       />
@@ -122,11 +122,11 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         fontFamily="Cormorant Garamond, Garamond, Georgia, serif"
         fontSize="21"
         fontWeight="500"
-        fill="#08130f"
+        fill="#08140f"
       >
         N
       </text>
-      <line x1="78" y1="199" x2="122" y2="199" stroke="#08130f" strokeOpacity="0.3" strokeWidth="0.6" />
+      <line x1="78" y1="199" x2="122" y2="199" stroke="#08140f" strokeOpacity="0.3" strokeWidth="0.6" />
       <text
         x="100"
         y="210"
@@ -134,7 +134,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         fontFamily="Jost, system-ui, sans-serif"
         fontSize="6"
         letterSpacing="1.5"
-        fill="#08130f"
+        fill="#08140f"
         fillOpacity="0.72"
       >
         EXTRAIT
@@ -147,7 +147,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
           fontFamily="Jost, system-ui, sans-serif"
           fontSize="5.5"
           letterSpacing="1.2"
-          fill="#08130f"
+          fill="#08140f"
           fillOpacity="0.55"
         >
           No. {catalogue}

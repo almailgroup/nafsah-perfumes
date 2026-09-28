@@ -16,7 +16,7 @@ export default function Collection({ catalogue, searchRef }) {
       <div className="mx-auto max-w-[1560px] px-5 sm:px-9">
         <header className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="ticket text-saffron-300">{t('theCatalogue')}</p>
+            <p className="ticket text-gold-300">{t('theCatalogue')}</p>
             <h2 className="t-h2 mt-4">{t('allPerfumes')}</h2>
           </div>
           <p className="ticket text-pearl-400 sm:pb-1">{t('catalogueMeta')}</p>

@@ -48,7 +48,7 @@ export default function Story() {
       >
         <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div>
-            <p className="ticket text-saffron-300">{t('theHouse')}</p>
+            <p className="ticket text-gold-300">{t('theHouse')}</p>
             <h2 className="t-h2 mt-5">{t('houseTitle')}</h2>
             <p className="t-body mt-8 max-w-md">
               {lang === 'ar'
@@ -79,7 +79,7 @@ export default function Story() {
                 key={pillar.title.en}
                 className="grid grid-cols-[2.75rem_1fr] gap-4 border-b border-pearl-50/[0.14] py-7 sm:grid-cols-[4rem_1fr] sm:gap-8 sm:py-9"
               >
-                <span className="ticket pt-2 text-saffron-300">
+                <span className="ticket pt-2 text-gold-300">
                   {formatOrdinal(index + 1, lang)}
                 </span>
                 <div>

@@ -92,7 +92,7 @@ export default function HeroSlider({ onShopNow }) {
 
       <div className="relative mx-auto grid max-w-[1560px] items-center gap-10 px-5 py-12 sm:px-9 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
         <div key={`copy-${index}`} className="animate-fade-up">
-          <p className="ticket text-saffron-300">{pick(slide.eyebrow.en, slide.eyebrow.ar)}</p>
+          <p className="ticket text-gold-300">{pick(slide.eyebrow.en, slide.eyebrow.ar)}</p>
 
           <h1 className="t-display mt-6">
             {pick(slide.headline.en, slide.headline.ar).map((line) => (
@@ -145,7 +145,7 @@ export default function HeroSlider({ onShopNow }) {
               <span
                 className={classNames(
                   'block h-px transition-all duration-500',
-                  i === index ? 'w-8 bg-jade-300' : 'w-4 bg-pearl-50/30',
+                  i === index ? 'w-8 bg-green-300' : 'w-4 bg-pearl-50/30',
                 )}
               />
             </button>
@@ -157,7 +157,7 @@ export default function HeroSlider({ onShopNow }) {
             type="button"
             onClick={() => go(index - 1)}
             aria-label={t('prevSlide')}
-            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-jade-400 hover:bg-jade-600 hover:text-pearl-50"
+            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-green-400 hover:bg-green-600 hover:text-pearl-50"
           >
             <ChevronLeft className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
           </button>
@@ -165,7 +165,7 @@ export default function HeroSlider({ onShopNow }) {
             type="button"
             onClick={() => go(index + 1)}
             aria-label={t('nextSlide')}
-            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-jade-400 hover:bg-jade-600 hover:text-pearl-50"
+            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-green-400 hover:bg-green-600 hover:text-pearl-50"
           >
             <ChevronRight className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
           </button>

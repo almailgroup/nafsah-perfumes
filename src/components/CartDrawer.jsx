@@ -75,7 +75,7 @@ export default function CartDrawer() {
             <p className="t-body-noir mt-3 max-w-xs text-pearl-400">
               {t('cartEmptyBody')}
             </p>
-            <button type="button" onClick={closeCart} className="btn-jade mt-8">
+            <button type="button" onClick={closeCart} className="btn-green mt-8">
               {t('browseCatalogue')}
             </button>
           </div>
@@ -93,7 +93,7 @@ export default function CartDrawer() {
               </div>
               <div className="mt-3 h-px overflow-hidden bg-midnight-700">
                 <div
-                  className="h-full bg-jade-500 transition-[width] duration-500" style={{ width: `${progress}%` }}
+                  className="h-full bg-green-500 transition-[width] duration-500" style={{ width: `${progress}%` }}
                 />
               </div>
             </div>
@@ -177,7 +177,7 @@ export default function CartDrawer() {
                 </div>
               </dl>
 
-              <button type="button" onClick={openCheckout} className="btn-jade group mt-5 w-full">
+              <button type="button" onClick={openCheckout} className="btn-green group mt-5 w-full">
                 {t('checkout')}
                 <ArrowRight
                   className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"

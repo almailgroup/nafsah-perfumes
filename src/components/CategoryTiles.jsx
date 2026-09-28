@@ -27,7 +27,7 @@ export default function CategoryTiles({ onSelectFamily }) {
           <button
             type="button"
             onClick={() => onSelectFamily(null)}
-            className="ticket shrink-0 text-jade-300 underline underline-offset-4 transition-colors hover:text-jade-200"
+            className="ticket shrink-0 text-green-300 underline underline-offset-4 transition-colors hover:text-green-200"
           >
             {t('all12')}
           </button>
@@ -39,7 +39,7 @@ export default function CategoryTiles({ onSelectFamily }) {
               <button
                 type="button"
                 onClick={() => onSelectFamily(family)}
-                className="group relative flex w-full items-center gap-4 overflow-hidden border border-pearl-50/[0.14] bg-midnight-900 p-4 text-start transition-colors duration-300 hover:border-jade-500/50 sm:gap-5 sm:p-5"
+                className="group relative flex w-full items-center gap-4 overflow-hidden border border-pearl-50/[0.14] bg-midnight-900 p-4 text-start transition-colors duration-300 hover:border-green-500/50 sm:gap-5 sm:p-5"
               >
                 <span
                   aria-hidden="true"

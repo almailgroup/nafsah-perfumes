@@ -53,7 +53,7 @@ export default function NotesGuide() {
       <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
       <div ref={ref} className="relative mx-auto max-w-[1560px] px-5 sm:px-9">
         <header className="max-w-2xl">
-          <p className="ticket text-saffron-300">{t('readingFragrance')}</p>
+          <p className="ticket text-gold-300">{t('readingFragrance')}</p>
           <h2 className="t-h2 mt-5">{t('pyramidTitle')}</h2>
           <p className="t-body mt-6 max-w-md">{t('pyramidBody')}</p>
         </header>

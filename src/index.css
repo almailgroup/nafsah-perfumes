@@ -45,7 +45,7 @@
   }
 
   ::selection {
-    @apply bg-jade-600 text-pearl-50;
+    @apply bg-green-600 text-pearl-50;
   }
 
   * {
@@ -67,7 +67,7 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-jade-400 ring-offset-2 ring-offset-midnight-950;
+    @apply outline-none ring-2 ring-green-400 ring-offset-2 ring-offset-midnight-950;
   }
 }
 
@@ -187,7 +187,7 @@
    * motif — used as a low-opacity ground, never behind body copy.
    */
   .mashrabiya {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%237fc9b0' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%2379c3a5' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
     background-size: 56px 56px;
   }
 
@@ -202,10 +202,11 @@
 
   /* ---- Controls. Sans in both scripts, never Cormorant. ---- */
 
-  .btn-jade {
-    @apply inline-flex items-center justify-center gap-2.5 bg-jade-600 px-8 py-3.5 font-sans text-[11px]
+  /* Arab Green #006039 as the action fill — the brand value used exactly. */
+  .btn-green {
+    @apply inline-flex items-center justify-center gap-2.5 bg-green-600 px-8 py-3.5 font-sans text-[11px]
            font-normal uppercase tracking-label text-pearl-50 transition-colors duration-300
-           hover:bg-jade-500 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
+           hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
   }
 
   .btn-pearl {
@@ -215,12 +216,12 @@
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2.5 border border-pearl-50/25 px-8 py-3.5 font-sans
-           text-[11px] font-normal uppercase tracking-label text-pearl-100 transition-colors duration-300
-           hover:border-jade-400 hover:bg-jade-600 hover:text-pearl-50;
+    @apply inline-flex items-center justify-center gap-2.5 border border-gold-500 px-8 py-3.5 font-sans
+           text-[11px] font-normal uppercase tracking-label text-gold-300 transition-colors duration-300
+           hover:bg-gold-500 hover:text-midnight-950;
   }
 
-  [dir='rtl'] .btn-jade,
+  [dir='rtl'] .btn-green,
   [dir='rtl'] .btn-pearl,
   [dir='rtl'] .btn-outline {
     @apply font-sans-ar normal-case;
@@ -230,7 +231,7 @@
 
   .field {
     @apply w-full border border-pearl-50/20 bg-midnight-900 px-4 py-3 font-sans text-[15px] font-light
-           text-pearl-50 placeholder:text-pearl-400 transition-colors duration-200 focus:border-jade-400
+           text-pearl-50 placeholder:text-pearl-400 transition-colors duration-200 focus:border-green-400
            focus:outline-none focus:ring-0;
   }
 
@@ -264,11 +265,11 @@
 }
 
 .range-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(126, 201, 176, 0.35);
+  box-shadow: 0 0 0 4px rgba(121, 195, 165, 0.35);
 }
 
 .range-input:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(126, 201, 176, 0.35);
+  box-shadow: 0 0 0 4px rgba(121, 195, 165, 0.35);
 }
 
 .range-input::-webkit-slider-thumb {
@@ -279,7 +280,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #7fc9b0;
+  background: #79c3a5;
   background-clip: content-box;
   cursor: grab;
   margin-top: 0;
@@ -297,7 +298,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #7fc9b0;
+  background: #79c3a5;
   background-clip: content-box;
   cursor: grab;
 }

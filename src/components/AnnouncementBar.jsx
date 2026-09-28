@@ -26,14 +26,14 @@ export default function AnnouncementBar() {
       <div className="relative mx-auto flex h-10 max-w-[1560px] items-center justify-between gap-4 px-5 sm:px-9">
         <span className="hidden sm:block sm:w-24" />
         <p key={index} className="ticket flex animate-fade-in items-center gap-2.5 truncate text-pearl-200">
-          <Truck className="h-3.5 w-3.5 shrink-0 text-saffron-300" strokeWidth={1.25} />
+          <Truck className="h-3.5 w-3.5 shrink-0 text-gold-300" strokeWidth={1.25} />
           {message}
         </p>
         <button
           type="button"
           onClick={toggle}
           lang={lang === 'en' ? 'ar' : 'en'}
-          className="ticket shrink-0 border border-pearl-50/25 px-3 py-1 text-pearl-100 transition-colors duration-300 hover:border-jade-400 hover:text-jade-200 sm:w-24"
+          className="ticket shrink-0 border border-pearl-50/25 px-3 py-1 text-pearl-100 transition-colors duration-300 hover:border-green-400 hover:text-green-200 sm:w-24"
         >
           {t('switchTo')}
         </button>

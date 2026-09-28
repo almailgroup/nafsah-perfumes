@@ -67,7 +67,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full border border-pearl-50/20 bg-midnight-900 py-2.5 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-jade-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border border-pearl-50/20 bg-midnight-900 py-2.5 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
         </form>
 
@@ -102,7 +102,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             {totals.count > 0 && (
               <span
                 className={classNames(
-                  'absolute end-0 top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-jade-300 px-1 font-sans text-[10px] font-medium leading-none text-midnight-950 transition-transform duration-300',
+                  'absolute end-0 top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-green-600 px-1 font-sans text-[10px] font-medium leading-none text-pearl-50 transition-transform duration-300',
                   pulse && 'scale-125',
                 )}
               >
@@ -134,7 +134,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             onClick={() => onSelectFamily(null)}
             className={classNames(
               't-label py-3 transition-colors duration-300',
-              families.length === 0 ? 'text-jade-300' : 'text-pearl-300 hover:text-pearl-50',
+              families.length === 0 ? 'text-green-300' : 'text-pearl-300 hover:text-pearl-50',
             )}
           >
             {t('allPerfumes')}
@@ -146,7 +146,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               onClick={() => onSelectFamily(family)}
               className={classNames(
                 't-label py-3 transition-colors duration-300',
-                families.includes(family) ? 'text-jade-300' : 'text-pearl-300 hover:text-pearl-50',
+                families.includes(family) ? 'text-green-300' : 'text-pearl-300 hover:text-pearl-50',
               )}
             >
               {pick(family, FAMILY_AR[family])}
@@ -188,7 +188,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder={t('searchShort')}
-              className="w-full border border-pearl-50/20 bg-midnight-900 py-3 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-jade-400 focus:outline-none rtl:font-sans-ar"
+              className="w-full border border-pearl-50/20 bg-midnight-900 py-3 pe-4 ps-11 font-sans text-[14px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none rtl:font-sans-ar"
             />
           </form>
 

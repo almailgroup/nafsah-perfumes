@@ -99,20 +99,35 @@ A bilingual Gulf identity. The house is named Nafsah, ships from Kuwait and pric
 dinar, so the design says so: Arabic and English are peers, not a translation layer bolted
 on afterwards.
 
-### Colour
+### Colour — Rolex brand palette
 
-| Token      | Role                                                                   |
-| ---------- | ---------------------------------------------------------------------- |
-| `midnight` | `#08130f` → `#2b5144`. Deep green-black ground, panels and rules.       |
-| `pearl`    | `#f6f2e9` → `#8b8e85`. All text.                                        |
-| `jade`     | `#b6e3d2` → `#1f6f5c`. The accent: actions, active states, badges.      |
-| `saffron`  | `#e4b35f`, `#c8862a`. Rationed to eyebrow labels and the vial's seal.   |
-| `lapis`    | Decorative only — 3.8:1 on the ground, so never used for text.          |
-| `alert`    | Validation only.                                                        |
+Two official brand values, used exactly:
 
-Jade rather than gold is deliberate: this brand was already rejected once for looking like
-a gold merchant, and a green ground lets the warm note stay a fragrance reference rather
-than a metal.
+| Name           | Hex       | RGB             | Pantone |
+| -------------- | --------- | --------------- | ------- |
+| **Arab Green** | `#006039` | `0, 96, 57`     | 3425 C  |
+| **Boy Gold**   | `#A37E2C` | `163, 126, 44`  | 7754 C  |
+
+| Token      | Role                                                                    |
+| ---------- | ----------------------------------------------------------------------- |
+| `midnight` | `#08140f` → `#345548`. Surfaces, carrying the brand green's own 155.6° hue, so the ground reads as darkened Arab Green rather than grey. |
+| `green`    | `600` **is** Arab Green. Tints 200–500 are derived. |
+| `gold`     | `500` **is** Boy Gold. Tints 200–400 are derived. |
+| `pearl`    | `#f6f2e9` → `#8b8e85`. All text. |
+
+Two constraints govern how the brand values are allowed to be used:
+
+**Arab Green is a fill, never text.** At `2.45:1` against the ground it cannot carry
+type. It is the action fill — buttons, the cart badge, the full-bleed trust band — where
+pearl on it measures `6.88:1`. Green *text* uses the derived tints (`green-300` at
+`9.1:1`). The tints are also deliberately desaturated: at the brand's own 100% saturation
+they render neon, which is the opposite of what this palette is for.
+
+**Boy Gold is rationed.** `#A37E2C` is `4.99:1` on the ground — passing, but tight for an
+11px label — so it is used for fills, borders and the vial's wax seal, while gold *text*
+takes `gold-300` at `10.16:1`. Gold appears on eyebrow labels, the secondary button and the
+seal, and nowhere else. This brand was rejected once for looking like a gold merchant;
+green does the structural work and gold stays a punctuation mark.
 
 ### Type — four faces, two scripts
 

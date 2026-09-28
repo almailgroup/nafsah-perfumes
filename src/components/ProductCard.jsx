@@ -47,11 +47,11 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
 
   return (
     <article
-      className="group flex animate-fade-up flex-col border border-pearl-50/[0.14] bg-midnight-850 transition-colors duration-500 hover:border-jade-500/50"
+      className="group flex animate-fade-up flex-col border border-pearl-50/[0.14] bg-midnight-850 transition-colors duration-500 hover:border-green-500/50"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
       <div className="flex items-center justify-between border-b border-pearl-50/[0.14] px-5 py-3">
-        <span className="ticket text-saffron-300">
+        <span className="ticket text-gold-300">
           {lang === 'ar' ? 'رقم' : 'No.'} {formatOrdinal(catalogue, lang)}
         </span>
         <span className="ticket text-pearl-400">{pick(product.family, FAMILY_AR[product.family])}</span>
@@ -60,7 +60,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
       <div className="relative overflow-hidden bg-midnight-800">
         <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
         {(product.isNew || product.bestseller) && (
-          <span className="ticket absolute start-5 top-4 z-10 text-jade-300">
+          <span className="ticket absolute start-5 top-4 z-10 text-green-300">
             {product.isNew ? t('newBadge') : t('bestsellerBadge')}
           </span>
         )}
@@ -136,8 +136,8 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
             className={classNames(
               'mt-2 flex w-full items-center justify-center gap-2.5 py-3 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:normal-case rtl:tracking-normal',
               justAdded
-                ? 'bg-jade-400 text-midnight-950'
-                : 'bg-jade-600 text-pearl-50 hover:bg-jade-500',
+                ? 'bg-green-400 text-midnight-950'
+                : 'bg-green-600 text-pearl-50 hover:bg-green-500',
             )}
           >
             {justAdded ? (

@@ -225,8 +225,8 @@ export default function CheckoutModal() {
 
         {status === 'confirmed' && receipt ? (
           <div className="flex flex-col items-center px-6 py-16 text-center sm:px-12">
-            <span className="grid h-20 w-20 place-items-center rounded-full border border-jade-500/40 bg-jade-500/[0.07]">
-              <BadgeCheck className="h-9 w-9 text-jade-300" strokeWidth={1.25} />
+            <span className="grid h-20 w-20 place-items-center rounded-full border border-green-500/40 bg-green-500/[0.07]">
+              <BadgeCheck className="h-9 w-9 text-green-300" strokeWidth={1.25} />
             </span>
             <h2 id="checkout-title" className="t-display-sm mt-7">{t('thankYou')}</h2>
             <p className="t-deck mt-4 max-w-sm">
@@ -248,7 +248,7 @@ export default function CheckoutModal() {
                 </span>
               </div>
             </div>
-            <button type="button" onClick={handleClose} className="btn-jade mt-9">
+            <button type="button" onClick={handleClose} className="btn-green mt-9">
               {t('continueBrowsing')}
             </button>
           </div>
@@ -269,7 +269,7 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors duration-300',
-                            done && 'border-jade-500 bg-jade-500 text-midnight-950',
+                            done && 'border-green-500 bg-green-500 text-midnight-950',
                             active && 'border-pearl-50 bg-pearl-50 text-midnight-950',
                             !done && !active && 'border-pearl-50/25 text-pearl-400',
                           )}
@@ -289,7 +289,7 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'h-px flex-1 transition-colors duration-500',
-                            done ? 'bg-jade-500/60' : 'bg-pearl-50/15',
+                            done ? 'bg-green-500/60' : 'bg-pearl-50/15',
                           )}
                         />
                       )}
@@ -374,7 +374,7 @@ export default function CheckoutModal() {
 
                 {/* Order summary */}
                 <div className="mt-8  border rule bg-midnight-900/60 p-5">
-                  <h3 className="ticket text-jade-300">{t('orderSummary')}</h3>
+                  <h3 className="ticket text-green-300">{t('orderSummary')}</h3>
                   <ul className="mt-4 space-y-2.5">
                     {lines.map((line) => (
                       <li key={line.id} className="flex justify-between gap-4 text-sm">
@@ -420,7 +420,7 @@ export default function CheckoutModal() {
 
               <button type="button"
                 onClick={handleNext} disabled={status === 'processing' || lines.length === 0}
-                className="btn-jade group"
+                className="btn-green group"
               >
                 {status === 'processing' ? (
                   <>

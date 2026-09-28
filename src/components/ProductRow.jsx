@@ -17,7 +17,7 @@ export default function ProductRow({ title, caption, products, onViewAll, tone =
           <button
             type="button"
             onClick={onViewAll}
-            className="ticket shrink-0 text-jade-300 underline underline-offset-4 transition-colors hover:text-jade-200"
+            className="ticket shrink-0 text-green-300 underline underline-offset-4 transition-colors hover:text-green-200"
           >
             {t('viewAll')}
           </button>

@@ -50,7 +50,7 @@ export default function Footer() {
       <div className="relative border-b border-pearl-50/15">
         <div className="mx-auto grid max-w-[1560px] gap-10 px-5 py-16 sm:px-9 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="ticket text-saffron-300">{t('privateList')}</p>
+            <p className="ticket text-gold-300">{t('privateList')}</p>
             <h2 className="t-h2 mt-5">{t('newsletterTitle')}</h2>
           </div>
           <div className="lg:ps-10">
@@ -112,7 +112,7 @@ export default function Footer() {
               <ul className="mt-5 space-y-3">
                 {pick(column.links.en, column.links.ar).map((link) => (
                   <li key={link}>
-                    <a href="#collection" className="t-body text-[13px] transition-colors duration-300 hover:text-jade-300">
+                    <a href="#collection" className="t-body text-[13px] transition-colors duration-300 hover:text-green-300">
                       {link}
                     </a>
                   </li>
@@ -136,8 +136,8 @@ export default function Footer() {
             {t('rights', { year: formatNumber(new Date().getFullYear(), lang).replace(/[,٬]/g, '') })}
           </p>
           <div className="flex items-center gap-6">
-            <a href="#collection" className="ticket text-pearl-400 hover:text-jade-300">{t('privacy')}</a>
-            <a href="#collection" className="ticket text-pearl-400 hover:text-jade-300">{t('terms')}</a>
+            <a href="#collection" className="ticket text-pearl-400 hover:text-green-300">{t('privacy')}</a>
+            <a href="#collection" className="ticket text-pearl-400 hover:text-green-300">{t('terms')}</a>
           </div>
         </div>
       </div>

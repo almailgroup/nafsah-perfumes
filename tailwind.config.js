@@ -4,34 +4,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Deep green-black. Gulf perfumery packaging lives in this register,
-        // and it lets the accent be jade rather than metal — the failure mode
-        // this brand has already been through once.
+        // Surfaces: near-black carrying the brand green's own hue (155.6deg),
+        // so the ground reads as a darkened Arab Green rather than a grey.
         midnight: {
-          950: '#08130f',
-          900: '#0c1a15',
-          850: '#10211b',
-          800: '#152a22',
-          700: '#1e3a2f',
-          600: '#2b5144',
+          950: '#08140f',
+          900: '#0b1b15',
+          850: '#0f211a',
+          800: '#152b22',
+          700: '#233e33',
+          600: '#345548',
         },
-        jade: {
-          200: '#b6e3d2',
-          300: '#7fc9b0',
-          400: '#4ea88c',
-          500: '#2f8a6e',
-          600: '#1f6f5c',
+        // Rolex "Arab Green". 600 is the exact brand value and is a FILL only:
+        // at 2.45:1 on the ground it cannot carry text. The lighter tints are
+        // desaturated derivations — at full saturation they go neon, which is
+        // the opposite of what this brand is.
+        green: {
+          200: '#a6d3c1',
+          300: '#79c3a5',
+          400: '#43b185',
+          500: '#218c61',
+          600: '#006039',
+          700: '#004d2e',
         },
-        // Decorative only — 3.8:1 on the ground, so never used for text.
-        lapis: {
-          400: '#4a6fb5',
-          600: '#26467f',
-        },
-        // The warm note, rationed hard. Saffron is a fragrance in the
-        // catalogue, not a metal.
-        saffron: {
-          300: '#e4b35f',
-          500: '#c8862a',
+        // Rolex "Boy Gold". 500 is the exact brand value, used for fills,
+        // borders and the vial's seal; 300 carries gold TEXT, where 500 is
+        // only 4.99:1 and too tight for an 11px label.
+        gold: {
+          200: '#e7d3a7',
+          300: '#dabb77',
+          400: '#cda347',
+          500: '#a37e2c',
         },
         pearl: {
           50: '#f6f2e9',

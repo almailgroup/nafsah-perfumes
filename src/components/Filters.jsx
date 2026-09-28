@@ -31,7 +31,7 @@ function PriceSlider({ range, onChange }) {
       </div>
       <div className="relative h-10">
         <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-pearl-50/25" />
-        <div className="absolute top-1/2 h-px -translate-y-1/2 bg-jade-300" style={fill} />
+        <div className="absolute top-1/2 h-px -translate-y-1/2 bg-green-300" style={fill} />
         <input
           type="range" min={floor} max={ceiling} step={STEP} value={range[0]}
           onChange={(e) => setMin(e.target.value)} aria-label={`${t('price')} — min`}
@@ -74,7 +74,7 @@ const Filters = forwardRef(function Filters(
             id="fragrance-search" ref={searchRef} type="search" value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder={t('searchShort')} aria-label={t('search')}
-            className="w-full border-b border-pearl-50/25 bg-transparent pb-2 pe-6 ps-6 font-sans text-[15px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-jade-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border-b border-pearl-50/25 bg-transparent pb-2 pe-6 ps-6 font-sans text-[15px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
           {query && (
             <button
@@ -94,7 +94,7 @@ const Filters = forwardRef(function Filters(
           </label>
           <select
             id="fragrance-sort" value={sort} onChange={(e) => onSortChange(e.target.value)}
-            className="w-full cursor-pointer appearance-none border-b border-pearl-50/25 bg-transparent pb-2 pe-6 font-sans text-[15px] font-light text-pearl-50 focus:border-jade-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full cursor-pointer appearance-none border-b border-pearl-50/25 bg-transparent pb-2 pe-6 font-sans text-[15px] font-light text-pearl-50 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value} className="bg-midnight-900 text-pearl-50">
@@ -115,12 +115,12 @@ const Filters = forwardRef(function Filters(
               key={family} type="button" onClick={() => onToggleFamily(family)} aria-pressed={active}
               className={classNames(
                 'relative py-1 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal',
-                active ? 'text-jade-300' : 'text-pearl-400 hover:text-pearl-100',
+                active ? 'text-green-300' : 'text-pearl-400 hover:text-pearl-100',
               )}
             >
               {pick(family, FAMILY_AR[family])}
               <span className={classNames(
-                'absolute -bottom-0.5 start-0 h-px bg-jade-300 transition-all duration-300',
+                'absolute -bottom-0.5 start-0 h-px bg-green-300 transition-all duration-300',
                 active ? 'w-full' : 'w-0',
               )} />
             </button>
@@ -134,7 +134,7 @@ const Filters = forwardRef(function Filters(
           {isFiltered && (
             <button
               type="button" onClick={onReset}
-              className="ticket text-jade-300 underline underline-offset-4 transition-colors hover:text-jade-200"
+              className="ticket text-green-300 underline underline-offset-4 transition-colors hover:text-green-200"
             >
               {t('reset')}
             </button>
