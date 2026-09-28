@@ -67,7 +67,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full border border-snow-300 bg-snow-100 py-2.5 pe-4 ps-11 font-sans text-[14px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border border-snow-300 bg-snow-100 py-2.5 pe-4 ps-11 font-sans text-[15px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
         </form>
 
@@ -192,7 +192,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder={t('searchShort')}
-              className="w-full border border-snow-300 bg-snow-100 py-3 pe-4 ps-11 font-sans text-[14px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none rtl:font-sans-ar"
+              className="w-full border border-snow-300 bg-snow-100 py-3 pe-4 ps-11 font-sans text-[15px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none rtl:font-sans-ar"
             />
           </form>
 

@@ -83,7 +83,7 @@ export default function CartDrawer() {
           <>
             {/* Free-shipping progress */}
             <div className="border-b rule px-6 py-4">
-              <div className="flex items-center gap-2 font-sans text-[12px] font-light text-pearl-400">
+              <div className="flex items-center gap-2 font-sans text-[13px] font-normal text-pearl-400">
                 <Truck className="h-3.5 w-3.5 text-pearl-200" strokeWidth={1.5} />
                 {remaining > 0 ? (
                   <span>{t('awayFromFree', { amount: formatPrice(remaining, lang) })}</span>
@@ -154,7 +154,7 @@ export default function CartDrawer() {
             </ul>
 
             <footer className="border-t rule bg-midnight-900/60 px-6 py-5">
-              <dl className="space-y-2 font-sans text-[13px] font-light">
+              <dl className="space-y-2 font-sans text-[14px] font-normal">
                 <div className="flex justify-between text-pearl-400">
                   <dt>{t('subtotal')}</dt>
                   <dd className="tabular-nums text-pearl-100">{formatPrice(totals.subtotal, lang)}</dd>

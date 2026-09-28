@@ -3,20 +3,34 @@
 @tailwind utilities;
 
 /*
- * BILINGUAL TYPE SYSTEM — tuned for legibility
+ * BILINGUAL TYPE SYSTEM
  *
- * Latin display is Marcellus: Roman inscriptional capitals, x-height 0.466
- * against Cormorant Garamond's 0.386, which is 21% more apparent size at the
- * same nominal setting with far sturdier strokes. One weight, no italic.
+ * The whole Latin side is Jost, a geometric sans in the Futura line. Measured
+ * at 100px: cap-height 0.700, x-height 0.460, so x/cap is 0.657 — a small
+ * lowercase under tall capitals, which is the Futura signature and the reason
+ * a single family can carry both the display and the UI here.
  *
- * Latin UI and body is Inter, x-height 0.546 against Jost's 0.460 and drawn
- * specifically for interface legibility. Body weight is 400, not 300 — a
- * hairline body weight on a dark ground is the other half of "hard to read".
+ * Two consequences drive the numbers below.
+ *
+ * Capitals need nothing. Jost's cap-height is within 1.4% of the Marcellus it
+ * replaces, so every display size and every all-caps label keeps its setting.
+ *
+ * Lowercase needs a step. At the same nominal size Jost's x-height is 16%
+ * under Inter's, so running text set at the old sizes would read smaller.
+ * Mixed-case text is therefore set one step larger. Jost is also 11% narrower
+ * than Inter, so that step is close to width-neutral — 16px Jost occupies
+ * about the same measure as 15px Inter, and no line lengths move.
+ *
+ * Weight stays at 400 for body. Jost is monolinear and light for its size,
+ * and light-on-dark thins further in gamma space, so 300 is not available to
+ * this design on the dark ground.
  *
  * Arabic display is Reem Kufi, sharing the mashrabiya's geometry; Arabic UI is
- * IBM Plex Sans Arabic. Arabic sits lower and wider than Latin at the same
- * nominal size, so the [dir="rtl"] blocks re-tune size and leading rather than
- * reusing the Latin numbers.
+ * IBM Plex Sans Arabic. Jost has no Arabic, so this pair is not optional — but
+ * geometric Kufi sits closer to a geometric Latin than to the serif it used to
+ * answer. Arabic sits lower and wider than Latin at the same nominal size, so
+ * the [dir="rtl"] blocks keep re-tuning size and leading rather than reusing
+ * the Latin numbers.
  */
 
 @layer base {
@@ -77,7 +91,9 @@
     font-size: clamp(2.25rem, 5.6vw, 4.75rem);
     font-weight: 400;
     line-height: 1.12;
-    letter-spacing: -0.005em;
+    /* Geometric capitals have open counters already; at 76px they close up
+       rather than crowd. */
+    letter-spacing: -0.02em;
   }
 
   [dir='rtl'] .t-display {
@@ -93,12 +109,16 @@
     font-size: clamp(1.7rem, 3vw, 2.4rem);
     font-weight: 400;
     line-height: 1.18;
+    letter-spacing: -0.012em;
   }
 
   [dir='rtl'] .t-h2 {
     @apply font-display-ar;
     font-size: clamp(1.6rem, 2.9vw, 2.25rem);
     line-height: 1.4;
+    /* Negative tracking is for the geometric Latin; on Arabic it pulls joined
+       letterforms into each other. */
+    letter-spacing: 0;
   }
 
   .t-title {
@@ -106,22 +126,24 @@
     font-size: 1.4rem;
     font-weight: 400;
     line-height: 1.25;
+    letter-spacing: -0.006em;
   }
 
   [dir='rtl'] .t-title {
     @apply font-display-ar;
     font-size: 1.375rem;
     line-height: 1.5;
+    letter-spacing: 0;
   }
 
   /* ---- Body and UI. Sans in both scripts. ---- */
 
   .t-body {
     @apply font-sans text-pearl-200;
-    font-size: 0.9375rem;
+    font-size: 1rem; /* was 15px under Inter; 16px Jost holds the same measure */
     font-weight: 400;
     line-height: 1.65;
-    letter-spacing: -0.003em;
+    letter-spacing: 0;
   }
 
   [dir='rtl'] .t-body {
@@ -159,8 +181,9 @@
     letter-spacing: 0;
   }
 
-  /* Prices. Cormorant's default figures are proportional oldstyle, so a
-     column jitters without lnum+tnum. */
+  /* Prices. Jost's default figures are proportional — its 1 measures 450
+     against the 0's 600 at 100px — so a column jitters without tnum. Its
+     figures are already lining, and tabular-nums is confirmed supported. */
   .t-figure {
     @apply font-sans;
     font-size: 1.0625rem;
@@ -319,7 +342,7 @@
   }
 
   .field {
-    @apply w-full border border-pearl-50/20 bg-midnight-900 px-4 py-3 font-sans text-[15px] font-light
+    @apply w-full border border-pearl-50/20 bg-midnight-900 px-4 py-3 font-sans text-[16px] font-normal
            text-pearl-50 placeholder:text-pearl-400 transition-colors duration-200 focus:border-green-400
            focus:outline-none focus:ring-0;
   }

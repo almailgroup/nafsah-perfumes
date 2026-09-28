@@ -74,7 +74,7 @@ const Filters = forwardRef(function Filters(
             id="fragrance-search" ref={searchRef} type="search" value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder={t('searchShort')} aria-label={t('search')}
-            className="w-full border-b border-pearl-50/25 bg-transparent pb-2 pe-6 ps-6 font-sans text-[15px] font-light text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border-b border-pearl-50/25 bg-transparent pb-2 pe-6 ps-6 font-sans text-[16px] font-normal text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
           {query && (
             <button
@@ -94,7 +94,7 @@ const Filters = forwardRef(function Filters(
           </label>
           <select
             id="fragrance-sort" value={sort} onChange={(e) => onSortChange(e.target.value)}
-            className="w-full cursor-pointer appearance-none border-b border-pearl-50/25 bg-transparent pb-2 pe-6 font-sans text-[15px] font-light text-pearl-50 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full cursor-pointer appearance-none border-b border-pearl-50/25 bg-transparent pb-2 pe-6 font-sans text-[16px] font-normal text-pearl-50 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           >
             {SORT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value} className="bg-midnight-900 text-pearl-50">

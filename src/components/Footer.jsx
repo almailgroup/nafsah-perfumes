@@ -99,7 +99,7 @@ export default function Footer() {
                 'atelier@nafsah.example',
                 '+965 2200 0000',
               ].map((line) => (
-                <li key={line} className="t-body text-[13px]" dir={line.startsWith('+') ? 'ltr' : undefined}>
+                <li key={line} className="t-body text-[14px]" dir={line.startsWith('+') ? 'ltr' : undefined}>
                   {line}
                 </li>
               ))}
@@ -114,7 +114,7 @@ export default function Footer() {
                   <li key={link}>
                     <a
                       href="#collection"
-                      className="nav-link nav-link-body t-body text-[13px] transition-colors duration-300 hover:text-green-300"
+                      className="nav-link nav-link-body t-body text-[14px] transition-colors duration-300 hover:text-green-300"
                     >
                       {link}
                     </a>

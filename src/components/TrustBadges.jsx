@@ -32,7 +32,7 @@ export default function TrustBadges() {
             <Icon className="mt-0.5 h-5 w-5 shrink-0 text-gold-200" strokeWidth={1.25} />
             <div className="min-w-0">
               <h3 className="t-title text-[1.2rem] text-pearl-50">{t(title)}</h3>
-              <p className="t-body mt-1.5 text-[13px] text-pearl-100">{t(body, { threshold })}</p>
+              <p className="t-body mt-1.5 text-[14px] text-pearl-100">{t(body, { threshold })}</p>
             </div>
           </div>
         ))}

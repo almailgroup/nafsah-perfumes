@@ -57,16 +57,17 @@ export default {
         },
       },
       fontFamily: {
-        // Marcellus: Roman inscriptional capitals. x-height 0.466 against
-        // Cormorant's 0.386 — 21% more apparent size at the same setting, with
-        // far sturdier strokes. One weight, no italic, which is a discipline.
-        display: ['Marcellus', 'Optima', 'Georgia', 'serif'],
-        // Geometric Kufi: the Arabic counterpart to a display serif, and the
-        // shape language the mashrabiya lattice is drawn from.
-        'display-ar': ['"Reem Kufi"', '"Noto Kufi Arabic"', 'serif'],
-        // Inter: x-height 0.546 against Jost's 0.460, and drawn specifically
-        // for interface legibility. This is the "user friendly" half.
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+        // Jost carries the whole Latin side, display and UI alike. Measured at
+        // 100px: cap 0.700 against Marcellus' 0.710, so it takes over the
+        // display sizes unchanged; x-height 0.460 against Inter's 0.550, so
+        // lowercase UI text is set a step larger to hold its apparent size.
+        // Being 11% narrower than Inter, that step costs almost no width.
+        display: ['Jost', 'Futura', 'Century Gothic', 'sans-serif'],
+        sans: ['Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
+        // Jost has no Arabic, so the Arabic side keeps its own pair. Reem Kufi
+        // is geometric Kufi, which now sits closer to the Latin than the
+        // inscriptional serif it replaced.
+        'display-ar': ['"Reem Kufi"', '"Noto Kufi Arabic"', 'sans-serif'],
         'sans-ar': ['"IBM Plex Sans Arabic"', '"Noto Sans Arabic"', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {

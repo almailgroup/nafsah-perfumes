@@ -105,7 +105,7 @@ function Field({ id, label, error, className, ...props }) {
         className={classNames('field', error && 'border-alert-400 focus:border-alert-400')} aria-invalid={Boolean(error)}
         {...props}
       />
-      {error && <p className="mt-2 font-sans text-[12px] text-alert-400">{error}</p>}
+      {error && <p className="mt-2 font-sans text-[13px] text-alert-400">{error}</p>}
     </div>
   )
 }
@@ -365,7 +365,7 @@ export default function CheckoutModal() {
                       autoComplete="cc-csc" value={form.cvc}
                       onChange={update('cvc')} error={errors.cvc}
                     />
-                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[11px] text-pearl-400">
+                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[12px] text-pearl-400">
                       <Lock className="h-3.5 w-3.5 text-pearl-100" strokeWidth={1.5} />
                       {t('demoOnly')}
                     </p>
