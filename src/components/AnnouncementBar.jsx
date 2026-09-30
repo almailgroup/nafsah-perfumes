@@ -24,8 +24,8 @@ export default function AnnouncementBar() {
     <div className="relative overflow-hidden bg-green-600">
       
       <div className="relative mx-auto flex h-10 max-w-[1560px] items-center justify-center px-5 sm:px-9">
-        <p key={index} className="ticket flex animate-fade-in items-center gap-2.5 truncate text-pearl-50">
-          <Truck className="h-3.5 w-3.5 shrink-0 text-gold-200" strokeWidth={1.25} />
+        <p key={index} className="ticket flex animate-fade-in items-center gap-2.5 truncate text-snow-50">
+          <Truck className="h-3.5 w-3.5 shrink-0 text-gold-300" strokeWidth={1.25} />
           {message}
         </p>
       </div>

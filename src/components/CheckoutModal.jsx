@@ -97,15 +97,15 @@ function Field({ id, label, error, className, ...props }) {
     <div className={className}>
       <label
         htmlFor={id}
-        className="ticket mb-2 block text-pearl-400"
+        className="ticket mb-2 block text-snow-600"
       >
         {label}
       </label>
       <input id={id}
-        className={classNames('field', error && 'border-alert-400 focus:border-alert-400')} aria-invalid={Boolean(error)}
+        className={classNames('field', error && 'border-alert-600 focus:border-alert-600')} aria-invalid={Boolean(error)}
         {...props}
       />
-      {error && <p className="mt-2 font-sans text-[13px] text-alert-400">{error}</p>}
+      {error && <p className="mt-2 font-sans text-[13px] text-alert-600">{error}</p>}
     </div>
   )
 }
@@ -209,41 +209,41 @@ export default function CheckoutModal() {
     <div className="fixed inset-0 z-[60] flex items-end justify-center p-0 sm:items-center sm:p-6">
       <div
         onClick={handleClose}
-        className="absolute inset-0 animate-fade-in bg-pearl-50/60 backdrop-blur-sm"
+        className="absolute inset-0 animate-fade-in bg-ink-950/35 backdrop-blur-sm"
       />
 
       <div ref={panelRef} role="dialog" aria-modal="true"
         tabIndex={-1} aria-labelledby="checkout-title"
-        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-white/[0.08] bg-midnight-950 border-pearl-50/15 bg-midnight-900 shadow-[0_40px_100px_-30px_rgba(20,18,16,0.5)] sm:"
+        className="relative flex max-h-[94vh] w-full max-w-3xl animate-scale-in flex-col overflow-hidden  border border-snow-200 bg-snow-50 border-snow-200 bg-snow-50 shadow-[0_40px_100px_-30px_rgba(20,18,16,0.5)] sm:"
       >
         <button type="button"
           onClick={handleClose} aria-label={t('closeCheckout')}
-          className="absolute end-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-pearl-300 transition-colors hover:text-pearl-50"
+          className="absolute end-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-snow-600 transition-colors hover:text-ink-950"
         >
           <X className="h-4 w-4" strokeWidth={1.5} />
         </button>
 
         {status === 'confirmed' && receipt ? (
           <div className="flex flex-col items-center px-6 py-16 text-center sm:px-12">
-            <span className="grid h-20 w-20 place-items-center rounded-full border border-green-500/40 bg-green-500/[0.07]">
-              <BadgeCheck className="h-9 w-9 text-green-300" strokeWidth={1.25} />
+            <span className="grid h-20 w-20 place-items-center rounded-full border border-green-600/40 bg-green-700/[0.07]">
+              <BadgeCheck className="h-9 w-9 text-green-600" strokeWidth={1.25} />
             </span>
             <h2 id="checkout-title" className="t-display-sm mt-7">{t('thankYou')}</h2>
             <p className="t-deck mt-4 max-w-sm">
               {t('confirmedBody', { email: receipt.email })}
             </p>
-            <div className="mt-8 w-full max-w-xs  border rule bg-midnight-900/70 p-5 text-left">
+            <div className="mt-8 w-full max-w-xs  border rule bg-snow-50/70 p-5 text-left">
               <div className="flex items-baseline justify-between gap-4">
-                <span className="ticket text-pearl-400">{t('order')}</span>
-                <span className="t-figure text-[1.25rem] text-pearl-50">{receipt.reference}</span>
+                <span className="ticket text-snow-600">{t('order')}</span>
+                <span className="t-figure text-[1.25rem] text-ink-950">{receipt.reference}</span>
               </div>
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
-                <span className="ticket text-pearl-400">{t('items')}</span>
-                <span className="t-figure text-[1.25rem] text-pearl-50">{formatNumber(receipt.items, lang)}</span>
+                <span className="ticket text-snow-600">{t('items')}</span>
+                <span className="t-figure text-[1.25rem] text-ink-950">{formatNumber(receipt.items, lang)}</span>
               </div>
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
-                <span className="ticket text-pearl-400">{t('paid')}</span>
-                <span className="t-figure text-[1.25rem] text-pearl-50">
+                <span className="ticket text-snow-600">{t('paid')}</span>
+                <span className="t-figure text-[1.25rem] text-ink-950">
                   {formatPrice(receipt.total, lang)}
                 </span>
               </div>
@@ -269,9 +269,9 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-colors duration-300',
-                            done && 'border-green-500 bg-green-500 text-midnight-950',
-                            active && 'border-pearl-50 bg-pearl-50 text-midnight-950',
-                            !done && !active && 'border-pearl-50/25 text-pearl-400',
+                            done && 'border-green-600 bg-green-700 text-snow-50',
+                            active && 'border-green-600 bg-green-600 text-snow-50',
+                            !done && !active && 'border-snow-200 text-snow-600',
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -279,7 +279,7 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'hidden font-sans text-[10px] uppercase tracking-label transition-colors duration-300 sm:block',
-                            active ? 'text-pearl-50' : 'text-pearl-400',
+                            active ? 'text-ink-950' : 'text-snow-600',
                           )}
                         >
                           {t(entry.label)}
@@ -289,7 +289,7 @@ export default function CheckoutModal() {
                         <span
                           className={classNames(
                             'h-px flex-1 transition-colors duration-500',
-                            done ? 'bg-green-500/60' : 'bg-pearl-50/15',
+                            done ? 'bg-green-600' : 'bg-snow-200',
                           )}
                         />
                       )}
@@ -365,42 +365,42 @@ export default function CheckoutModal() {
                       autoComplete="cc-csc" value={form.cvc}
                       onChange={update('cvc')} error={errors.cvc}
                     />
-                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[12px] text-pearl-400">
-                      <Lock className="h-3.5 w-3.5 text-pearl-100" strokeWidth={1.5} />
+                    <p className="sm:col-span-2 mt-1 flex items-center gap-2 text-[12px] text-snow-600">
+                      <Lock className="h-3.5 w-3.5 text-ink-950" strokeWidth={1.5} />
                       {t('demoOnly')}
                     </p>
                   </div>
                 )}
 
                 {/* Order summary */}
-                <div className="mt-8  border rule bg-midnight-900/60 p-5">
-                  <h3 className="ticket text-green-300">{t('orderSummary')}</h3>
+                <div className="mt-8  border rule bg-snow-50/60 p-5">
+                  <h3 className="ticket text-green-600">{t('orderSummary')}</h3>
                   <ul className="mt-4 space-y-2.5">
                     {lines.map((line) => (
                       <li key={line.id} className="flex justify-between gap-4 text-sm">
-                        <span className="min-w-0 truncate text-pearl-100">
+                        <span className="min-w-0 truncate text-ink-950">
                           {pick(line.product.name, line.product.ar.name)}
-                          <span className="text-pearl-400">
+                          <span className="text-snow-600">
                             {' '}
                             · {line.ml}{lang === 'ar' ? ' مل' : 'ml'} × {formatNumber(line.qty, lang)}
                           </span>
                         </span>
-                        <span className="shrink-0 tabular-nums text-pearl-50">
+                        <span className="shrink-0 tabular-nums text-ink-950">
                           {formatPrice(line.subtotal, lang)}
                         </span>
                       </li>
                     ))}
                   </ul>
                   <div className="mt-4 space-y-1.5 border-t rule pt-4 text-sm">
-                    <div className="flex justify-between text-pearl-300">
+                    <div className="flex justify-between text-snow-600">
                       <span>{t('shipping')}</span>
                       <span className="tabular-nums">
                         {totals.shipping === 0 ? t('complimentary') : formatPrice(totals.shipping, lang)}
                       </span>
                     </div>
                     <div className="flex items-baseline justify-between pt-1.5">
-                      <span className="ticket text-pearl-50">{t('total')}</span>
-                      <span className="t-figure text-[1.75rem] text-pearl-50">
+                      <span className="ticket text-ink-950">{t('total')}</span>
+                      <span className="t-figure text-[1.75rem] text-ink-950">
                         {formatPrice(totals.total, lang)}
                       </span>
                     </div>
@@ -409,10 +409,10 @@ export default function CheckoutModal() {
               </div>
             </div>
 
-            <footer className="flex items-center justify-between gap-3 border-t rule bg-midnight-900/40 px-6 py-5 sm:px-10">
+            <footer className="flex items-center justify-between gap-3 border-t rule bg-snow-50/40 px-6 py-5 sm:px-10">
               <button type="button"
                 onClick={() => (stepIndex === 0 ? handleClose() : setStepIndex((i) => i - 1))}
-                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-pearl-300 transition-colors hover:text-pearl-50"
+                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-label text-snow-600 transition-colors hover:text-ink-950"
               >
                 <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
                 {stepIndex === 0 ? t('cancel') : t(STEPS[stepIndex - 1].label)}

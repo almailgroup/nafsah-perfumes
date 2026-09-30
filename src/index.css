@@ -35,7 +35,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   html {
@@ -43,7 +43,7 @@
   }
 
   body {
-    @apply bg-midnight-950 font-sans text-pearl-200;
+    @apply bg-snow-50 font-sans text-ink-950;
     font-weight: 400;
   }
 
@@ -57,12 +57,12 @@
   }
 
   ::selection {
-    @apply bg-green-600 text-pearl-50;
+    @apply bg-green-600 text-snow-50;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #1e3a2f transparent;
+    scrollbar-color: #cfcabb transparent;
   }
 
   *::-webkit-scrollbar {
@@ -71,7 +71,7 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    @apply bg-midnight-700;
+    @apply bg-snow-300;
   }
 
   *::-webkit-scrollbar-track {
@@ -79,7 +79,7 @@
   }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-green-400 ring-offset-2 ring-offset-midnight-950;
+    @apply outline-none ring-2 ring-green-600 ring-offset-2 ring-offset-snow-50;
   }
 }
 
@@ -87,7 +87,7 @@
   /* ---- Display. Cormorant never appears below 24px on this ground. ---- */
 
   .t-display {
-    @apply font-display text-pearl-50;
+    @apply font-display text-ink-950;
     font-size: clamp(2.25rem, 5.6vw, 4.75rem);
     font-weight: 400;
     line-height: 1.12;
@@ -105,7 +105,7 @@
   }
 
   .t-h2 {
-    @apply font-display text-pearl-50;
+    @apply font-display text-ink-950;
     font-size: clamp(1.7rem, 3vw, 2.4rem);
     font-weight: 400;
     line-height: 1.18;
@@ -122,7 +122,7 @@
   }
 
   .t-title {
-    @apply font-display text-pearl-50;
+    @apply font-display text-ink-950;
     font-size: 1.4rem;
     font-weight: 400;
     line-height: 1.25;
@@ -139,7 +139,7 @@
   /* ---- Body and UI. Sans in both scripts. ---- */
 
   .t-body {
-    @apply font-sans text-pearl-200;
+    @apply font-sans text-ink-950;
     font-size: 1rem; /* was 15px under Inter; 16px Jost holds the same measure */
     font-weight: 400;
     line-height: 1.65;
@@ -323,7 +323,7 @@
   /* ---- Structure ---- */
 
   .rule {
-    @apply border-pearl-50/[0.14];
+    @apply border-snow-200;
   }
 
   /*
@@ -332,7 +332,7 @@
    * motif — used as a low-opacity ground, never behind body copy.
    */
   .mashrabiya {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%2379c3a5' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23006039' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
     background-size: 56px 56px;
   }
 
@@ -345,29 +345,44 @@
     mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
   }
 
+  /* The same tile drawn in paper, for the bands that run on Arab Green. */
+  .mashrabiya-on-green {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23fbfaf7' stroke-width='0.9' stroke-opacity='0.55'%3E%3Cpath d='M12 12h32v32H12z'/%3E%3Cpath d='M28 4l24 24-24 24L4 28z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
   /* ---- Controls. Sans in both scripts, never Cormorant. ---- */
 
   /* Arab Green #006039 as the action fill — the brand value used exactly. */
   .btn-green {
     @apply inline-flex items-center justify-center gap-2.5 bg-green-600 px-8 py-3.5 font-sans text-[11px]
-           font-medium uppercase tracking-wide2 text-pearl-50 transition-colors duration-300
-           hover:bg-green-500 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
+           font-medium uppercase tracking-wide2 text-snow-50 transition-colors duration-300
+           hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-snow-200 disabled:text-snow-600;
   }
 
-  .btn-pearl {
-    @apply inline-flex items-center justify-center gap-2.5 bg-pearl-50 px-8 py-3.5 font-sans text-[11px]
-           font-medium uppercase tracking-wide2 text-midnight-950 transition-colors duration-300
-           hover:bg-pearl-200 disabled:cursor-not-allowed disabled:bg-midnight-700 disabled:text-pearl-400;
+  /* Secondary action on paper: ink fill. */
+  .btn-ink {
+    @apply inline-flex items-center justify-center gap-2.5 bg-ink-950 px-8 py-3.5 font-sans text-[11px]
+           font-medium uppercase tracking-wide2 text-snow-50 transition-colors duration-300
+           hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-snow-200 disabled:text-snow-600;
+  }
+
+  /* The same action on one of the Arab Green bands, where ink goes muddy and
+     paper is the only fill with anywhere to go. */
+  .btn-paper {
+    @apply inline-flex items-center justify-center gap-2.5 bg-snow-50 px-8 py-3.5 font-sans text-[11px]
+           font-medium uppercase tracking-wide2 text-ink-950 transition-colors duration-300
+           hover:bg-snow-200 disabled:cursor-not-allowed disabled:bg-green-600 disabled:text-snow-300;
   }
 
   .btn-outline {
     @apply inline-flex items-center justify-center gap-2.5 border border-gold-500 px-8 py-3.5 font-sans
-           text-[11px] font-medium uppercase tracking-wide2 text-gold-300 transition-colors duration-300
-           hover:bg-gold-500 hover:text-midnight-950;
+           text-[11px] font-medium uppercase tracking-wide2 text-green-600 transition-colors duration-300
+           hover:bg-green-600 hover:text-snow-50 hover:border-green-600;
   }
 
   [dir='rtl'] .btn-green,
-  [dir='rtl'] .btn-pearl,
+  [dir='rtl'] .btn-ink,
+  [dir='rtl'] .btn-paper,
   [dir='rtl'] .btn-outline {
     @apply font-sans-ar normal-case;
     font-size: 0.8125rem;
@@ -375,8 +390,8 @@
   }
 
   .field {
-    @apply w-full border border-pearl-50/20 bg-midnight-900 px-4 py-3 font-sans text-[16px] font-normal
-           text-pearl-50 placeholder:text-pearl-400 transition-colors duration-200 focus:border-green-400
+    @apply w-full border border-snow-300 bg-snow-100 px-4 py-3 font-sans text-[16px] font-normal
+           text-ink-950 placeholder:text-snow-600 transition-colors duration-200 focus:border-green-600
            focus:outline-none focus:ring-0;
   }
 
@@ -410,11 +425,11 @@
 }
 
 .range-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(121, 195, 165, 0.35);
+  box-shadow: 0 0 0 4px rgba(0, 96, 57, 0.28);
 }
 
 .range-input:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(121, 195, 165, 0.35);
+  box-shadow: 0 0 0 4px rgba(0, 96, 57, 0.28);
 }
 
 .range-input::-webkit-slider-thumb {
@@ -425,7 +440,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #79c3a5;
+  background: #006039;
   background-clip: content-box;
   cursor: grab;
   margin-top: 0;
@@ -443,7 +458,7 @@
   width: 40px;
   border-radius: 9999px;
   border: 13px solid transparent;
-  background: #79c3a5;
+  background: #006039;
   background-clip: content-box;
   cursor: grab;
 }

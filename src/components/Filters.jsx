@@ -24,14 +24,14 @@ function PriceSlider({ range, onChange }) {
   return (
     <div className="w-full lg:w-60">
       <div className="mb-3 flex items-baseline justify-between gap-4">
-        <span className="ticket text-pearl-400">{t('price')}</span>
-        <span className="t-figure text-[14px] text-pearl-100">
+        <span className="ticket text-snow-600">{t('price')}</span>
+        <span className="t-figure text-[14px] text-ink-950">
           {formatPrice(range[0], lang)} – {formatPrice(range[1], lang)}
         </span>
       </div>
       <div className="relative h-10">
-        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-pearl-50/25" />
-        <div className="absolute top-1/2 h-px -translate-y-1/2 bg-green-300" style={fill} />
+        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-snow-300" />
+        <div className="absolute top-1/2 h-px -translate-y-1/2 bg-green-600" style={fill} />
         <input
           type="range" min={floor} max={ceiling} step={STEP} value={range[0]}
           onChange={(e) => setMin(e.target.value)} aria-label={`${t('price')} — min`}
@@ -63,23 +63,23 @@ const Filters = forwardRef(function Filters(
   ]
 
   return (
-    <div className="border-y border-pearl-50/[0.14] py-6">
+    <div className="border-y border-snow-200 py-6">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
         <div className="relative flex-1 lg:max-w-xs">
-          <label htmlFor="fragrance-search" className="ticket mb-3 block text-pearl-400">
+          <label htmlFor="fragrance-search" className="ticket mb-3 block text-snow-600">
             {t('search')}
           </label>
-          <Search className="pointer-events-none absolute bottom-2.5 start-0 h-3.5 w-3.5 text-pearl-400" strokeWidth={1.25} />
+          <Search className="pointer-events-none absolute bottom-2.5 start-0 h-3.5 w-3.5 text-snow-600" strokeWidth={1.25} />
           <input
             id="fragrance-search" ref={searchRef} type="search" value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder={t('searchShort')} aria-label={t('search')}
-            className="w-full border-b border-pearl-50/25 bg-transparent pb-2 pe-6 ps-6 font-sans text-[16px] font-normal text-pearl-50 placeholder:text-pearl-400 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border-b border-snow-200 bg-transparent pb-2 pe-6 ps-6 font-sans text-[16px] font-normal text-ink-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
           {query && (
             <button
               type="button" onClick={() => onQueryChange('')} aria-label={t('reset')}
-              className="absolute bottom-1.5 end-0 grid h-6 w-6 place-items-center text-pearl-400 transition-colors hover:text-pearl-50"
+              className="absolute bottom-1.5 end-0 grid h-6 w-6 place-items-center text-snow-600 transition-colors hover:text-ink-950"
             >
               <X className="h-3 w-3" strokeWidth={1.75} />
             </button>
@@ -89,25 +89,25 @@ const Filters = forwardRef(function Filters(
         <PriceSlider range={priceRange} onChange={onPriceChange} />
 
         <div className="relative lg:w-52">
-          <label htmlFor="fragrance-sort" className="ticket mb-3 block text-pearl-400">
+          <label htmlFor="fragrance-sort" className="ticket mb-3 block text-snow-600">
             {t('sort')}
           </label>
           <select
             id="fragrance-sort" value={sort} onChange={(e) => onSortChange(e.target.value)}
-            className="w-full cursor-pointer appearance-none border-b border-pearl-50/25 bg-transparent pb-2 pe-6 font-sans text-[16px] font-normal text-pearl-50 focus:border-green-400 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full cursor-pointer appearance-none border-b border-snow-200 bg-transparent pb-2 pe-6 font-sans text-[16px] font-normal text-ink-950 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           >
             {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value} className="bg-midnight-900 text-pearl-50">
+              <option key={o.value} value={o.value} className="bg-snow-50 text-ink-950">
                 {o.label}
               </option>
             ))}
           </select>
-          <ChevronDown className="pointer-events-none absolute bottom-2.5 end-0 h-3.5 w-3.5 text-pearl-400" strokeWidth={1.25} />
+          <ChevronDown className="pointer-events-none absolute bottom-2.5 end-0 h-3.5 w-3.5 text-snow-600" strokeWidth={1.25} />
         </div>
       </div>
 
       <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
-        <span className="ticket text-pearl-400">{t('family')}</span>
+        <span className="ticket text-snow-600">{t('family')}</span>
         {SCENT_FAMILIES.map((family) => {
           const active = families.includes(family)
           return (
@@ -115,12 +115,12 @@ const Filters = forwardRef(function Filters(
               key={family} type="button" onClick={() => onToggleFamily(family)} aria-pressed={active}
               className={classNames(
                 'relative py-1 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal',
-                active ? 'text-green-300' : 'text-pearl-400 hover:text-pearl-100',
+                active ? 'text-green-600' : 'text-snow-600 hover:text-ink-950',
               )}
             >
               {pick(family, FAMILY_AR[family])}
               <span className={classNames(
-                'absolute -bottom-0.5 start-0 h-px bg-green-300 transition-all duration-300',
+                'absolute -bottom-0.5 start-0 h-px bg-green-600 transition-all duration-300',
                 active ? 'w-full' : 'w-0',
               )} />
             </button>
@@ -128,13 +128,13 @@ const Filters = forwardRef(function Filters(
         })}
 
         <div className="flex w-full items-center justify-between gap-6 sm:ms-auto sm:w-auto">
-          <span className="ticket text-pearl-400">
+          <span className="ticket text-snow-600">
             {formatOrdinal(resultCount, lang)} {t('of')} {formatOrdinal(12, lang)}
           </span>
           {isFiltered && (
             <button
               type="button" onClick={onReset}
-              className="ticket text-green-300 underline underline-offset-4 transition-colors hover:text-green-200"
+              className="ticket text-green-600 underline underline-offset-4 transition-colors hover:text-green-600"
             >
               {t('reset')}
             </button>

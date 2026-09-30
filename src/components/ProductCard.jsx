@@ -47,25 +47,25 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
 
   return (
     <article
-      className="group flex animate-fade-up flex-col border border-pearl-50/[0.14] bg-midnight-850 transition-colors duration-500 hover:border-green-500/50"
+      className="group flex animate-fade-up flex-col border border-snow-200 bg-snow-50 transition-colors duration-500 hover:border-green-600/50"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
-      <div className="flex items-center justify-between border-b border-pearl-50/[0.14] px-5 py-3">
-        <span className="ticket text-gold-300">
+      <div className="flex items-center justify-between border-b border-snow-200 px-5 py-3">
+        <span className="ticket text-green-600">
           {lang === 'ar' ? 'رقم' : 'No.'} {formatOrdinal(catalogue, lang)}
         </span>
-        <span className="ticket text-pearl-400">{pick(product.family, FAMILY_AR[product.family])}</span>
+        <span className="ticket text-snow-600">{pick(product.family, FAMILY_AR[product.family])}</span>
       </div>
 
       <button
         type="button"
         onClick={() => onOpen?.(product)}
         aria-label={`${t('viewDetails')} — ${name}`}
-        className="relative block w-full overflow-hidden bg-midnight-800 text-start"
+        className="relative block w-full overflow-hidden bg-snow-100 text-start"
       >
         <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
         {(product.isNew || product.bestseller) && (
-          <span className="ticket absolute start-5 top-4 z-10 text-green-300">
+          <span className="ticket absolute start-5 top-4 z-10 text-green-600">
             {product.isNew ? t('newBadge') : t('bestsellerBadge')}
           </span>
         )}
@@ -79,44 +79,44 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         </div>
         <span
           aria-hidden="true"
-          className="ticket pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center bg-gradient-to-t from-midnight-950/90 to-transparent pb-4 pt-12 text-pearl-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
+          className="ticket pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center bg-gradient-to-t from-snow-50 via-snow-50/85 to-transparent pb-4 pt-12 text-green-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
         >
           {t('viewDetails')}
         </span>
       </button>
 
-      <div className="flex flex-1 flex-col border-t border-pearl-50/[0.14] px-5 pb-5 pt-5">
+      <div className="flex flex-1 flex-col border-t border-snow-200 px-5 pb-5 pt-5">
         <div className="flex items-baseline justify-between gap-4">
           <h3 className="t-title">
             <button
               type="button"
               onClick={() => onOpen?.(product)}
-              className="text-start transition-colors duration-300 hover:text-green-300"
+              className="text-start transition-colors duration-300 hover:text-green-600"
             >
               {name}
             </button>
           </h3>
-          <span className="t-figure shrink-0 text-[1.3rem] leading-none text-pearl-50">
+          <span className="t-figure shrink-0 text-[1.3rem] leading-none text-ink-950">
             {formatPrice(size.price, lang)}
           </span>
         </div>
 
         <p className="t-body mt-2.5">{pick(product.tagline, product.ar.tagline)}</p>
 
-        <p className="ticket mt-4 text-pearl-400">
+        <p className="ticket mt-4 text-snow-600">
           {pick(product.concentration, CONCENTRATION_AR[product.concentration])} ·{' '}
           {pick(product.intensity, INTENSITY_AR[product.intensity])}
         </p>
 
         {/* Pyramid, omitted on the compact merchandised rows. */}
-        <dl className={classNames('mt-5 border-t border-pearl-50/[0.14]', compact && 'hidden')}>
+        <dl className={classNames('mt-5 border-t border-snow-200', compact && 'hidden')}>
           {NOTE_ROWS.map((key) => (
             <div
               key={key}
-              className="flex items-baseline gap-4 border-b border-pearl-50/[0.08] py-2.5 last:border-b-0"
+              className="flex items-baseline gap-4 border-b border-snow-200 py-2.5 last:border-b-0"
             >
-              <dt className="ticket w-14 shrink-0 text-pearl-400">{t(key)}</dt>
-              <dd className="t-body text-pearl-100">
+              <dt className="ticket w-14 shrink-0 text-snow-600">{t(key)}</dt>
+              <dd className="t-body text-ink-950">
                 {pick(product.notes[key], product.ar.notes[key]).join(lang === 'ar' ? '، ' : ', ')}
               </dd>
             </div>
@@ -127,7 +127,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
           <div
             role="radiogroup"
             aria-label={`${name} — ${t('price')}`}
-            className="flex border border-pearl-50/20"
+            className="flex border border-snow-200"
           >
             {product.sizes.map((option) => (
               <button
@@ -139,8 +139,8 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
                 className={classNames(
                   'flex-1 py-2.5 font-sans text-[11px] tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:tracking-normal',
                   option.ml === selectedMl
-                    ? 'bg-midnight-700 text-pearl-50'
-                    : 'text-pearl-400 hover:text-pearl-100',
+                    ? 'bg-snow-200 text-ink-950'
+                    : 'text-snow-600 hover:text-ink-950',
                 )}
               >
                 {option.ml} {lang === 'ar' ? 'مل' : 'ml'}
@@ -155,8 +155,8 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
             className={classNames(
               'mt-2 flex w-full items-center justify-center gap-2.5 py-3 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:normal-case rtl:tracking-normal',
               justAdded
-                ? 'bg-green-400 text-midnight-950'
-                : 'bg-green-600 text-pearl-50 hover:bg-green-500',
+                ? 'bg-green-600 text-snow-50'
+                : 'bg-green-600 text-snow-50 hover:bg-green-700',
             )}
           >
             {justAdded ? (

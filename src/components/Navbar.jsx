@@ -53,7 +53,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
    * have to follow the label's script, not the document's.
    */
   const swapClass = classNames(
-    'nav-link nav-link-swap py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950',
+    'nav-link nav-link-swap py-3 text-snow-600 transition-colors duration-300 hover:text-ink-950',
     lang === 'en'
       // Arabic inside an LTR page. 0.16em tracking would pull joined
       // letterforms apart, and 11px is too small for this script.
@@ -76,7 +76,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
         >
           <span
             className={classNames(
-              'block text-midnight-950',
+              'block text-ink-950',
               lang === 'ar'
                 ? 'font-display-ar text-[26px] font-medium sm:text-[30px]'
                 : 'font-display text-[24px] font-medium tracking-[0.2em] sm:text-[28px]',
@@ -101,7 +101,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder={t('searchPlaceholder')}
-            className="w-full border border-snow-300 bg-snow-100 py-2.5 pe-4 ps-11 font-sans text-[15px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
+            className="w-full border border-snow-300 bg-snow-100 py-2.5 pe-4 ps-11 font-sans text-[15px] font-normal text-ink-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
           />
         </form>
 
@@ -113,7 +113,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               setMobileOpen(true)
               setTimeout(() => mobileInputRef.current?.focus({ preventScroll: true }), 220)
             }}
-            className="grid h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-midnight-950 md:hidden"
+            className="grid h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-ink-950 md:hidden"
           >
             <Search className="h-[18px] w-[18px]" strokeWidth={1.25} />
           </button>
@@ -121,7 +121,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
           <button
             type="button"
             aria-label={t('account')}
-            className="hidden h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-midnight-950 sm:grid"
+            className="hidden h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-ink-950 sm:grid"
           >
             <User className="h-[18px] w-[18px]" strokeWidth={1.25} />
           </button>
@@ -130,13 +130,13 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             type="button"
             onClick={openCart}
             aria-label={`${t('openCart')} — ${formatNumber(totals.count, lang)}`}
-            className="relative grid h-10 w-10 place-items-center text-midnight-700 transition-colors hover:text-midnight-950"
+            className="relative grid h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-ink-950"
           >
             <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.25} />
             {totals.count > 0 && (
               <span
                 className={classNames(
-                  'absolute end-0 top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-green-600 px-1 font-sans text-[10px] font-medium leading-none text-pearl-50 transition-transform duration-300',
+                  'absolute end-0 top-1.5 grid h-[18px] min-w-[18px] place-items-center rounded-full bg-green-600 text-snow-50 px-1 font-sans text-[10px] font-medium leading-none text-ink-950 transition-transform duration-300',
                   pulse && 'scale-125',
                 )}
               >
@@ -150,7 +150,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? t('closeMenu') : t('openMenu')}
             aria-expanded={mobileOpen}
-            className="grid h-10 w-10 place-items-center text-midnight-700 lg:hidden"
+            className="grid h-10 w-10 place-items-center text-snow-600 lg:hidden"
           >
             {mobileOpen ? (
               <X className="h-[18px] w-[18px]" strokeWidth={1.25} />
@@ -170,7 +170,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               'nav-link nav-link-label t-label py-3 transition-colors duration-300',
               families.length === 0
                 ? 'nav-link-active text-green-600'
-                : 'text-snow-600 hover:text-midnight-950',
+                : 'text-snow-600 hover:text-ink-950',
             )}
           >
             {t('allPerfumes')}
@@ -184,7 +184,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                 'nav-link nav-link-label t-label py-3 transition-colors duration-300',
                 families.includes(family)
                   ? 'nav-link-active text-green-600'
-                  : 'text-snow-600 hover:text-midnight-950',
+                  : 'text-snow-600 hover:text-ink-950',
               )}
             >
               {pick(family, FAMILY_AR[family])}
@@ -198,7 +198,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               <a
                 key={link.href}
                 href={link.href}
-                className="nav-link nav-link-label t-label py-3 text-snow-600 transition-colors duration-300 hover:text-midnight-950"
+                className="nav-link nav-link-label t-label py-3 text-snow-600 transition-colors duration-300 hover:text-ink-950"
               >
                 {link.label}
               </a>
@@ -229,7 +229,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
               placeholder={t('searchShort')}
-              className="w-full border border-snow-300 bg-snow-100 py-3 pe-4 ps-11 font-sans text-[15px] font-normal text-midnight-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none rtl:font-sans-ar"
+              className="w-full border border-snow-300 bg-snow-100 py-3 pe-4 ps-11 font-sans text-[15px] font-normal text-ink-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none rtl:font-sans-ar"
             />
           </form>
 
@@ -240,7 +240,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                 onSelectFamily(null)
                 setMobileOpen(false)
               }}
-              className="t-label border-b border-snow-200 py-4 text-start text-midnight-950"
+              className="t-label border-b border-snow-200 py-4 text-start text-ink-950"
             >
               {t('allPerfumes')}
             </button>
@@ -252,7 +252,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
                   onSelectFamily(family)
                   setMobileOpen(false)
                 }}
-                className="t-label border-b border-snow-200 py-4 text-start text-midnight-950"
+                className="t-label border-b border-snow-200 py-4 text-start text-ink-950"
               >
                 {pick(family, FAMILY_AR[family])}
               </button>
@@ -265,7 +265,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               }}
               lang={lang === 'en' ? 'ar' : 'en'}
               className={classNames(
-                'border-b border-snow-200 py-4 text-start text-midnight-950',
+                'border-b border-snow-200 py-4 text-start text-ink-950',
                 lang === 'en'
                   ? 'font-sans-ar text-[15px] normal-case tracking-normal'
                   : 'font-sans text-[11px] font-medium uppercase tracking-wide2',

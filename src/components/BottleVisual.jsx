@@ -30,10 +30,10 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
 
   const surfaceY = BODY_BOTTOM - (BODY_BOTTOM - BODY_TOP) * fillLevel
 
-  const contour = '#f6f2e9'
-  const contourOpacity = 0.32
-  const stopperFill = '#233e33'
-  const labelFill = '#f6f2e9'
+  const contour = '#08140f'
+  const contourOpacity = 0.5
+  const stopperFill = '#004d2e'
+  const labelFill = '#fbfaf7'
 
   return (
     <svg
@@ -65,7 +65,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
       {/* Ground-glass stopper */}
       <path d={STOPPER} fill={stopperFill} />
       <path d={STOPPER} fill="none" stroke={contour} strokeOpacity={contourOpacity} strokeWidth="1.1" />
-      <path d="M84 9 L91 9 L89 24 L82 22 Z" fill="#ffffff" opacity="0.14" />
+      <path d="M84 9 L91 9 L89 24 L82 22 Z" fill="#ffffff" opacity="0.2" />
       <rect x="88" y="29" width="24" height="6" fill={stopperFill} />
       <rect
         x="88"
@@ -79,7 +79,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
       />
 
       {/* Vial: glass shell, then liquid clipped inside it */}
-      <path d={SILHOUETTE} fill="#0c1a15" fillOpacity="0.55" />
+      <path d={SILHOUETTE} fill="#08140f" fillOpacity="0.07" />
       <g clipPath={`url(#${clip})`}>
         <rect x="40" y={surfaceY} width="120" height={BODY_BOTTOM - surfaceY} fill={`url(#${liquid})`} />
         <rect x="40" y={surfaceY} width="120" height="1.75" fill="#ffffff" opacity="0.4" />
@@ -88,7 +88,7 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
       </g>
       <path d={SILHOUETTE} fill="none" stroke={contour} strokeOpacity={contourOpacity} strokeWidth="1.2" />
 
-      {/* Wax seal at the neck — the one spot of oxblood on the product */}
+      {/* Wax seal at the neck — the only Boy Gold on the product itself */}
       <circle cx="100" cy="80" r="7.5" fill="#a37e2c" />
       <circle cx="100" cy="80" r="7.5" fill="none" stroke="#08140f" strokeOpacity="0.3" strokeWidth="0.8" />
       <circle cx="97.4" cy="77.4" r="2.1" fill="#ffffff" opacity="0.18" />
@@ -161,8 +161,8 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         cy="271"
         rx="56"
         ry="5"
-        fill="#000000"
-        opacity="0.5"
+        fill="#08140f"
+        opacity="0.14"
       />
     </svg>
   )

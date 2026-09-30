@@ -73,7 +73,7 @@ export default function HeroSlider({ onShopNow }) {
     <section
       id="top"
       aria-roledescription="carousel"
-      className="relative overflow-hidden bg-midnight-950"
+      className="relative overflow-hidden bg-snow-50"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -84,7 +84,7 @@ export default function HeroSlider({ onShopNow }) {
           key={`wash-${index}`}
           className="absolute end-[-12%] top-[-10%] h-[680px] w-[680px] animate-fade-in rounded-full blur-[130px]"
           style={{
-            background: `radial-gradient(circle at center, ${product.palette.via}38, transparent 66%)`,
+            background: `radial-gradient(circle at center, ${product.palette.via}1c, transparent 70%)`,
           }}
         />
         <div className="mashrabiya-band absolute inset-y-0 end-0 w-1/2" />
@@ -92,7 +92,7 @@ export default function HeroSlider({ onShopNow }) {
 
       <div className="relative mx-auto grid max-w-[1560px] items-center gap-10 px-5 py-12 sm:px-9 sm:py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
         <div key={`copy-${index}`} className="animate-fade-up">
-          <p className="ticket text-gold-300">{pick(slide.eyebrow.en, slide.eyebrow.ar)}</p>
+          <p className="ticket text-green-600">{pick(slide.eyebrow.en, slide.eyebrow.ar)}</p>
 
           <h1 className="t-display mt-6">
             {pick(slide.headline.en, slide.headline.ar).map((line) => (
@@ -105,16 +105,16 @@ export default function HeroSlider({ onShopNow }) {
           <p className="t-body mt-7 max-w-[32rem]">{pick(slide.body.en, slide.body.ar)}</p>
 
           <div className="mt-9 flex flex-wrap items-center gap-x-5 gap-y-3">
-            <button type="button" onClick={onShopNow} className="btn-pearl group">
+            <button type="button" onClick={onShopNow} className="btn-ink group">
               {t('shopNow')}
               <Forward
                 className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
                 strokeWidth={1.5}
               />
             </button>
-            <span className="ticket text-pearl-300">
+            <span className="ticket text-snow-600">
               {pick(product.name, product.ar.name)} · {t('from')}{' '}
-              <span className="t-figure text-[15px] text-pearl-50">{formatPrice(from, lang)}</span>
+              <span className="t-figure text-[15px] text-ink-950">{formatPrice(from, lang)}</span>
             </span>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function HeroSlider({ onShopNow }) {
               <span
                 className={classNames(
                   'block h-px transition-all duration-500',
-                  i === index ? 'w-8 bg-green-300' : 'w-4 bg-pearl-50/30',
+                  i === index ? 'w-8 bg-green-600' : 'w-4 bg-snow-300',
                 )}
               />
             </button>
@@ -157,7 +157,7 @@ export default function HeroSlider({ onShopNow }) {
             type="button"
             onClick={() => go(index - 1)}
             aria-label={t('prevSlide')}
-            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-green-400 hover:bg-green-600 hover:text-pearl-50"
+            className="grid h-10 w-10 place-items-center border border-snow-200 text-ink-950 transition-colors hover:border-green-600 hover:bg-green-600 hover:text-ink-950"
           >
             <ChevronLeft className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
           </button>
@@ -165,7 +165,7 @@ export default function HeroSlider({ onShopNow }) {
             type="button"
             onClick={() => go(index + 1)}
             aria-label={t('nextSlide')}
-            className="grid h-10 w-10 place-items-center border border-pearl-50/25 text-pearl-200 transition-colors hover:border-green-400 hover:bg-green-600 hover:text-pearl-50"
+            className="grid h-10 w-10 place-items-center border border-snow-200 text-ink-950 transition-colors hover:border-green-600 hover:bg-green-600 hover:text-ink-950"
           >
             <ChevronRight className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
           </button>

@@ -38,7 +38,7 @@ export default function Story() {
   const { lang, t } = useLocale()
 
   return (
-    <section id="house" className="scroll-mt-32 bg-midnight-950 py-20 sm:py-24">
+    <section id="house" className="scroll-mt-32 bg-snow-50 py-20 sm:py-24">
       <div
         ref={ref}
         className={classNames(
@@ -48,7 +48,7 @@ export default function Story() {
       >
         <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
           <div>
-            <p className="ticket text-gold-300">{t('theHouse')}</p>
+            <p className="ticket text-green-600">{t('theHouse')}</p>
             <h2 className="t-h2 mt-5">{t('houseTitle')}</h2>
             <p className="t-body mt-8 max-w-md">
               {lang === 'ar'
@@ -56,10 +56,10 @@ export default function Story() {
                 : 'Nafsah began in 1974 as a three-bench atelier supplying attars to a handful of houses in the Gulf. We still work the same way — small batches, long maceration, and formulas that are allowed to be difficult.'}
             </p>
 
-            <figure className="mt-10 max-w-md border-t border-pearl-50/[0.14] pt-8">
+            <figure className="mt-10 max-w-md border-t border-snow-200 pt-8">
               <blockquote
                 className={classNames(
-                  'text-pearl-50',
+                  'text-ink-950',
                   lang === 'ar'
                     ? 'font-display-ar text-[1.5rem] leading-[1.6]'
                     : 'font-display text-[1.7rem] italic leading-[1.3]',
@@ -69,17 +69,17 @@ export default function Story() {
                   ? '«ينبغي أن يُعرف العطر قبل أن يُعلَن عنه.»'
                   : '“A perfume should be recognised before it is announced.”'}
               </blockquote>
-              <figcaption className="ticket mt-4 text-pearl-400">{t('founder')}</figcaption>
+              <figcaption className="ticket mt-4 text-snow-600">{t('founder')}</figcaption>
             </figure>
           </div>
 
-          <ol className="border-t border-pearl-50/[0.14]">
+          <ol className="border-t border-snow-200">
             {PILLARS.map((pillar, index) => (
               <li
                 key={pillar.title.en}
-                className="grid grid-cols-[2.75rem_1fr] gap-4 border-b border-pearl-50/[0.14] py-7 sm:grid-cols-[4rem_1fr] sm:gap-8 sm:py-9"
+                className="grid grid-cols-[2.75rem_1fr] gap-4 border-b border-snow-200 py-7 sm:grid-cols-[4rem_1fr] sm:gap-8 sm:py-9"
               >
-                <span className="ticket pt-2 text-gold-300">
+                <span className="ticket pt-2 text-green-600">
                   {formatOrdinal(index + 1, lang)}
                 </span>
                 <div>

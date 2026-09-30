@@ -49,7 +49,7 @@ export default function ProductModal({ product, onClose }) {
     <div className="fixed inset-0 z-[55] flex items-stretch justify-center sm:items-center sm:p-6 lg:p-8">
       <div
         onClick={onClose}
-        className="absolute inset-0 animate-fade-in bg-midnight-950/80 backdrop-blur-sm"
+        className="absolute inset-0 animate-fade-in bg-ink-950/40 backdrop-blur-sm"
       />
 
       <div
@@ -58,27 +58,27 @@ export default function ProductModal({ product, onClose }) {
         aria-modal="true"
         tabIndex={-1}
         aria-labelledby="product-modal-title"
-        className="relative flex h-full w-full max-w-[1400px] animate-scale-in flex-col overflow-hidden border border-pearl-50/15 bg-midnight-900 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.9)] sm:h-auto sm:max-h-[92vh]"
+        className="relative flex h-full w-full max-w-[1400px] animate-scale-in flex-col overflow-hidden border border-snow-200 bg-snow-50 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.9)] sm:h-auto sm:max-h-[92vh]"
       >
         <button
           data-autofocus
           type="button"
           onClick={onClose}
           aria-label={t('closeDetails')}
-          className="absolute end-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-midnight-950/70 text-pearl-300 backdrop-blur-sm transition-colors duration-300 hover:text-pearl-50"
+          className="absolute end-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full bg-snow-50/80 text-ink-950 backdrop-blur-sm transition-colors duration-300 hover:text-ink-950"
         >
           <X className="h-4 w-4" strokeWidth={1.5} />
         </button>
 
         <div className="grid flex-1 overflow-y-auto lg:grid-cols-[1.02fr_1fr] lg:overflow-hidden">
-          <figure className="relative flex flex-col justify-between overflow-hidden border-b border-pearl-50/[0.12] bg-midnight-800 px-6 py-7 sm:px-10 lg:border-b-0 lg:border-e">
+          <figure className="relative flex flex-col justify-between overflow-hidden border-b border-snow-200 bg-snow-100 px-6 py-7 sm:px-10 lg:border-b-0 lg:border-e">
             <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
             <figcaption className="relative flex items-center gap-4">
-              <span className="ticket text-gold-300">
+              <span className="ticket text-green-600">
                 {lang === 'ar' ? 'رقم' : 'No.'} {formatOrdinal(catalogue, lang)}
               </span>
               {(product.isNew || product.bestseller) && (
-                <span className="ticket text-green-300">
+                <span className="ticket text-green-600">
                   {product.isNew ? t('newBadge') : t('bestsellerBadge')}
                 </span>
               )}
@@ -88,7 +88,7 @@ export default function ProductModal({ product, onClose }) {
               <BottleVisual palette={product.palette} catalogue={catalogue} />
             </div>
 
-            <p className="ticket relative text-center text-pearl-400">
+            <p className="ticket relative text-center text-snow-600">
               {pick(product.family, FAMILY_AR[product.family])}
             </p>
           </figure>
@@ -100,43 +100,43 @@ export default function ProductModal({ product, onClose }) {
             <p className="t-body mt-3 text-[17px]">{pick(product.tagline, product.ar.tagline)}</p>
 
             <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="ticket flex items-center gap-1.5 text-pearl-100">
-                <Star className="h-3.5 w-3.5 text-gold-300" strokeWidth={1.5} fill="currentColor" />
+              <span className="ticket flex items-center gap-1.5 text-ink-950">
+                <Star className="h-3.5 w-3.5 text-green-600" strokeWidth={1.5} fill="currentColor" />
                 {formatNumber(product.rating, lang)}
               </span>
-              <span className="ticket text-pearl-400">
+              <span className="ticket text-snow-600">
                 {t('reviewsLabel', { count: formatNumber(product.reviews, lang) })}
               </span>
             </p>
 
-            <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-pearl-50/[0.12] py-6 sm:grid-cols-3">
+            <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-snow-200 py-6 sm:grid-cols-3">
               {[
                 [t('concentrationLabel'), pick(product.concentration, CONCENTRATION_AR[product.concentration])],
                 [t('intensityLabel'), pick(product.intensity, INTENSITY_AR[product.intensity])],
                 [t('introduced'), year],
               ].map(([label, value]) => (
                 <div key={label}>
-                  <dt className="ticket text-pearl-400">{label}</dt>
-                  <dd className="t-body mt-1.5 text-[14px] text-pearl-100">{value}</dd>
+                  <dt className="ticket text-snow-600">{label}</dt>
+                  <dd className="t-body mt-1.5 text-[14px] text-ink-950">{value}</dd>
                 </div>
               ))}
             </dl>
 
             <section className="mt-7">
-              <h3 className="ticket text-gold-300">{t('aboutThis')}</h3>
+              <h3 className="ticket text-green-600">{t('aboutThis')}</h3>
               <p className="t-body mt-3">{pick(product.description, product.ar.description)}</p>
             </section>
 
             <section className="mt-8">
-              <h3 className="ticket text-gold-300">{t('theComposition')}</h3>
-              <dl className="mt-3 border-t border-pearl-50/[0.12]">
+              <h3 className="ticket text-green-600">{t('theComposition')}</h3>
+              <dl className="mt-3 border-t border-snow-200">
                 {NOTE_ROWS.map((key) => (
                   <div
                     key={key}
-                    className="flex items-baseline gap-5 border-b border-pearl-50/[0.08] py-3 last:border-b-0"
+                    className="flex items-baseline gap-5 border-b border-snow-200 py-3 last:border-b-0"
                   >
-                    <dt className="ticket w-16 shrink-0 text-pearl-400">{t(key)}</dt>
-                    <dd className="t-body text-[14px] text-pearl-100">
+                    <dt className="ticket w-16 shrink-0 text-snow-600">{t(key)}</dt>
+                    <dd className="t-body text-[14px] text-ink-950">
                       {pick(product.notes[key], product.ar.notes[key]).join(lang === 'ar' ? '، ' : ', ')}
                     </dd>
                   </div>
@@ -149,7 +149,7 @@ export default function ProductModal({ product, onClose }) {
                 <div
                   role="radiogroup"
                   aria-label={t('selectSize')}
-                  className="flex border border-pearl-50/20"
+                  className="flex border border-snow-200"
                 >
                   {product.sizes.map((option) => (
                     <button
@@ -161,15 +161,15 @@ export default function ProductModal({ product, onClose }) {
                       className={classNames(
                         'px-6 py-2.5 font-sans text-[11px] tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:tracking-normal',
                         option.ml === size.ml
-                          ? 'bg-midnight-700 text-pearl-50'
-                          : 'text-pearl-400 hover:text-pearl-100',
+                          ? 'bg-snow-200 text-ink-950'
+                          : 'text-snow-600 hover:text-ink-950',
                       )}
                     >
                       {option.ml} {lang === 'ar' ? 'مل' : 'ml'}
                     </button>
                   ))}
                 </div>
-                <span className="t-figure text-[1.6rem] leading-none text-pearl-50">
+                <span className="t-figure text-[1.6rem] leading-none text-ink-950">
                   {formatPrice(size.price, lang)}
                 </span>
               </div>
@@ -184,7 +184,7 @@ export default function ProductModal({ product, onClose }) {
                 {t('addToCart')}
               </button>
 
-              <p className="ticket mt-4 text-center text-pearl-400">{t('securePayment')}</p>
+              <p className="ticket mt-4 text-center text-snow-600">{t('securePayment')}</p>
             </div>
           </div>
         </div>

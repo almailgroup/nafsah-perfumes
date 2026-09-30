@@ -20,14 +20,14 @@ export default function CategoryTiles({ onSelectFamily }) {
   const { lang, t, pick } = useLocale()
 
   return (
-    <section className="bg-midnight-950 py-14 sm:py-16">
+    <section className="bg-snow-50 py-14 sm:py-16">
       <div className="mx-auto max-w-[1560px] px-5 sm:px-9">
-        <div className="flex items-end justify-between gap-6 border-b border-pearl-50/[0.14] pb-5">
+        <div className="flex items-end justify-between gap-6 border-b border-snow-200 pb-5">
           <h2 className="t-h2">{t('shopByFamily')}</h2>
           <button
             type="button"
             onClick={() => onSelectFamily(null)}
-            className="ticket shrink-0 text-green-300 underline underline-offset-4 transition-colors hover:text-green-200"
+            className="ticket shrink-0 text-green-600 underline underline-offset-4 transition-colors hover:text-green-600"
           >
             {t('all12')}
           </button>
@@ -39,7 +39,7 @@ export default function CategoryTiles({ onSelectFamily }) {
               <button
                 type="button"
                 onClick={() => onSelectFamily(family)}
-                className="group relative flex w-full items-center gap-4 overflow-hidden border border-pearl-50/[0.14] bg-midnight-900 p-4 text-start transition-colors duration-300 hover:border-green-500/50 sm:gap-5 sm:p-5"
+                className="group relative flex w-full items-center gap-4 overflow-hidden border border-snow-200 bg-snow-50 p-4 text-start transition-colors duration-300 hover:border-green-600/50 sm:gap-5 sm:p-5"
               >
                 <span
                   aria-hidden="true"
@@ -50,12 +50,12 @@ export default function CategoryTiles({ onSelectFamily }) {
                 </span>
                 <span className="relative min-w-0">
                   <span className="t-title block">{pick(family, FAMILY_AR[family])}</span>
-                  <span className="ticket mt-2 block text-pearl-400">
+                  <span className="ticket mt-2 block text-snow-600">
                     {formatNumber(COUNTS[family], lang)} {t('extraits')}
                   </span>
-                  <span className="ticket mt-2 block text-pearl-300">
+                  <span className="ticket mt-2 block text-snow-600">
                     {t('from')}{' '}
-                    <span className="t-figure text-[14px] text-pearl-50">
+                    <span className="t-figure text-[14px] text-ink-950">
                       {formatPrice(FROM[family], lang)}
                     </span>
                   </span>

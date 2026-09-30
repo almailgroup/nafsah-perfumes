@@ -44,17 +44,17 @@ export default function Footer() {
   }
 
   return (
-    <footer id="contact" className="relative scroll-mt-32 overflow-hidden bg-midnight-900">
-      <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
+    <footer id="contact" className="relative scroll-mt-32 overflow-hidden bg-green-700">
+      <div aria-hidden="true" className="mashrabiya-band mashrabiya-on-green pointer-events-none absolute inset-0" />
 
-      <div className="relative border-b border-pearl-50/15">
+      <div className="relative border-b border-snow-50/20">
         <div className="mx-auto grid max-w-[1560px] gap-10 px-5 py-16 sm:px-9 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="ticket text-gold-300">{t('privateList')}</p>
-            <h2 className="t-h2 mt-5">{t('newsletterTitle')}</h2>
+            <h2 className="t-h2 mt-5 text-snow-50">{t('newsletterTitle')}</h2>
           </div>
           <div className="lg:ps-10">
-            <p className="t-body max-w-md">{t('newsletterBody')}</p>
+            <p className="t-body max-w-md text-snow-200">{t('newsletterBody')}</p>
             <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-3 sm:flex-row">
               <label htmlFor="newsletter" className="sr-only">{t('emailAddress')}</label>
               <input
@@ -62,7 +62,7 @@ export default function Footer() {
                 onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
                 className="field flex-1"
               />
-              <button type="submit" className="btn-pearl group shrink-0">
+              <button type="submit" className="btn-paper group shrink-0">
                 {subscribed ? (
                   <>
                     <Check className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -84,11 +84,11 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
             <span className={lang === 'ar'
-              ? 'font-display-ar text-[30px] font-medium text-pearl-50'
-              : 'font-display text-[28px] font-medium tracking-[0.2em] text-pearl-50'}>
+              ? 'font-display-ar text-[30px] font-medium text-snow-50'
+              : 'font-display text-[28px] font-medium tracking-[0.2em] text-snow-50'}>
               {t('brand')}
             </span>
-            <p className="t-body mt-5 max-w-xs">
+            <p className="t-body mt-5 max-w-xs text-snow-200">
               {lang === 'ar'
                 ? 'دار عطور تأسست عام ١٩٧٤. تُركَّب في غراس، وتُعبّأ بدفعات صغيرة، وتُشحن من الكويت إلى العالم.'
                 : 'Maison de parfum, founded 1974. Composed in Grasse, bottled in small batches, shipped worldwide from Kuwait.'}
@@ -99,7 +99,7 @@ export default function Footer() {
                 'atelier@nafsah.example',
                 '+965 2200 0000',
               ].map((line) => (
-                <li key={line} className="t-body text-[14px]" dir={line.startsWith('+') ? 'ltr' : undefined}>
+                <li key={line} className="t-body text-[14px] text-snow-200" dir={line.startsWith('+') ? 'ltr' : undefined}>
                   {line}
                 </li>
               ))}
@@ -108,13 +108,13 @@ export default function Footer() {
 
           {COLUMNS.map((column) => (
             <div key={column.title.en}>
-              <h3 className="ticket text-pearl-200">{pick(column.title.en, column.title.ar)}</h3>
+              <h3 className="ticket text-snow-50">{pick(column.title.en, column.title.ar)}</h3>
               <ul className="mt-5 space-y-3">
                 {pick(column.links.en, column.links.ar).map((link) => (
                   <li key={link}>
                     <a
                       href="#collection"
-                      className="nav-link nav-link-body t-body text-[14px] transition-colors duration-300 hover:text-green-300"
+                      className="nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300"
                     >
                       {link}
                     </a>
@@ -125,29 +125,29 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-3 border-t border-pearl-50/15 pt-8">
-          <span className="ticket me-2 text-pearl-400">{t('weAccept')}</span>
+        <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-3 border-t border-snow-50/20 pt-8">
+          <span className="ticket me-2 text-snow-300">{t('weAccept')}</span>
           {PAYMENTS.map((method) => (
-            <span key={method} className="border border-pearl-50/25 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-pearl-200">
+            <span key={method} className="border border-snow-50/20 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-snow-200">
               {method}
             </span>
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-pearl-50/15 pt-8 sm:flex-row">
-          <p className="ticket text-pearl-400">
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-snow-50/20 pt-8 sm:flex-row">
+          <p className="ticket text-snow-300">
             {t('rights', { year: formatNumber(new Date().getFullYear(), lang).replace(/[,٬]/g, '') })}
           </p>
           <div className="flex items-center gap-6">
             <a
               href="#collection"
-              className="nav-link nav-link-ticket ticket text-pearl-400 transition-colors duration-300 hover:text-green-300"
+              className="nav-link nav-link-ticket ticket text-snow-300 transition-colors duration-300 hover:text-green-300"
             >
               {t('privacy')}
             </a>
             <a
               href="#collection"
-              className="nav-link nav-link-ticket ticket text-pearl-400 transition-colors duration-300 hover:text-green-300"
+              className="nav-link nav-link-ticket ticket text-snow-300 transition-colors duration-300 hover:text-green-300"
             >
               {t('terms')}
             </a>

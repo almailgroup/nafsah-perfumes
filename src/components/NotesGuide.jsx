@@ -48,34 +48,34 @@ export default function NotesGuide() {
   return (
     <section
       id="notes"
-      className="relative scroll-mt-32 overflow-hidden border-t border-pearl-50/[0.14] bg-midnight-900 py-20 sm:py-24"
+      className="relative scroll-mt-32 overflow-hidden border-t border-snow-200 bg-snow-50 py-20 sm:py-24"
     >
       <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
       <div ref={ref} className="relative mx-auto max-w-[1560px] px-5 sm:px-9">
         <header className="max-w-2xl">
-          <p className="ticket text-gold-300">{t('readingFragrance')}</p>
+          <p className="ticket text-green-600">{t('readingFragrance')}</p>
           <h2 className="t-h2 mt-5">{t('pyramidTitle')}</h2>
           <p className="t-body mt-6 max-w-md">{t('pyramidBody')}</p>
         </header>
 
-        <div className="mt-14 grid border-t border-pearl-50/[0.14] md:grid-cols-3">
+        <div className="mt-14 grid border-t border-snow-200 md:grid-cols-3">
           {LAYERS.map((layer, index) => (
             <article
               key={layer.key}
               className={classNames(
-                'border-b border-pearl-50/[0.14] py-9 transition-all duration-700 md:border-b-0 md:border-s md:py-11 md:ps-9 md:first:border-s-0 md:first:ps-0',
+                'border-b border-snow-200 py-9 transition-all duration-700 md:border-b-0 md:border-s md:py-11 md:ps-9 md:first:border-s-0 md:first:ps-0',
                 visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
               )}
               style={{ transitionDelay: `${index * 140}ms` }}
             >
-              <span className="ticket text-pearl-400">{pick(layer.window.en, layer.window.ar)}</span>
+              <span className="ticket text-snow-600">{pick(layer.window.en, layer.window.ar)}</span>
               <h3 className="t-h2 mt-4 text-[1.9rem]">{t(layer.key)}</h3>
               <p className="t-body mt-5 max-w-xs">{pick(layer.body.en, layer.body.ar)}</p>
-              <ul className="mt-7 border-t border-pearl-50/[0.1] pt-4">
+              <ul className="mt-7 border-t border-snow-200 pt-4">
                 {pick(layer.examples.en, layer.examples.ar).map((example) => (
                   <li
                     key={example}
-                    className="t-body border-b border-pearl-50/[0.08] py-2 text-pearl-100 last:border-b-0"
+                    className="t-body border-b border-snow-200 py-2 text-ink-950 last:border-b-0"
                   >
                     {example}
                   </li>
