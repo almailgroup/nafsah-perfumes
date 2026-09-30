@@ -7,9 +7,9 @@ export default function ProductRow({ title, caption, products, onViewAll, onOpen
   if (products.length === 0) return null
 
   return (
-    <section className={tone === 'tint' ? 'bg-snow-100 py-14 sm:py-16' : 'bg-snow-50 py-14 sm:py-16'}>
+    <section className={tone === 'tint' ? 'bg-snow-100 py-16 sm:py-24' : 'bg-snow-50 py-16 sm:py-24'}>
       <div className="mx-auto max-w-[1560px] px-5 sm:px-9">
-        <div className="flex items-end justify-between gap-6 border-b border-snow-200 pb-5">
+        <div className="flex items-end justify-between gap-6 border-b border-gold-500/60 pb-5">
           <div>
             <h2 className="t-h2">{title}</h2>
             {caption && <p className="ticket mt-3 text-snow-600">{caption}</p>}
@@ -17,7 +17,7 @@ export default function ProductRow({ title, caption, products, onViewAll, onOpen
           <button
             type="button"
             onClick={onViewAll}
-            className="ticket shrink-0 text-green-600 underline underline-offset-4 transition-colors hover:text-green-600"
+            className="ticket shrink-0 text-green-600 underline underline-offset-4 transition-colors hover:text-ink-950"
           >
             {t('viewAll')}
           </button>

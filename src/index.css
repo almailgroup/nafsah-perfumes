@@ -337,10 +337,13 @@
   }
 
   /* Texture, not wallpaper: low enough to read as a watermark, and masked so
-     it fades out rather than tiling hard to every edge. */
+     it fades out rather than tiling hard to every edge. Drawn in ink on paper
+     it carries further than it did in paper on ink, hence the lower opacity —
+     and it goes behind the vials and the green bands only, never behind a
+     column of copy. */
   .mashrabiya-band {
     @apply mashrabiya;
-    opacity: 0.05;
+    opacity: 0.035;
     -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
     mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
   }

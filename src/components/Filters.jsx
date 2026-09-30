@@ -134,7 +134,7 @@ const Filters = forwardRef(function Filters(
           {isFiltered && (
             <button
               type="button" onClick={onReset}
-              className="ticket text-green-600 underline underline-offset-4 transition-colors hover:text-green-600"
+              className="ticket text-green-600 underline underline-offset-4 transition-colors hover:text-ink-950"
             >
               {t('reset')}
             </button>

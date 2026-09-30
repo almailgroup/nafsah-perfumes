@@ -50,7 +50,6 @@ export default function NotesGuide() {
       id="notes"
       className="relative scroll-mt-32 overflow-hidden border-t border-snow-200 bg-snow-50 py-20 sm:py-24"
     >
-      <div aria-hidden="true" className="mashrabiya-band pointer-events-none absolute inset-0" />
       <div ref={ref} className="relative mx-auto max-w-[1560px] px-5 sm:px-9">
         <header className="max-w-2xl">
           <p className="ticket text-green-600">{t('readingFragrance')}</p>
@@ -58,7 +57,7 @@ export default function NotesGuide() {
           <p className="t-body mt-6 max-w-md">{t('pyramidBody')}</p>
         </header>
 
-        <div className="mt-14 grid border-t border-snow-200 md:grid-cols-3">
+        <div className="mt-14 grid border-t border-gold-500/60 md:grid-cols-3">
           {LAYERS.map((layer, index) => (
             <article
               key={layer.key}

@@ -47,7 +47,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
 
   return (
     <article
-      className="group flex animate-fade-up flex-col border border-snow-200 bg-snow-50 transition-colors duration-500 hover:border-green-600/50"
+      className="group flex animate-fade-up flex-col border border-snow-200 bg-snow-50 transition-[border-color,box-shadow] duration-500 hover:border-green-600/50 hover:shadow-[0_18px_44px_-28px_rgba(8,20,15,0.45)]"
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms` }}
     >
       <div className="flex items-center justify-between border-b border-snow-200 px-5 py-3">

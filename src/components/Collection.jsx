@@ -12,9 +12,9 @@ export default function Collection({ catalogue, searchRef, onOpenProduct }) {
   } = catalogue
 
   return (
-    <section id="collection" className="relative scroll-mt-32 bg-snow-50 py-14 sm:py-16">
+    <section id="collection" className="relative scroll-mt-32 bg-snow-50 py-16 sm:py-24">
       <div className="mx-auto max-w-[1560px] px-5 sm:px-9">
-        <header className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <header className="flex flex-col gap-4 border-b border-gold-500/60 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="ticket text-green-600">{t('theCatalogue')}</p>
             <h2 className="t-h2 mt-4">{t('allPerfumes')}</h2>

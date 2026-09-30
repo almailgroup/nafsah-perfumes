@@ -73,7 +73,7 @@ export default function Story() {
             </figure>
           </div>
 
-          <ol className="border-t border-snow-200">
+          <ol className="border-t border-gold-500/60">
             {PILLARS.map((pillar, index) => (
               <li
                 key={pillar.title.en}
