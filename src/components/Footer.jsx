@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
 import { Link } from '../router/RouterProvider'
-import { CONTACT } from '../router/router-context'
+import { CONTACT, PRIVACY, TERMS } from '../router/router-context'
 
 const COLUMNS = [
   {
@@ -159,18 +159,18 @@ export default function Footer({ onGoToSection }) {
             {t('rights', { year: formatNumber(new Date().getFullYear(), lang).replace(/[,٬]/g, '') })}
           </p>
           <div className="flex items-center gap-6">
-            <a
-              href="#collection"
-              className="nav-link nav-link-ticket ticket text-snow-300 transition-colors duration-300 hover:text-green-300"
-            >
-              {t('privacy')}
-            </a>
-            <a
-              href="#collection"
-              className="nav-link nav-link-ticket ticket text-snow-300 transition-colors duration-300 hover:text-green-300"
-            >
-              {t('terms')}
-            </a>
+            {[
+              [PRIVACY, t('privacy')],
+              [TERMS, t('terms')],
+            ].map(([to, label]) => (
+              <Link
+                key={to}
+                to={to}
+                className="nav-link nav-link-ticket ticket text-snow-300 transition-colors duration-300 hover:text-green-300"
+              >
+                {label}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

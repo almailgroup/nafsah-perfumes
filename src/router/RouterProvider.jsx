@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CONTACT, HOME, RouterContext, normalise, useRouter } from './router-context'
+import { CONTACT, HOME, ROUTES, RouterContext, normalise, useRouter } from './router-context'
 
 /**
  * A two-page router, hand-rolled rather than pulled in.
@@ -28,7 +28,7 @@ export function RouterProvider({ children }) {
   // claim a page that does not exist.
   useEffect(() => {
     const current = normalise(window.location.pathname)
-    if (current === HOME || current === CONTACT) return
+    if (ROUTES.includes(current)) return
     window.history.replaceState(null, '', HOME + window.location.search + window.location.hash)
     setPath(HOME)
   }, [])
@@ -65,7 +65,7 @@ export function RouterProvider({ children }) {
   }, [])
 
   const value = useMemo(
-    () => ({ path: path === CONTACT ? CONTACT : HOME, navigate }),
+    () => ({ path: ROUTES.includes(path) ? path : HOME, navigate }),
     [path, navigate],
   )
 

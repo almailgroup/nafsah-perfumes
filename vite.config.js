@@ -33,6 +33,8 @@ export default defineConfig({
       input: {
         main: here('index.html'),
         contact: here('contact/index.html'),
+        privacy: here('privacy/index.html'),
+        terms: here('terms/index.html'),
       },
     },
   },

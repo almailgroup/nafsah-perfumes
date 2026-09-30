@@ -2,6 +2,11 @@ import { createContext, useContext } from 'react'
 
 export const HOME = '/'
 export const CONTACT = '/contact'
+export const PRIVACY = '/privacy'
+export const TERMS = '/terms'
+
+/** Every address the site claims. Anything else resolves to the homepage. */
+export const ROUTES = [HOME, CONTACT, PRIVACY, TERMS]
 
 /* GitHub Pages serves a directory at /contact/, so a trailing slash has to
    resolve to the same route a pushState to /contact produces. */

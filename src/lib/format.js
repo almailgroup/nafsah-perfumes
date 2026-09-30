@@ -23,6 +23,16 @@ export const formatPrice = (value, lang = 'en') =>
 export const formatNumber = (value, lang = 'en') =>
   new Intl.NumberFormat(lang === 'ar' ? 'ar-KW' : 'en-KW').format(value)
 
+/** A long-form date in the active script — Arabic gets Arabic-Indic digits
+ *  and Arabic month names, which is the whole reason this is not a template
+ *  string. */
+export const formatDate = (iso, lang = 'en') =>
+  new Intl.DateTimeFormat(lang === 'ar' ? 'ar-KW' : 'en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(iso))
+
 /** Zero-padded catalogue numbers, in the active script. */
 export const formatOrdinal = (value, lang = 'en') => {
   const n = String(value).padStart(2, '0')

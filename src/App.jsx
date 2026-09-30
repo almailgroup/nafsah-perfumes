@@ -7,6 +7,7 @@ import Collection from './components/Collection'
 import ContactPage from './components/ContactPage'
 import Footer from './components/Footer'
 import HeroSlider from './components/HeroSlider'
+import LegalPage from './components/LegalPage'
 import Navbar from './components/Navbar'
 import NotesGuide from './components/NotesGuide'
 import ProductModal from './components/ProductModal'
@@ -16,10 +17,11 @@ import TrustBadges from './components/TrustBadges'
 import { CartProvider } from './context/CartProvider'
 import { LocaleProvider } from './i18n/LocaleProvider'
 import { useLocale } from './i18n/locale-context'
+import { LEGAL } from './data/legal'
 import { PRODUCTS } from './data/products'
 import { useCatalogue } from './hooks/useCatalogue'
 import { RouterProvider } from './router/RouterProvider'
-import { CONTACT, HOME, useRouter } from './router/router-context'
+import { CONTACT, HOME, PRIVACY, TERMS, useRouter } from './router/router-context'
 
 // Only three fragrances carry each flag, so the rows are topped up to a full
 // four by the next best candidate — otherwise the 4-up grid shows a hole.
@@ -30,6 +32,12 @@ const BESTSELLERS = topUp(
   PRODUCTS.filter((p) => p.bestseller),
   (a, b) => b.rating - a.rating || b.reviews - a.reviews,
 )
+const PAGE_TITLE = {
+  [CONTACT]: 'titleContact',
+  [PRIVACY]: 'titlePrivacy',
+  [TERMS]: 'titleTerms',
+}
+
 const NEW_ARRIVALS = topUp(
   PRODUCTS.filter((p) => p.isNew),
   (a, b) => b.year - a.year || b.rating - a.rating,
@@ -82,7 +90,7 @@ function Shell() {
   const onHome = path === HOME
 
   useEffect(() => {
-    document.title = t(path === CONTACT ? 'titleContact' : 'titleHome')
+    document.title = t(PAGE_TITLE[path] ?? 'titleHome')
   }, [path, t])
 
   const goToSection = useCallback(
@@ -147,15 +155,16 @@ function Shell() {
         onSubmitSearch={goToCatalogue}
       />
 
-      {onHome ? (
+      {path === CONTACT && <ContactPage />}
+      {path === PRIVACY && <LegalPage doc={LEGAL.privacy} />}
+      {path === TERMS && <LegalPage doc={LEGAL.terms} />}
+      {onHome && (
         <Storefront
           catalogue={{ state: catalogue, onSelectFamily: selectFamily }}
           searchRef={searchRef}
           onViewAll={viewAll}
           onOpenProduct={setOpenProduct}
         />
-      ) : (
-        <ContactPage />
       )}
 
       <Footer onGoToSection={goToSection} />

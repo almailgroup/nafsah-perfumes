@@ -7,6 +7,7 @@ const STORAGE_KEY = 'nafsah.cart.v1'
 const MAX_QTY = 10
 /** Order value above which express shipping is complimentary, in KD. */
 export const FREE_SHIPPING_KD = 75
+export const SHIPPING_KD = 5.5
 
 /**
  * Lines are stored as the minimum needed to rebuild a cart row
@@ -122,7 +123,7 @@ export function CartProvider({ children }) {
     const subtotal = detailedLines.reduce((sum, line) => sum + line.subtotal, 0)
     const count = detailedLines.reduce((sum, line) => sum + line.qty, 0)
     // Complimentary express shipping above the house threshold, in dinar.
-    const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_KD ? 0 : 5.5
+    const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_KD ? 0 : SHIPPING_KD
     // No sales tax line: Kuwait has not implemented VAT, and its 2026-2030
     // fiscal plan excludes it before 2028.
     return { subtotal, count, shipping, total: subtotal + shipping }
