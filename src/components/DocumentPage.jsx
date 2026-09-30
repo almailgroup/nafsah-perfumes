@@ -1,7 +1,7 @@
 import { FREE_SHIPPING_KD, SHIPPING_KD } from '../context/CartProvider'
-import { LEGAL_NOTE } from '../data/legal'
+
 import { useLocale } from '../i18n/locale-context'
-import { formatDate, formatOrdinal, formatPrice } from '../lib/format'
+import { classNames, formatDate, formatOrdinal, formatPrice } from '../lib/format'
 import { Link } from '../router/RouterProvider'
 import { CONTACT } from '../router/router-context'
 
@@ -14,8 +14,15 @@ const slugify = (heading) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
 
-/** One layout for both documents; the difference between them is the prose. */
-export default function LegalPage({ doc }) {
+/**
+ * One layout for every prose page — privacy, terms, shipping. The difference
+ * between them is the writing, not the design: an eyebrow, a lede, a dated
+ * gold rule, a contents list that sticks while you read, and numbered clauses
+ * that match it.
+ *
+ * `note` is optional and only the legal pages pass one.
+ */
+export default function DocumentPage({ doc, note }) {
   const { lang, t, pick } = useLocale()
 
   const fill = (text) =>
@@ -88,6 +95,43 @@ export default function LegalPage({ doc }) {
                         </ul>
                       )}
 
+                      {section.table && (
+                        <div className="mt-5 overflow-x-auto">
+                          <table className="w-full border-collapse text-start">
+                            <thead>
+                              <tr className="border-y border-snow-300">
+                                {section.table.head.map((cell) => (
+                                  <th
+                                    key={cell.en}
+                                    scope="col"
+                                    className="ticket py-3 pe-5 text-start text-snow-600 last:pe-0"
+                                  >
+                                    {pick(cell.en, cell.ar)}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {section.table.rows.map((row) => (
+                                <tr key={row[0].en} className="border-b border-snow-200">
+                                  {row.map((cell, cellIndex) => (
+                                    <td
+                                      key={cell.en}
+                                      className={classNames(
+                                        't-body py-4 pe-5 align-top text-[14px] last:pe-0',
+                                        cellIndex === 0 && 'text-ink-950',
+                                      )}
+                                    >
+                                      {fill(pick(cell.en, cell.ar))}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
                       {section.after && <div className="mt-4">{section.after.map(paragraph)}</div>}
                     </div>
                   </div>
@@ -104,9 +148,11 @@ export default function LegalPage({ doc }) {
             </div>
           </div>
 
-          <p className="t-body mt-16 max-w-2xl border-t border-snow-200 pt-6 text-[14px] text-snow-600">
-            {pick(LEGAL_NOTE.en, LEGAL_NOTE.ar)}
-          </p>
+          {note && (
+            <p className="t-body mt-16 max-w-2xl border-t border-snow-200 pt-6 text-[14px] text-snow-600">
+              {pick(note.en, note.ar)}
+            </p>
+          )}
         </div>
       </section>
     </main>

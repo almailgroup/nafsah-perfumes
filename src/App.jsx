@@ -7,7 +7,8 @@ import Collection from './components/Collection'
 import ContactPage from './components/ContactPage'
 import Footer from './components/Footer'
 import HeroSlider from './components/HeroSlider'
-import LegalPage from './components/LegalPage'
+import DocumentPage from './components/DocumentPage'
+import FaqPage from './components/FaqPage'
 import Navbar from './components/Navbar'
 import NotesGuide from './components/NotesGuide'
 import ProductModal from './components/ProductModal'
@@ -17,11 +18,12 @@ import TrustBadges from './components/TrustBadges'
 import { CartProvider } from './context/CartProvider'
 import { LocaleProvider } from './i18n/LocaleProvider'
 import { useLocale } from './i18n/locale-context'
-import { LEGAL } from './data/legal'
+import { LEGAL, LEGAL_NOTE } from './data/legal'
+import { SHIPPING_DOC } from './data/help'
 import { PRODUCTS } from './data/products'
 import { useCatalogue } from './hooks/useCatalogue'
 import { RouterProvider } from './router/RouterProvider'
-import { CONTACT, HOME, PRIVACY, TERMS, useRouter } from './router/router-context'
+import { CONTACT, FAQ, HOME, PRIVACY, SHIPPING, TERMS, useRouter } from './router/router-context'
 
 // Only three fragrances carry each flag, so the rows are topped up to a full
 // four by the next best candidate — otherwise the 4-up grid shows a hole.
@@ -36,6 +38,8 @@ const PAGE_TITLE = {
   [CONTACT]: 'titleContact',
   [PRIVACY]: 'titlePrivacy',
   [TERMS]: 'titleTerms',
+  [SHIPPING]: 'titleShipping',
+  [FAQ]: 'titleFaq',
 }
 
 const NEW_ARRIVALS = topUp(
@@ -156,8 +160,10 @@ function Shell() {
       />
 
       {path === CONTACT && <ContactPage />}
-      {path === PRIVACY && <LegalPage doc={LEGAL.privacy} />}
-      {path === TERMS && <LegalPage doc={LEGAL.terms} />}
+      {path === PRIVACY && <DocumentPage doc={LEGAL.privacy} note={LEGAL_NOTE} />}
+      {path === TERMS && <DocumentPage doc={LEGAL.terms} note={LEGAL_NOTE} />}
+      {path === SHIPPING && <DocumentPage doc={SHIPPING_DOC} />}
+      {path === FAQ && <FaqPage />}
       {onHome && (
         <Storefront
           catalogue={{ state: catalogue, onSelectFamily: selectFamily }}

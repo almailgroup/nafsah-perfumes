@@ -35,6 +35,8 @@ export default defineConfig({
         contact: here('contact/index.html'),
         privacy: here('privacy/index.html'),
         terms: here('terms/index.html'),
+        shipping: here('shipping/index.html'),
+        faq: here('faq/index.html'),
       },
     },
   },

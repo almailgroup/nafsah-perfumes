@@ -3,33 +3,37 @@ import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
 import { Link } from '../router/RouterProvider'
-import { CONTACT, PRIVACY, TERMS } from '../router/router-context'
+import { CONTACT, FAQ, PRIVACY, SHIPPING, TERMS } from '../router/router-context'
 
+/* Each link carries its own destination now that Client Care has real pages
+   behind it: two of the four are pages, two still reach a person. */
 const COLUMNS = [
   {
-    section: 'collection',
     title: { en: 'Catalogue', ar: 'الفهرس' },
-    links: {
-      en: ['New Arrivals', 'Bestsellers', 'Discovery Sets', 'Gifting'],
-      ar: ['وصل حديثاً', 'الأكثر مبيعاً', 'أطقم الاكتشاف', 'الهدايا'],
-    },
+    links: [
+      { en: 'New Arrivals', ar: 'وصل حديثاً', section: 'collection' },
+      { en: 'Bestsellers', ar: 'الأكثر مبيعاً', section: 'collection' },
+      { en: 'Discovery Sets', ar: 'أطقم الاكتشاف', section: 'collection' },
+      { en: 'Gifting', ar: 'الهدايا', section: 'collection' },
+    ],
   },
   {
-    section: 'house',
     title: { en: 'The House', ar: 'الدار' },
-    links: {
-      en: ['Our Story', 'Sourcing', 'Sustainability', 'Ateliers'],
-      ar: ['قصتنا', 'مصادر المواد', 'الاستدامة', 'المعامل'],
-    },
+    links: [
+      { en: 'Our Story', ar: 'قصتنا', section: 'house' },
+      { en: 'Sourcing', ar: 'مصادر المواد', section: 'house' },
+      { en: 'Sustainability', ar: 'الاستدامة', section: 'house' },
+      { en: 'Ateliers', ar: 'المعامل', section: 'house' },
+    ],
   },
   {
-    // Client care is the contact page; these four are what it is for.
-    to: CONTACT,
     title: { en: 'Client Care', ar: 'خدمة العملاء' },
-    links: {
-      en: ['Shipping & Returns', 'Track an Order', 'Consultation', 'FAQ'],
-      ar: ['الشحن والإرجاع', 'تتبّع الطلب', 'استشارة', 'الأسئلة الشائعة'],
-    },
+    links: [
+      { en: 'Shipping & Returns', ar: 'الشحن والإرجاع', to: SHIPPING },
+      { en: 'FAQ', ar: 'الأسئلة الشائعة', to: FAQ },
+      { en: 'Track an Order', ar: 'تتبّع الطلب', to: CONTACT },
+      { en: 'Consultation', ar: 'استشارة', to: CONTACT },
+    ],
   },
 ]
 
@@ -116,25 +120,25 @@ export default function Footer({ onGoToSection }) {
             <div key={column.title.en}>
               <h3 className="ticket text-snow-50">{pick(column.title.en, column.title.ar)}</h3>
               <ul className="mt-5 space-y-3">
-                {pick(column.links.en, column.links.ar).map((link) => {
+                {column.links.map((link) => {
                   const className =
                     'nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300'
                   return (
-                    <li key={link}>
-                      {column.to ? (
-                        <Link to={column.to} className={className}>
-                          {link}
+                    <li key={link.en}>
+                      {link.to ? (
+                        <Link to={link.to} className={className}>
+                          {pick(link.en, link.ar)}
                         </Link>
                       ) : (
                         <a
-                          href={`#${column.section}`}
+                          href={`#${link.section}`}
                           onClick={(event) => {
                             event.preventDefault()
-                            onGoToSection(column.section)
+                            onGoToSection(link.section)
                           }}
                           className={className}
                         >
-                          {link}
+                          {pick(link.en, link.ar)}
                         </a>
                       )}
                     </li>
