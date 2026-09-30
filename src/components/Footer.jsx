@@ -2,9 +2,12 @@ import { useState } from 'react'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
+import { Link } from '../router/RouterProvider'
+import { CONTACT } from '../router/router-context'
 
 const COLUMNS = [
   {
+    section: 'collection',
     title: { en: 'Catalogue', ar: 'الفهرس' },
     links: {
       en: ['New Arrivals', 'Bestsellers', 'Discovery Sets', 'Gifting'],
@@ -12,6 +15,7 @@ const COLUMNS = [
     },
   },
   {
+    section: 'house',
     title: { en: 'The House', ar: 'الدار' },
     links: {
       en: ['Our Story', 'Sourcing', 'Sustainability', 'Ateliers'],
@@ -19,6 +23,8 @@ const COLUMNS = [
     },
   },
   {
+    // Client care is the contact page; these four are what it is for.
+    to: CONTACT,
     title: { en: 'Client Care', ar: 'خدمة العملاء' },
     links: {
       en: ['Shipping & Returns', 'Track an Order', 'Consultation', 'FAQ'],
@@ -29,7 +35,7 @@ const COLUMNS = [
 
 const PAYMENTS = ['KNET', 'Visa', 'Mastercard', 'Amex', 'Apple Pay']
 
-export default function Footer() {
+export default function Footer({ onGoToSection }) {
   const { lang, t, isRtl, pick } = useLocale()
   const [email, setEmail] = useState('')
   const [subscribed, setSubscribed] = useState(false)
@@ -110,16 +116,30 @@ export default function Footer() {
             <div key={column.title.en}>
               <h3 className="ticket text-snow-50">{pick(column.title.en, column.title.ar)}</h3>
               <ul className="mt-5 space-y-3">
-                {pick(column.links.en, column.links.ar).map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#collection"
-                      className="nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
+                {pick(column.links.en, column.links.ar).map((link) => {
+                  const className =
+                    'nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300'
+                  return (
+                    <li key={link}>
+                      {column.to ? (
+                        <Link to={column.to} className={className}>
+                          {link}
+                        </Link>
+                      ) : (
+                        <a
+                          href={`#${column.section}`}
+                          onClick={(event) => {
+                            event.preventDefault()
+                            onGoToSection(column.section)
+                          }}
+                          className={className}
+                        >
+                          {link}
+                        </a>
+                      )}
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           ))}

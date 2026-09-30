@@ -4,16 +4,8 @@ import { useCart } from '../context/cart-context'
 import { SCENT_FAMILIES, FAMILY_AR } from '../data/products'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
-
-/**
- * "#top" is the top of the page, not a section anyone would deep-link to, so
- * it has no business in the address bar. Section anchors like #collection and
- * #contact are real destinations and are left alone.
- */
-function stripTopHash() {
-  if (window.location.hash !== '#top') return
-  window.history.replaceState(null, '', window.location.pathname + window.location.search)
-}
+import { Link } from '../router/RouterProvider'
+import { CONTACT, HOME, useRouter } from '../router/router-context'
 
 /**
  * Retail header. Layout is expressed in logical properties (ms/me/ps/pe/start)
@@ -22,14 +14,13 @@ function stripTopHash() {
 export default function Navbar({ query, onQueryChange, families, onSelectFamily, onSubmitSearch }) {
   const { totals, openCart, lastAddedAt } = useCart()
   const { lang, t, pick, toggle } = useLocale()
+  const { path } = useRouter()
+  // A category is only 'current' while the catalogue is the page you are on.
+  const onHome = path === HOME
   const [mobileOpen, setMobileOpen] = useState(false)
   const [pulse, setPulse] = useState(false)
   const inputRef = useRef(null)
   const mobileInputRef = useRef(null)
-
-  useEffect(() => {
-    stripTopHash()
-  }, [])
 
   useEffect(() => {
     if (!lastAddedAt) return undefined
@@ -44,7 +35,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
     onSubmitSearch()
   }
 
-  const LINKS = [{ label: t('contact'), href: '#contact' }]
+  const LINKS = [{ label: t('contact'), to: CONTACT }]
 
   /**
    * The switcher always names the language you are moving TO, so its label is
@@ -64,16 +55,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   return (
     <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
       <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
-        <a
-          href="#top"
-          aria-label={t('brand')}
-          onClick={(event) => {
-            event.preventDefault()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-            stripTopHash()
-          }}
-          className="shrink-0 leading-none"
-        >
+        <Link to={HOME} aria-label={t('brand')} className="shrink-0 leading-none">
           <span
             className={classNames(
               'block text-ink-950',
@@ -84,7 +66,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
           >
             {t('brand')}
           </span>
-        </a>
+        </Link>
 
         <form onSubmit={submit} role="search" className="relative hidden flex-1 md:block">
           <label htmlFor="header-search" className="sr-only">
@@ -168,7 +150,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             onClick={() => onSelectFamily(null)}
             className={classNames(
               'nav-link nav-link-label t-label py-3 transition-colors duration-300',
-              families.length === 0
+              onHome && families.length === 0
                 ? 'nav-link-active text-green-600'
                 : 'text-snow-600 hover:text-ink-950',
             )}
@@ -182,7 +164,7 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               onClick={() => onSelectFamily(family)}
               className={classNames(
                 'nav-link nav-link-label t-label py-3 transition-colors duration-300',
-                families.includes(family)
+                onHome && families.includes(family)
                   ? 'nav-link-active text-green-600'
                   : 'text-snow-600 hover:text-ink-950',
               )}
@@ -195,13 +177,19 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               {t('switchTo')}
             </button>
             {LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="nav-link nav-link-label t-label py-3 text-snow-600 transition-colors duration-300 hover:text-ink-950"
+              <Link
+                key={link.to}
+                to={link.to}
+                aria-current={path === link.to ? 'page' : undefined}
+                className={classNames(
+                  'nav-link nav-link-label t-label py-3 transition-colors duration-300',
+                  path === link.to
+                    ? 'nav-link-active text-green-600'
+                    : 'text-snow-600 hover:text-ink-950',
+                )}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </span>
         </div>
@@ -274,14 +262,14 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
               {t('switchTo')}
             </button>
             {LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
+              <Link
+                key={link.to}
+                to={link.to}
+                onNavigate={() => setMobileOpen(false)}
                 className="t-label border-b border-snow-200 py-4 text-snow-600 last:border-b-0"
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
         </div>
