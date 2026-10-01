@@ -4,7 +4,7 @@ import { useCart } from '../context/cart-context'
 import { SCENT_FAMILIES, FAMILY_AR } from '../data/products'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
-import logoInk from '../assets/logo/logo-ink.png'
+import { HEADER_LOGO } from '../brand'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, HOME, useRouter } from '../router/router-context'
 
@@ -56,17 +56,16 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   return (
     <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
       <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
-        {/* The official logo, drawn at 26px on a phone and 32px above that —
-            the same footprint the text wordmark had. width and height are the
+        {/* Whichever logo src/brand.js marks active. width and height are the
             file's intrinsic size, so the browser reserves the space before it
             loads and nothing in the header shifts. */}
         <Link to={HOME} className="shrink-0 leading-none">
           <img
-            src={logoInk}
+            src={HEADER_LOGO.src}
             alt={t('brand')}
-            width={528}
-            height={120}
-            className="block h-[26px] w-auto sm:h-8"
+            width={HEADER_LOGO.width}
+            height={HEADER_LOGO.height}
+            className={classNames('block w-auto', HEADER_LOGO.className)}
           />
         </Link>
 

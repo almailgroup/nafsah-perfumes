@@ -3,7 +3,13 @@ Derive every logo asset the site serves from the one official file:
 
     assets/website-logo/NafsahLogo.png
 
-Run from the repo root after replacing that file:
+and the flag edition, when it is present:
+
+    assets/website-logo/NAFSAHKuwaitFlagRibbonLogo.png
+
+Which one the header shows is a single constant in src/brand.js.
+
+Run from the repo root after replacing either file:
 
     python3 scripts/logo.py
 
@@ -20,6 +26,7 @@ from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / 'assets' / 'website-logo' / 'NafsahLogo.png'
+RIBBON = ROOT / 'assets' / 'website-logo' / 'NAFSAHKuwaitFlagRibbonLogo.png'
 LOGO_OUT = ROOT / 'src' / 'assets' / 'logo'
 ICON_OUT = ROOT / 'public'
 
@@ -27,8 +34,9 @@ INK = (0, 0, 0)  # the logo exactly as supplied
 PAPER = (251, 250, 247)  # snow-50: the reversed logo for the green footer
 GREEN = (0, 96, 57)  # green-600, Arab Green: the tab icon's ground
 
-# The largest the logo is ever drawn is 36px tall (the footer). 120px covers
-# that at 3x device pixel ratio, which is the densest phone screen in use.
+# The largest any logo is drawn is 40px tall (the flag edition, in the
+# desktop header). 120px covers that at 3x device pixel ratio, which is the
+# densest phone screen in use.
 LOGO_HEIGHT = 120
 
 
@@ -105,6 +113,16 @@ def main():
     tab_icon(glyph, 16, rounded=True, thicken=9).save(ICON_OUT / 'favicon-16.png', optimize=True)
     tab_icon(glyph, 32, rounded=True, thicken=5).save(ICON_OUT / 'favicon-32.png', optimize=True)
     tab_icon(glyph, 180, rounded=False).save(ICON_OUT / 'apple-touch-icon.png', optimize=True)
+
+    # The flag edition is photographic and multicoloured, so it is neither
+    # tinted nor reversed — it is only ever drawn on the warm white header.
+    # It is stored as lossless WebP: lossy WebP subsamples colour, which
+    # fringes the hard red, green and black edges where the ribbon crosses
+    # the letters, and those edges are the whole design.
+    if RIBBON.exists():
+        ribbon = scaled(trim(Image.open(RIBBON).convert('RGBA')), LOGO_HEIGHT)
+        ribbon.save(LOGO_OUT / 'logo-ribbon.webp', 'WEBP', lossless=True, method=6)
+        print(f'ribbon  {ribbon.width}x{ribbon.height}  ->  logo-ribbon.webp')
 
     print(f'source  {source.width}x{source.height}  ink {ink.width}x{ink.height}')
     print(f'logo    {logo.width}x{logo.height}  ->  logo-ink.png, logo-paper.png')

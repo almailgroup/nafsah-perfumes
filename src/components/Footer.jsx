@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
-import logoPaper from '../assets/logo/logo-paper.png'
+import { FOOTER_LOGO } from '../brand'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, FAQ, PRIVACY, SHIPPING, TERMS } from '../router/router-context'
 
@@ -94,13 +94,13 @@ export default function Footer({ onGoToSection }) {
       <div className="relative mx-auto max-w-[1560px] px-5 py-14 sm:px-9">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            {/* The reversed logo: the supplied black would sit at about 2:1 on
-                this green, so the footer carries the same mark in paper. */}
+            {/* The plain wordmark reversed out in paper — see src/brand.js for
+                why the footer does not follow the header's logo. */}
             <img
-              src={logoPaper}
+              src={FOOTER_LOGO.src}
               alt={t('brand')}
-              width={528}
-              height={120}
+              width={FOOTER_LOGO.width}
+              height={FOOTER_LOGO.height}
               className="block h-9 w-auto"
             />
             <p className="t-body mt-5 max-w-xs text-snow-200">
