@@ -18,7 +18,7 @@ const HEADER_LOGOS = {
 }
 
 /** 'plain' or 'ribbon'. */
-export const ACTIVE_LOGO = 'ribbon'
+export const ACTIVE_LOGO = 'plain'
 
 export const HEADER_LOGO = HEADER_LOGOS[ACTIVE_LOGO]
 
