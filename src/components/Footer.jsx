@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
+import logoPaper from '../assets/logo/logo-paper.png'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, FAQ, PRIVACY, SHIPPING, TERMS } from '../router/router-context'
 
@@ -93,11 +94,15 @@ export default function Footer({ onGoToSection }) {
       <div className="relative mx-auto max-w-[1560px] px-5 py-14 sm:px-9">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div>
-            <span className={lang === 'ar'
-              ? 'font-display-ar text-[30px] font-medium text-snow-50'
-              : 'font-display text-[28px] font-medium tracking-[0.2em] text-snow-50'}>
-              {t('brand')}
-            </span>
+            {/* The reversed logo: the supplied black would sit at about 2:1 on
+                this green, so the footer carries the same mark in paper. */}
+            <img
+              src={logoPaper}
+              alt={t('brand')}
+              width={528}
+              height={120}
+              className="block h-9 w-auto"
+            />
             <p className="t-body mt-5 max-w-xs text-snow-200">
               {lang === 'ar'
                 ? 'دار عطور تأسست عام ١٩٧٤. تُركَّب في غراس، وتُعبّأ بدفعات صغيرة، وتُشحن من الكويت إلى العالم.'

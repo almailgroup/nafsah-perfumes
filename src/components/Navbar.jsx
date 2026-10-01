@@ -4,6 +4,7 @@ import { useCart } from '../context/cart-context'
 import { SCENT_FAMILIES, FAMILY_AR } from '../data/products'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
+import logoInk from '../assets/logo/logo-ink.png'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, HOME, useRouter } from '../router/router-context'
 
@@ -55,17 +56,18 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
   return (
     <header className="sticky top-0 z-40 border-b border-gold-500/40 bg-snow-50">
       <div className="mx-auto flex h-16 max-w-[1560px] items-center gap-4 px-5 sm:h-[72px] sm:gap-8 sm:px-9">
-        <Link to={HOME} aria-label={t('brand')} className="shrink-0 leading-none">
-          <span
-            className={classNames(
-              'block text-ink-950',
-              lang === 'ar'
-                ? 'font-display-ar text-[26px] font-medium sm:text-[30px]'
-                : 'font-display text-[24px] font-medium tracking-[0.2em] sm:text-[28px]',
-            )}
-          >
-            {t('brand')}
-          </span>
+        {/* The official logo, drawn at 26px on a phone and 32px above that —
+            the same footprint the text wordmark had. width and height are the
+            file's intrinsic size, so the browser reserves the space before it
+            loads and nothing in the header shifts. */}
+        <Link to={HOME} className="shrink-0 leading-none">
+          <img
+            src={logoInk}
+            alt={t('brand')}
+            width={528}
+            height={120}
+            className="block h-[26px] w-auto sm:h-8"
+          />
         </Link>
 
         <form onSubmit={submit} role="search" className="relative hidden flex-1 md:block">

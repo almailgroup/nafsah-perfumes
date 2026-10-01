@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#faf7f1"/>
-  <rect x="4.5" y="4.5" width="23" height="23" fill="none" stroke="#6e2c3c" stroke-width="1"/>
-  <text x="16" y="22" text-anchor="middle" font-family="Jost, Futura, Century Gothic, sans-serif"
-        font-size="16" font-weight="500" letter-spacing="0.5" fill="#141210">N</text>
-</svg>

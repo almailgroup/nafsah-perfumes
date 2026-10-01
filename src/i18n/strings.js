@@ -6,7 +6,7 @@ export const STRINGS = {
   en: {
     dir: 'ltr',
     localeTag: 'en-KW',
-    brand: 'NAFSAH',
+    brand: 'Nafsah',
     brandSub: 'Maison de Parfum',
     switchTo: 'العربية',
     announce: [

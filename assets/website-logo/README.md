@@ -1,12 +1,25 @@
 # Website logo
 
-Upload the official logo here as **`NafsahLogo.png`**.
+**`NafsahLogo.png`** is the official logo — the one source every logo on the
+site is made from. It is never served to visitors as-is.
 
-- A transparent background works best — the logo sits on the warm white
-  header and on the green footer, so a filled background would show as a box
-  on one of them.
-- Larger is better. The site generates its own smaller sizes from this file,
-  so a source of 512px or more on its longest side stays sharp on
-  high-density screens. Nothing here is served to visitors at full size.
+`scripts/logo.py` derives what the site actually uses:
 
-This folder is source material only; it is not published as-is.
+| File | Size | Used for |
+|---|---|---|
+| `src/assets/logo/logo-ink.png` | 528 × 120 | Header, on the warm white |
+| `src/assets/logo/logo-paper.png` | 528 × 120 | Footer, reversed for the green |
+| `public/favicon-32.png` · `favicon-16.png` | 32 · 16 | Browser tab |
+| `public/apple-touch-icon.png` | 180 | iPhone and iPad home screen |
+
+The logo files are trimmed to the ink and sized for 3× screens at the largest
+size they are drawn (36px). The tab icons use the logo's own **N**, because
+the full wordmark is five pixels tall at 16px.
+
+To change the logo, replace `NafsahLogo.png` here and run:
+
+```
+python3 scripts/logo.py
+```
+
+A transparent background and 512px or more on the longest side work best.
