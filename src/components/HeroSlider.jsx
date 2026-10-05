@@ -95,8 +95,10 @@ export default function HeroSlider({ onShopNow }) {
           <p className="ticket text-green-600">{pick(slide.eyebrow.en, slide.eyebrow.ar)}</p>
 
           <h1 className="t-display mt-6">
-            {pick(slide.headline.en, slide.headline.ar).map((line) => (
+            {pick(slide.headline.en, slide.headline.ar).map((line, lineIndex) => (
               <span key={line} className="block">
+                {/* Invisible at the start of a block, but keeps the words apart in search snippets */}
+                {lineIndex > 0 && ' '}
                 {line}
               </span>
             ))}
