@@ -1,12 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Check, Plus } from 'lucide-react'
 import BottleVisual from './BottleVisual'
+import FormatToggle from './product/FormatToggle'
 import { useCart } from '../context/cart-context'
-import { CATALOGUE_NUMBERS, CONCENTRATION_AR, FAMILY_AR, INTENSITY_AR } from '../data/products'
+import { bottleFormats, CATALOGUE_NUMBERS, concentrationFor, formatOf } from '../data/products'
+import { CONCENTRATION_BY_ID, FAMILY_BY_ID, SILLAGE_BY_ID } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatOrdinal, formatPrice } from '../lib/format'
 
-const NOTE_ROWS = ['top', 'heart', 'base']
+const NOTE_ROWS = [
+  ['top', 'topNotes'],
+  ['heart', 'heartNotes'],
+  ['base', 'baseNotes'],
+]
 
 /**
  * A catalogue plate framed in the mashrabiya lattice: catalogue number, the
@@ -15,35 +21,37 @@ const NOTE_ROWS = ['top', 'heart', 'base']
  */
 export default function ProductCard({ product, index = 0, priceRange, compact = false, onOpen }) {
   const { addItem } = useCart()
-  const { lang, t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
+  const nameId = useId()
   const [justAdded, setJustAdded] = useState(false)
 
-  // A product qualifies for the price filter if ANY size is in range, so the
-  // card must open on a size inside that range or it advertises a price the
-  // shopper just filtered out.
+  // A product qualifies for the price filter if ANY bottle is in range, so the
+  // card must open on a format inside that range or it advertises a price the
+  // shopper just filtered out. Samples are never filtered on.
   const inRange = priceRange
-    ? product.sizes.filter((s) => s.price >= priceRange[0] && s.price <= priceRange[1])
-    : product.sizes
-  const preferredMl = (inRange[0] ?? product.sizes[0]).ml
-  const [selectedMl, setSelectedMl] = useState(preferredMl)
+    ? bottleFormats(product).filter((f) => f.priceFils >= priceRange[0] && f.priceFils <= priceRange[1])
+    : product.formats
+  const preferredId = (inRange[0] ?? product.formats[0]).id
+  const [selectedId, setSelectedId] = useState(preferredId)
 
   useEffect(() => {
-    setSelectedMl((current) =>
-      inRange.length > 0 && !inRange.some((s) => s.ml === current) ? inRange[0].ml : current,
+    setSelectedId((current) =>
+      inRange.length > 0 && !inRange.some((f) => f.id === current) ? inRange[0].id : current,
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preferredMl, inRange.length])
+  }, [preferredId, inRange.length])
 
-  const size = product.sizes.find((entry) => entry.ml === selectedMl) ?? product.sizes[0]
+  const format = formatOf(product, selectedId) ?? product.formats[0]
+  const concentration = CONCENTRATION_BY_ID[concentrationFor(product, format.id)]
   const catalogue = CATALOGUE_NUMBERS[product.id]
 
   const handleAdd = () => {
-    addItem(product, size)
+    addItem(product, format.id)
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 1400)
   }
 
-  const name = pick(product.name, product.ar.name)
+  const name = tr(product.name)
 
   return (
     <article
@@ -54,7 +62,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
         <span className="ticket text-green-600">
           {lang === 'ar' ? 'رقم' : 'No.'} {formatOrdinal(catalogue, lang)}
         </span>
-        <span className="ticket text-snow-600">{pick(product.family, FAMILY_AR[product.family])}</span>
+        <span className="ticket text-snow-600">{tr(FAMILY_BY_ID[product.family]?.short)}</span>
       </div>
 
       <button
@@ -75,7 +83,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
             compact ? 'h-[15rem]' : 'h-[18.5rem]',
           )}
         >
-          <BottleVisual palette={product.palette} catalogue={catalogue} />
+          <BottleVisual palette={product.palette} catalogue={catalogue} label={concentration?.abbr} />
         </div>
         <span
           aria-hidden="true"
@@ -87,7 +95,7 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
 
       <div className="flex flex-1 flex-col border-t border-snow-200 px-5 pb-5 pt-5">
         <div className="flex items-baseline justify-between gap-4">
-          <h3 className="t-title">
+          <h3 id={nameId} className="t-title">
             <button
               type="button"
               onClick={() => onOpen?.(product)}
@@ -97,56 +105,39 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
             </button>
           </h3>
           <span className="t-figure shrink-0 text-[1.3rem] leading-none text-ink-950">
-            {formatPrice(size.price, lang)}
+            {formatPrice(format.priceFils, lang)}
           </span>
         </div>
 
-        <p className="t-body mt-2.5">{pick(product.tagline, product.ar.tagline)}</p>
+        <p className="t-body mt-2.5">{tr(product.tagline)}</p>
 
         <p className="ticket mt-4 text-snow-600">
-          {pick(product.concentration, CONCENTRATION_AR[product.concentration])} ·{' '}
-          {pick(product.intensity, INTENSITY_AR[product.intensity])}
+          {tr(concentration)} · {tr(SILLAGE_BY_ID[product.projectionSillage])}
         </p>
 
         {/* Pyramid, omitted on the compact merchandised rows. */}
         <dl className={classNames('mt-5 border-t border-snow-200', compact && 'hidden')}>
-          {NOTE_ROWS.map((key) => (
+          {NOTE_ROWS.map(([key, field]) => (
             <div
               key={key}
               className="flex items-baseline gap-4 border-b border-snow-200 py-2.5 last:border-b-0"
             >
               <dt className="ticket w-14 shrink-0 text-snow-600">{t(key)}</dt>
               <dd className="t-body text-ink-950">
-                {pick(product.notes[key], product.ar.notes[key]).join(lang === 'ar' ? '، ' : ', ')}
+                {product[field].map((note) => tr(note)).join(lang === 'ar' ? '، ' : ', ')}
               </dd>
             </div>
           ))}
         </dl>
 
         <div className="mt-auto pt-6">
-          <div
-            role="radiogroup"
-            aria-label={`${name} — ${t('price')}`}
-            className="flex border border-snow-200"
-          >
-            {product.sizes.map((option) => (
-              <button
-                key={option.ml}
-                type="button"
-                role="radio"
-                aria-checked={option.ml === selectedMl}
-                onClick={() => setSelectedMl(option.ml)}
-                className={classNames(
-                  'flex-1 py-2.5 font-sans text-[11px] tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:tracking-normal',
-                  option.ml === selectedMl
-                    ? 'bg-snow-200 text-ink-950'
-                    : 'text-snow-600 hover:text-ink-950',
-                )}
-              >
-                {option.ml} {lang === 'ar' ? 'مل' : 'ml'}
-              </button>
-            ))}
-          </div>
+          <FormatToggle
+            product={product}
+            value={format.id}
+            onChange={setSelectedId}
+            variant="compact"
+            labelledBy={nameId}
+          />
 
           <button
             type="button"

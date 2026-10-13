@@ -3,454 +3,809 @@
  *
  * Every fragrance carries a `palette` used by <BottleVisual /> to render its
  * image placeholder, so the grid stays visually rich without binary assets.
- * Prices are keyed by size (in ml) and expressed in whole USD.
+ * Prices are integer fils (1 KWD = 1000 fils) on each entry of `formats`.
+ * Ids are enumerated in ./taxonomy and notes come from ./notes; the shape is
+ * checked by ./schema in the tests.
+ *
+ * Longevity, sillage and heat resistance are the house's own guidance, not
+ * customer ratings. Ratings come only from real reviews.
  */
 
-export const SCENT_FAMILIES = ['Woody', 'Floral', 'Citrus', 'Oriental']
+import { NOTES } from './notes'
+import { byId, FORMAT_BY_ID } from './taxonomy'
 
-/** Arabic labels for the enumerated fields, keyed by their English value. */
-export const FAMILY_AR = {"Woody": "خشبية", "Floral": "زهرية", "Citrus": "حمضية", "Oriental": "شرقية"}
+/** Note objects from their ids. */
+const notes = (...ids) => ids.map((id) => NOTES[id])
 
-export const CONCENTRATION_AR = {"Extrait de Parfum": "عطر مركّز", "Eau de Parfum": "ماء عطر"}
-
-export const INTENSITY_AR = {"Intense": "قوي", "Moderate": "متوسط", "Fresh": "منعش", "Soft": "ناعم"}
+/** One entry of the size toggle, at the format's standard volume. */
+const format = (id, priceFils) => ({ id, ml: FORMAT_BY_ID[id]?.ml, priceFils })
 
 export const PRODUCTS = [
   {
     id: 'oud-noir',
-    name: 'Oud Noir',
-    tagline: 'Smoked oud, ink-dark and unhurried',
-    family: 'Woody',
-    concentration: 'Extrait de Parfum',
-    intensity: 'Intense',
-    year: 2019,
-    rating: 4.9,
-    reviews: 412,
-    bestseller: true,
-    notes: {
-      top: ['Bergamot', 'Pink Pepper'],
-      heart: ['Cambodian Oud', 'Damask Rose'],
-      base: ['Sandalwood', 'Leather', 'Vetiver'],
+    name: { en: 'Oud Noir', ar: 'العود الأسود' },
+    tagline: { en: 'Smoked oud, ink-dark and unhurried', ar: 'عود مدخّن، حالك وغير متعجّل' },
+    description: {
+      en: 'A resinous oud aged eighteen months and lifted by rose absolute. Worn close to the skin it reads like warm leather in a dark room.',
+      ar: 'عود راتنجي مُعتَّق ثمانية عشر شهراً، يرفعه مطلق الورد. على البشرة مباشرةً يُقرأ كجلدٍ دافئ في غرفة معتمة.',
     },
-    sizes: [
-      { ml: 50, price: 75.000 },
-      { ml: 100, price: 119.000 },
+    family: 'oud-musk',
+    familyProfile: { 'oud-musk': 60, rose: 20, amber: 20 },
+    concentration: 'extrait',
+    gender: 'unisex',
+    longevity: 12,
+    projectionSillage: 'strong',
+    heatResistance: 3,
+    seasons: ['winter'],
+    occasions: ['diwaniya', 'wedding'],
+    topNotes: notes('bergamot', 'pink-pepper'),
+    heartNotes: notes('cambodi-oud', 'damask-rose'),
+    baseNotes: notes('sandalwood', 'leather', 'vetiver'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Oud bukhoor', ar: 'بخور العود' },
+        how: {
+          en: 'Hold the dishdasha or abaya over the mabkhara for a minute, then spray once the smoke has settled into the cloth.',
+          ar: 'بخّر الدشداشة أو العباءة فوق المبخرة دقيقة، ثم رُشّ العطر بعد أن يستقرّ الدخان في القماش.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'A drop of Taif rose oil on each wrist first, then Oud Noir over it to bring the rose in its heart forward.',
+          ar: 'قطرة من دهن الورد الطائفي على كل معصم أولاً، ثم «العود الأسود» فوقها ليتقدّم الورد الذي في قلبه.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc on the neck before Oud Noir: musk under oud softens the smoke and carries it further into the night.',
+          ar: '«المسك الأبيض» على الرقبة قبل «العود الأسود»: المسك تحت العود يليّن الدخان ويمدّ أثره إلى آخر الليل.',
+        },
+      },
+    ],
+    formats: [
+      format('full', 119000),
+      format('spray50', 75000),
+      format('quarter-tola', 29000),
+      format('sample', 4500),
     ],
     palette: { from: '#4a2c1a', via: '#8a5a2b', to: '#c9a961', glass: '#241611' },
-    ar: {
-      name: 'العود الأسود',
-      tagline: 'عود مدخّن، حالك وغير متعجّل',
-      notes: {
-        top: ['برغموت', 'فلفل وردي'],
-        heart: ['عود كمبودي', 'وردة دمشقية'],
-        base: ['خشب الصندل', 'جلد', 'نجيل الهند'],
-      },
-      description:
-        'عود راتنجي مُعتَّق ثمانية عشر شهراً، يرفعه مطلق الورد. على البشرة مباشرةً يُقرأ كجلدٍ دافئ في غرفة معتمة.',
-    },
-    description:
-      'A resinous oud aged eighteen months and lifted by rose absolute. Worn close to the skin it reads like warm leather in a dark room.',
+    year: 2019,
+    bestseller: true,
+    isNew: false,
   },
   {
     id: 'rose-imperiale',
-    name: 'Rose Impériale',
-    tagline: 'Damask rose at first light',
-    family: 'Floral',
-    concentration: 'Eau de Parfum',
-    intensity: 'Moderate',
-    year: 2021,
-    rating: 4.8,
-    reviews: 328,
-    bestseller: true,
-    notes: {
-      top: ['Lychee', 'Pink Peppercorn'],
-      heart: ['Damask Rose', 'Peony', 'Violet Leaf'],
-      base: ['White Musk', 'Cashmere Wood'],
+    name: { en: 'Rose Impériale', ar: 'الوردة الإمبراطورية' },
+    tagline: { en: 'Damask rose at first light', ar: 'وردة دمشقية عند أول الضوء' },
+    description: {
+      en: 'Three thousand Damask roses distilled for a single flacon. Dewy and translucent at the top, powdery and quiet by the fourth hour.',
+      ar: 'ثلاثة آلاف وردة دمشقية تُقطَّر لقارورة واحدة. نديٌّ شفيف في مطلعه، بودريٌّ هادئ عند الساعة الرابعة.',
     },
-    sizes: [
-      { ml: 50, price: 65.000 },
-      { ml: 100, price: 105.000 },
-    ],
-    palette: { from: '#5c2438', via: '#b06a7d', to: '#f0cdd4', glass: '#2a1520' },
-    ar: {
-      name: 'الوردة الإمبراطورية',
-      tagline: 'وردة دمشقية عند أول الضوء',
-      notes: {
-        top: ['ليتشي', 'حبّ الفلفل الوردي'],
-        heart: ['وردة دمشقية', 'فاوانيا', 'ورق البنفسج'],
-        base: ['مسك أبيض', 'خشب الكشمير'],
+    family: 'rose',
+    familyProfile: { rose: 75, 'oud-musk': 25 },
+    concentration: 'edp',
+    gender: 'women',
+    longevity: 8,
+    projectionSillage: 'moderate',
+    heatResistance: 3,
+    seasons: ['summer', 'winter'],
+    occasions: ['wedding', 'everyday', 'office'],
+    topNotes: notes('lychee', 'pink-pepper'),
+    heartNotes: notes('damask-rose', 'peony', 'violet-leaf'),
+    baseNotes: notes('white-musk', 'cashmere-wood'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Rose bukhoor', ar: 'بخور الورد' },
+        how: {
+          en: 'Let the hair and shayla take in rose bukhoor smoke, then spray Rose Impériale on the ends of the hair.',
+          ar: 'بخّري الشعر والشيلة ببخور الورد، ثم رُشّي «الوردة الإمبراطورية» على أطراف الشعر.',
+        },
       },
-      description:
-        'ثلاثة آلاف وردة دمشقية تُقطَّر لقارورة واحدة. نديٌّ شفيف في مطلعه، بودريٌّ هادئ عند الساعة الرابعة.',
-    },
-    description:
-      'Three thousand Damask roses distilled for a single flacon. Dewy and translucent at the top, powdery and quiet by the fourth hour.',
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'One drop of Dehn Al Oud on the pulse points underneath turns it into a classic rose and oud for the evening.',
+          ar: 'قطرة واحدة من دهن العود على نقاط النبض تحته تحوّله إلى ورد وعود كلاسيكي للمساء.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc sprayed first keeps the rose soft and close for the office.',
+          ar: 'رشّة من «المسك الأبيض» أولاً تُبقي الوردة ناعمة وقريبة من البشرة في العمل.',
+        },
+      },
+    ],
+    formats: [format('full', 105000), format('spray50', 65000), format('sample', 4000)],
+    palette: { from: '#5c2438', via: '#b06a7d', to: '#f0cdd4', glass: '#2a1520' },
+    year: 2021,
+    bestseller: true,
+    isNew: false,
   },
   {
     id: 'citron-de-mer',
-    name: 'Citron de Mer',
-    tagline: 'Sicilian lemon over cold salt air',
-    family: 'Citrus',
-    concentration: 'Eau de Parfum',
-    intensity: 'Fresh',
-    year: 2022,
-    rating: 4.6,
-    reviews: 265,
-    notes: {
-      top: ['Sicilian Lemon', 'Yuzu', 'Sea Salt'],
-      heart: ['Neroli', 'Marine Accord'],
-      base: ['Driftwood', 'Ambrette'],
+    name: { en: 'Citron de Mer', ar: 'ليمون البحر' },
+    tagline: { en: 'Sicilian lemon over cold salt air', ar: 'ليمون صقلي فوق هواء مالح بارد' },
+    description: {
+      en: 'Built for heat. Cold-pressed lemon and yuzu snap against a mineral salt accord, then settle into sun-bleached driftwood, with ambroxan underneath to carry it across a room at noon.',
+      ar: 'صُنع للحرّ. ليمون معصور على البارد ويوزو ينقدحان على أكورد ملحي معدني، ثم يستقرّان على خشبٍ طافٍ بهتته الشمس، ومن تحتهما أمبروكسان يحمله عبر المكان في عزّ الظهيرة.',
     },
-    sizes: [
-      { ml: 50, price: 49.500 },
-      { ml: 100, price: 79.500 },
-    ],
-    palette: { from: '#1c4a4a', via: '#57a6a0', to: '#e6d98a', glass: '#10262a' },
-    ar: {
-      name: 'ليمون البحر',
-      tagline: 'ليمون صقلي فوق هواء مالح بارد',
-      notes: {
-        top: ['ليمون صقلي', 'يوزو', 'ملح البحر'],
-        heart: ['زهر النارنج', 'أكورد بحري'],
-        base: ['خشب الطافي', 'حبّ المسك'],
+    family: 'fresh-aquatic',
+    familyProfile: { 'fresh-aquatic': 80, amber: 20 },
+    concentration: 'edp',
+    gender: 'men',
+    longevity: 7,
+    projectionSillage: 'beast',
+    heatResistance: 5,
+    seasons: ['summer'],
+    occasions: ['office', 'everyday'],
+    topNotes: notes('sicilian-lemon', 'yuzu', 'sea-salt'),
+    heartNotes: notes('neroli', 'marine-accord'),
+    baseNotes: notes('driftwood', 'ambrette-seed', 'ambroxan'),
+    layering: [
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc on the skin first, Citron de Mer over it: the musk holds the citrus past midday.',
+          ar: '«المسك الأبيض» على البشرة أولاً ثم «ليمون البحر» فوقه: المسك يُمسك الحمضيات إلى ما بعد الظهر.',
+        },
       },
-      description:
-        'صُنع للحرّ. ليمون معصور على البارد ويوزو ينقدحان على أكورد ملحي معدني، ثم يستقرّان على خشبٍ طافٍ بهتته الشمس.',
-    },
-    description:
-      'Built for heat. Cold-pressed lemon and yuzu snap against a mineral salt accord, then settle into sun-bleached driftwood.',
+      {
+        kind: 'bukhoor',
+        name: { en: 'Light sandalwood bukhoor', ar: 'بخور صندل خفيف' },
+        how: {
+          en: 'Pass the ghutra briefly over a light sandalwood bukhoor in the morning; the citrus sits on top of the smoke without fighting it.',
+          ar: 'مرّر الغترة سريعاً فوق بخور صندل خفيف في الصباح، فتجلس الحمضيات فوق الدخان دون أن تتنازع معه.',
+        },
+      },
+    ],
+    formats: [format('full', 79500), format('spray50', 49500), format('sample', 3500)],
+    palette: { from: '#1c4a4a', via: '#57a6a0', to: '#e6d98a', glass: '#10262a' },
+    year: 2022,
+    bestseller: false,
+    isNew: false,
   },
   {
     id: 'ambre-royale',
-    name: 'Ambre Royale',
-    tagline: 'Amber, vanilla and slow-burning resin',
-    family: 'Oriental',
-    concentration: 'Extrait de Parfum',
-    intensity: 'Intense',
-    year: 2018,
-    rating: 4.9,
-    reviews: 501,
-    bestseller: true,
-    notes: {
-      top: ['Saffron', 'Cardamom'],
-      heart: ['Amber Resin', 'Labdanum', 'Jasmine'],
-      base: ['Madagascan Vanilla', 'Benzoin', 'Tonka Bean'],
+    name: { en: 'Ambre Royale', ar: 'العنبر الملكي' },
+    tagline: { en: 'Amber, vanilla and slow-burning resin', ar: 'عنبر وفانيلا وراتنج بطيء الاحتراق' },
+    description: {
+      en: 'The house signature. Saffron and cardamom open onto a bed of labdanum and vanilla that lingers on wool for days.',
+      ar: 'توقيع الدار. زعفران وهيل ينفتحان على فراش من اللادن والفانيلا يبقى على الصوف أياماً.',
     },
-    sizes: [
-      { ml: 50, price: 89.000 },
-      { ml: 100, price: 135.000 },
+    family: 'amber',
+    familyProfile: { amber: 55, gourmand: 25, 'french-arabic': 20 },
+    concentration: 'extrait',
+    gender: 'unisex',
+    longevity: 14,
+    projectionSillage: 'strong',
+    heatResistance: 2,
+    seasons: ['winter'],
+    occasions: ['wedding', 'diwaniya'],
+    topNotes: notes('saffron', 'cardamom'),
+    heartNotes: notes('amber-resin', 'labdanum', 'jasmine'),
+    baseNotes: notes('madagascan-vanilla', 'benzoin', 'tonka'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Amber bukhoor', ar: 'بخور العنبر' },
+        how: {
+          en: 'Perfume the bisht or abaya with amber bukhoor, then spray Ambre Royale on the wool where the smoke has been.',
+          ar: 'بخّر البشت أو العباءة ببخور العنبر، ثم رُشّ «العنبر الملكي» على الصوف حيث مرّ الدخان.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'A drop of Dehn Al Oud on the wrists under Ambre Royale lends the vanilla a dark edge of leather.',
+          ar: 'قطرة من دهن العود على المعصمين تحت «العنبر الملكي» تمنح الفانيلا حافّة داكنة من الجلد.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'qahwa',
+        how: {
+          en: 'Qahwa on the chest and Ambre Royale on the neck for a long winter diwaniya: saffron answers saffron.',
+          ar: '«قهوة» على الصدر و«العنبر الملكي» على الرقبة لديوانية شتوية طويلة، فيلتقي الزعفران بالزعفران.',
+        },
+      },
+    ],
+    formats: [
+      format('full', 135000),
+      format('spray50', 89000),
+      format('quarter-tola', 34000),
+      format('sample', 5000),
     ],
     palette: { from: '#5a2f10', via: '#c07c2a', to: '#f2d79a', glass: '#2c1a08' },
-    ar: {
-      name: 'العنبر الملكي',
-      tagline: 'عنبر وفانيلا وراتنج بطيء الاحتراق',
-      notes: {
-        top: ['زعفران', 'هيل'],
-        heart: ['راتنج العنبر', 'لادن', 'ياسمين'],
-        base: ['فانيلا مدغشقرية', 'بنزوين', 'حبّ التونكا'],
-      },
-      description:
-        'توقيع الدار. زعفران وهيل ينفتحان على فراش من اللادن والفانيلا يبقى على الصوف أياماً.',
-    },
-    description:
-      'The house signature. Saffron and cardamom open onto a bed of labdanum and vanilla that lingers on wool for days.',
+    year: 2018,
+    bestseller: true,
+    isNew: false,
   },
   {
     id: 'santal-blanc',
-    name: 'Santal Blanc',
-    tagline: 'Creamy sandalwood, worn like linen',
-    family: 'Woody',
-    concentration: 'Eau de Parfum',
-    intensity: 'Moderate',
-    year: 2020,
-    rating: 4.7,
-    reviews: 298,
-    notes: {
-      top: ['Violet Leaf', 'Cardamom'],
-      heart: ['Mysore Sandalwood', 'Iris'],
-      base: ['Cedar', 'Tonka Bean', 'Musk'],
+    name: { en: 'Santal Blanc', ar: 'الصندل الأبيض' },
+    tagline: { en: 'Creamy sandalwood, worn like linen', ar: 'صندل كريمي يُلبس كالكتّان' },
+    description: {
+      en: 'Sandalwood without the smoke. Iris gives it a powdery softness that makes it read closer to skin than to wood.',
+      ar: 'خشب صندل بلا دخان. السوسن يمنحه نعومة بودرية تجعله أقرب إلى البشرة منه إلى الخشب.',
     },
-    sizes: [
-      { ml: 50, price: 59.000 },
-      { ml: 100, price: 95.000 },
-    ],
-    palette: { from: '#4c4132', via: '#a2907a', to: '#e8dcc6', glass: '#241f18' },
-    ar: {
-      name: 'الصندل الأبيض',
-      tagline: 'صندل كريمي يُلبس كالكتّان',
-      notes: {
-        top: ['ورق البنفسج', 'هيل'],
-        heart: ['صندل ميسور', 'سوسن'],
-        base: ['أرز', 'حبّ التونكا', 'مسك'],
+    family: 'french-arabic',
+    familyProfile: { 'french-arabic': 55, 'oud-musk': 25, rose: 20 },
+    concentration: 'edp',
+    gender: 'unisex',
+    longevity: 9,
+    projectionSillage: 'moderate',
+    heatResistance: 4,
+    seasons: ['summer', 'winter'],
+    occasions: ['office', 'everyday'],
+    topNotes: notes('violet-leaf', 'cardamom'),
+    heartNotes: notes('mysore-sandalwood', 'iris'),
+    baseNotes: notes('cedar', 'tonka', 'musk'),
+    layering: [
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'Taif rose oil on the pulse points under Santal Blanc: rose over sandalwood, a pairing older than the bottle.',
+          ar: 'دهن الورد الطائفي على نقاط النبض تحت «الصندل الأبيض»: ورد فوق صندل، اقتران أقدم من القارورة نفسها.',
+        },
       },
-      description:
-        'خشب صندل بلا دخان. السوسن يمنحه نعومة بودرية تجعله أقرب إلى البشرة منه إلى الخشب.',
-    },
-    description:
-      'Sandalwood without the smoke. Iris gives it a powdery softness that makes it read closer to skin than to wood.',
+      {
+        kind: 'bukhoor',
+        name: { en: 'Sandalwood bukhoor', ar: 'بخور الصندل' },
+        how: {
+          en: 'Give the dishdasha a short pass of sandalwood bukhoor, then one light spray for the office.',
+          ar: 'مرّر الدشداشة مروراً قصيراً فوق بخور الصندل، ثم رشّة خفيفة واحدة للعمل.',
+        },
+      },
+    ],
+    formats: [format('full', 95000), format('spray50', 59000), format('sample', 4000)],
+    palette: { from: '#4c4132', via: '#a2907a', to: '#e8dcc6', glass: '#241f18' },
+    year: 2020,
+    bestseller: false,
+    isNew: false,
   },
   {
     id: 'nuit-de-jasmin',
-    name: 'Nuit de Jasmin',
-    tagline: 'Night-blooming jasmine and tuberose',
-    family: 'Floral',
-    concentration: 'Extrait de Parfum',
-    intensity: 'Intense',
-    year: 2023,
-    rating: 4.8,
-    reviews: 187,
-    isNew: true,
-    notes: {
-      top: ['Mandarin', 'Green Fig'],
-      heart: ['Sambac Jasmine', 'Tuberose', 'Ylang-Ylang'],
-      base: ['Sandalwood', 'Vanilla Orchid'],
+    name: { en: 'Nuit de Jasmin', ar: 'ليلة الياسمين' },
+    tagline: { en: 'Night-blooming jasmine and tuberose', ar: 'ياسمين ليلي ومسك الروم' },
+    description: {
+      en: 'Jasmine picked between midnight and dawn, when the flower gives up its most indolic facets. Unapologetically nocturnal.',
+      ar: 'ياسمين يُقطف بين منتصف الليل والفجر، حين تمنح الزهرة أكثر أوجهها عمقاً. ليليٌّ بلا اعتذار.',
     },
-    sizes: [
-      { ml: 50, price: 79.000 },
-      { ml: 100, price: 125.000 },
-    ],
-    palette: { from: '#2b2350', via: '#6f6bb0', to: '#e9e2f5', glass: '#161238' },
-    ar: {
-      name: 'ليلة الياسمين',
-      tagline: 'ياسمين ليلي ومسك الروم',
-      notes: {
-        top: ['يوسفي', 'تين أخضر'],
-        heart: ['ياسمين سمبك', 'مسك الروم', 'يلانغ يلانغ'],
-        base: ['خشب الصندل', 'سحلب الفانيلا'],
+    family: 'rose',
+    familyProfile: { rose: 70, amber: 30 },
+    concentration: 'extrait',
+    gender: 'women',
+    longevity: 10,
+    projectionSillage: 'strong',
+    heatResistance: 3,
+    seasons: ['winter'],
+    occasions: ['wedding'],
+    topNotes: notes('mandarin', 'green-fig'),
+    heartNotes: notes('jasmine-sambac', 'tuberose', 'ylang-ylang'),
+    baseNotes: notes('sandalwood', 'vanilla-orchid'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Oud bukhoor', ar: 'بخور العود' },
+        how: {
+          en: 'Before a wedding, smoke the hair and abaya with oud bukhoor, then spray Nuit de Jasmin on the ends of the hair.',
+          ar: 'قبل العرس، بخّري الشعر والعباءة ببخور العود، ثم رُشّي «ليلة الياسمين» على أطراف الشعر.',
+        },
       },
-      description:
-        'ياسمين يُقطف بين منتصف الليل والفجر، حين تمنح الزهرة أكثر أوجهها عمقاً. ليليٌّ بلا اعتذار.',
-    },
-    description:
-      'Jasmine picked between midnight and dawn, when the flower gives up its most indolic facets. Unapologetically nocturnal.',
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'A drop of Dehn Al Oud behind the ears gives the jasmine a dark root that lasts until the last guest leaves.',
+          ar: 'قطرة من دهن العود خلف الأذنين تمنح الياسمين جذراً داكناً يدوم حتى يغادر آخر الضيوف.',
+        },
+      },
+    ],
+    formats: [format('full', 125000), format('spray50', 79000), format('sample', 4500)],
+    palette: { from: '#2b2350', via: '#6f6bb0', to: '#e9e2f5', glass: '#161238' },
+    year: 2023,
+    bestseller: false,
+    isNew: true,
   },
   {
     id: 'bergamote-dor',
-    name: "Bergamote d'Or",
-    tagline: 'Gilded bergamot with a honeyed finish',
-    family: 'Citrus',
-    concentration: 'Eau de Parfum',
-    intensity: 'Fresh',
-    year: 2022,
-    rating: 4.5,
-    reviews: 221,
-    notes: {
-      top: ['Calabrian Bergamot', 'Blood Orange'],
-      heart: ['Orange Blossom', 'Honey Accord'],
-      base: ['Amberwood', 'White Musk'],
+    name: { en: "Bergamote d'Or", ar: 'البرغموت الذهبي' },
+    tagline: { en: 'Gilded bergamot with a honeyed finish', ar: 'برغموت مذهّب بنهاية عسلية' },
+    description: {
+      en: 'Calabrian bergamot rounded with a raw honey accord so the citrus never turns thin. Bright for an hour, golden for four more.',
+      ar: 'برغموت كالابري يُدوَّر بأكورد عسل خام كي لا يرقّ الحمضي أبداً. ساطع لساعة، وذهبيّ لأربع ساعات بعدها.',
     },
-    sizes: [
-      { ml: 50, price: 53.000 },
-      { ml: 100, price: 85.000 },
-    ],
-    palette: { from: '#6b4a10', via: '#d9a32c', to: '#f7e6a8', glass: '#2e2109' },
-    ar: {
-      name: 'البرغموت الذهبي',
-      tagline: 'برغموت مذهّب بنهاية عسلية',
-      notes: {
-        top: ['برغموت كالابري', 'برتقال دموي'],
-        heart: ['زهر البرتقال', 'أكورد العسل'],
-        base: ['خشب العنبر', 'مسك أبيض'],
+    family: 'fresh-aquatic',
+    familyProfile: { 'fresh-aquatic': 65, gourmand: 20, rose: 15 },
+    concentration: 'edt',
+    gender: 'unisex',
+    longevity: 5,
+    projectionSillage: 'moderate',
+    heatResistance: 4,
+    seasons: ['summer'],
+    occasions: ['office', 'everyday'],
+    topNotes: notes('calabrian-bergamot', 'blood-orange'),
+    heartNotes: notes('orange-blossom', 'honey'),
+    baseNotes: notes('amberwood', 'white-musk'),
+    layering: [
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc underneath stretches the golden drydown through a summer working day.',
+          ar: '«المسك الأبيض» تحته يُطيل الختام الذهبي طوال يوم عمل صيفي.',
+        },
       },
-      description:
-        'برغموت كالابري يُدوَّر بأكورد عسل خام كي لا يرقّ الحمضي أبداً. ساطع لساعة، ذهبيّ لستّ.',
-    },
-    description:
-      'Calabrian bergamot rounded with a raw honey accord so the citrus never turns thin. Bright for an hour, golden for six.',
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'A dab of Taif rose oil on the wrists turns the orange blossom into a soft rose for the evening.',
+          ar: 'لمسة من دهن الورد الطائفي على المعصمين تحوّل زهر البرتقال إلى وردة ناعمة للمساء.',
+        },
+      },
+    ],
+    formats: [format('full', 85000), format('spray50', 53000), format('sample', 3500)],
+    palette: { from: '#6b4a10', via: '#d9a32c', to: '#f7e6a8', glass: '#2e2109' },
+    year: 2022,
+    bestseller: false,
+    isNew: false,
   },
   {
     id: 'safran-imperial',
-    name: 'Safran Impérial',
-    tagline: 'Saffron threads over warm spice',
-    family: 'Oriental',
-    concentration: 'Extrait de Parfum',
-    intensity: 'Intense',
-    year: 2021,
-    rating: 4.7,
-    reviews: 243,
-    notes: {
-      top: ['Saffron', 'Nutmeg', 'Pink Pepper'],
-      heart: ['Rose Absolute', 'Cinnamon Bark'],
-      base: ['Oud', 'Amber', 'Patchouli'],
+    name: { en: 'Safran Impérial', ar: 'الزعفران الإمبراطوري' },
+    tagline: { en: 'Saffron threads over warm spice', ar: 'خيوط زعفران فوق توابل دافئة' },
+    description: {
+      en: 'Saffron at full strength, tempered by rose absolute and cinnamon bark. A cold-weather fragrance with a long, dry finish.',
+      ar: 'زعفران بكامل قوّته، يلطّفه مطلق الورد ولحاء القرفة. عطر للطقس البارد بخاتمة جافّة طويلة.',
     },
-    sizes: [
-      { ml: 50, price: 83.000 },
-      { ml: 100, price: 129.000 },
+    family: 'french-arabic',
+    familyProfile: { 'french-arabic': 50, 'oud-musk': 30, rose: 20 },
+    concentration: 'extrait',
+    gender: 'unisex',
+    longevity: 12,
+    projectionSillage: 'beast',
+    heatResistance: 3,
+    seasons: ['winter'],
+    occasions: ['diwaniya', 'wedding'],
+    topNotes: notes('saffron', 'nutmeg', 'pink-pepper'),
+    heartNotes: notes('rose-absolute', 'cinnamon-bark'),
+    baseNotes: notes('hindi-oud', 'amber', 'patchouli'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Oud bukhoor', ar: 'بخور العود' },
+        how: {
+          en: 'Smoke the dishdasha and ghutra over oud bukhoor, then spray Safran Impérial on the chest.',
+          ar: 'بخّر الدشداشة والغترة ببخور العود، ثم رُشّ «الزعفران الإمبراطوري» على الصدر.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'Taif rose oil on the pulse points draws the rose absolute forward through the saffron.',
+          ar: 'دهن الورد الطائفي على نقاط النبض يُبرز مطلق الورد من خلال الزعفران.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc first on the skin rounds the spice for a wedding that runs past midnight.',
+          ar: '«المسك الأبيض» أولاً على البشرة يليّن التوابل لعرسٍ يمتدّ إلى ما بعد منتصف الليل.',
+        },
+      },
+    ],
+    formats: [
+      format('full', 129000),
+      format('spray50', 83000),
+      format('quarter-tola', 32000),
+      format('sample', 5000),
     ],
     palette: { from: '#63200f', via: '#c2502a', to: '#f0b169', glass: '#2d0f08' },
-    ar: {
-      name: 'الزعفران الإمبراطوري',
-      tagline: 'خيوط زعفران فوق توابل دافئة',
-      notes: {
-        top: ['زعفران', 'جوزة الطيب', 'فلفل وردي'],
-        heart: ['مطلق الورد', 'لحاء القرفة'],
-        base: ['عود', 'عنبر', 'باتشولي'],
-      },
-      description:
-        'زعفران بكامل قوّته، يلطّفه مطلق الورد ولحاء القرفة. عطر للطقس البارد بخاتمة جافّة طويلة.',
-    },
-    description:
-      'Saffron at full strength, tempered by rose absolute and cinnamon bark. A cold-weather fragrance with a long, dry finish.',
+    year: 2021,
+    bestseller: false,
+    isNew: false,
   },
   {
     id: 'cedre-fume',
-    name: 'Cèdre Fumé',
-    tagline: 'Atlas cedar drawn through woodsmoke',
-    family: 'Woody',
-    concentration: 'Eau de Parfum',
-    intensity: 'Moderate',
-    year: 2023,
-    rating: 4.6,
-    reviews: 154,
-    isNew: true,
-    notes: {
-      top: ['Juniper', 'Black Pepper'],
-      heart: ['Atlas Cedar', 'Cypress', 'Birch Tar'],
-      base: ['Vetiver', 'Oakmoss', 'Grey Amber'],
+    name: { en: 'Cèdre Fumé', ar: 'الأرز المدخّن' },
+    tagline: { en: 'Atlas cedar drawn through woodsmoke', ar: 'أرز أطلسي مسحوب عبر دخان الحطب' },
+    description: {
+      en: 'Birch tar gives the cedar its smoke; oakmoss keeps it damp rather than ashen. Closer to a forest floor than a fireplace.',
+      ar: 'قطران البتولا يمنح الأرز دخانه، وطحلب البلوط يبقيه رطباً لا رمادياً. أقرب إلى أرض الغابة منه إلى الموقد.',
     },
-    sizes: [
-      { ml: 50, price: 55.500 },
-      { ml: 100, price: 89.500 },
-    ],
-    palette: { from: '#23302a', via: '#5e7361', to: '#c3cbb8', glass: '#141c18' },
-    ar: {
-      name: 'الأرز المدخّن',
-      tagline: 'أرز أطلسي مسحوب عبر دخان الحطب',
-      notes: {
-        top: ['عرعر', 'فلفل أسود'],
-        heart: ['أرز أطلسي', 'سرو', 'قطران البتولا'],
-        base: ['نجيل الهند', 'أشنة البلوط', 'عنبر رمادي'],
+    family: 'french-arabic',
+    familyProfile: { 'french-arabic': 45, 'oud-musk': 35, 'bukhoor-oils': 20 },
+    concentration: 'edp',
+    gender: 'men',
+    longevity: 9,
+    projectionSillage: 'strong',
+    heatResistance: 3,
+    seasons: ['winter'],
+    occasions: ['diwaniya', 'everyday'],
+    topNotes: notes('juniper', 'black-pepper'),
+    heartNotes: notes('atlas-cedar', 'cypress', 'birch-tar', 'frankincense'),
+    baseNotes: notes('vetiver', 'oakmoss', 'hindi-oud', 'ambergris'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Frankincense (luban)', ar: 'بخور اللبان' },
+        how: {
+          en: 'Burn a few grains of frankincense and hold the dishdasha over the smoke; Cèdre Fumé picks up where the smoke leaves off.',
+          ar: 'أحرق حبّات من اللبان وبخّر الدشداشة بدخانها، فيكمل «الأرز المدخّن» من حيث ينتهي الدخان.',
+        },
       },
-      description:
-        'قطران البتولا يمنح الأرز دخانه، وطحلب البلوط يبقيه رطباً لا رمادياً. أقرب إلى أرض الغابة منه إلى الموقد.',
-    },
-    description:
-      'Birch tar gives the cedar its smoke; oakmoss keeps it damp rather than ashen. Closer to a forest floor than a fireplace.',
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'A drop of Dehn Al Oud on the wrists makes the cedar darker and longer for an evening at the diwaniya.',
+          ar: 'قطرة من دهن العود على المعصمين تجعل الأرز أعمق وأطول ثباتاً لسهرة في الديوانية.',
+        },
+      },
+    ],
+    formats: [format('full', 89500), format('spray50', 55500), format('sample', 4000)],
+    palette: { from: '#23302a', via: '#5e7361', to: '#c3cbb8', glass: '#141c18' },
+    year: 2023,
+    bestseller: false,
+    isNew: true,
   },
   {
     id: 'fleur-de-neroli',
-    name: 'Fleur de Néroli',
-    tagline: 'Orange blossom in full sun',
-    family: 'Floral',
-    concentration: 'Eau de Parfum',
-    intensity: 'Fresh',
-    year: 2020,
-    rating: 4.5,
-    reviews: 176,
-    notes: {
-      top: ['Petitgrain', 'Green Mandarin'],
-      heart: ['Neroli', 'Orange Blossom', 'Honeysuckle'],
-      base: ['White Musk', 'Blond Woods'],
+    name: { en: 'Fleur de Néroli', ar: 'زهرة النيرولي' },
+    tagline: { en: 'Orange blossom in full sun', ar: 'زهر البرتقال في شمس كاملة' },
+    description: {
+      en: 'Neroli distilled from Tunisian bitter orange flowers. Green and slightly bitter up top, soft and sunlit underneath.',
+      ar: 'نيرولي مُقطَّر من زهر النارنج التونسي. أخضر ومرٌّ قليلاً في أعلاه، ناعم مشمس تحته.',
     },
-    sizes: [
-      { ml: 50, price: 48.000 },
-      { ml: 100, price: 77.000 },
-    ],
-    palette: { from: '#4a4a22', via: '#a8b06a', to: '#f4efd0', glass: '#22240f' },
-    ar: {
-      name: 'زهرة النيرولي',
-      tagline: 'زهر البرتقال في شمس كاملة',
-      notes: {
-        top: ['بتيتغرين', 'يوسفي أخضر'],
-        heart: ['نيرولي', 'زهر البرتقال', 'زهر العسل'],
-        base: ['مسك أبيض', 'أخشاب فاتحة'],
+    family: 'rose',
+    familyProfile: { rose: 60, 'fresh-aquatic': 40 },
+    concentration: 'edt',
+    gender: 'women',
+    longevity: 5,
+    projectionSillage: 'intimate',
+    heatResistance: 4,
+    seasons: ['summer'],
+    occasions: ['office', 'everyday'],
+    topNotes: notes('petitgrain', 'green-mandarin'),
+    heartNotes: notes('neroli', 'orange-blossom', 'honeysuckle'),
+    baseNotes: notes('white-musk', 'blond-woods'),
+    layering: [
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Musc Blanc underneath keeps the neroli on the skin well past lunchtime.',
+          ar: '«المسك الأبيض» تحته يُبقي النيرولي على البشرة إلى ما بعد الغداء بكثير.',
+        },
       },
-      description:
-        'نيرولي مُقطَّر من زهر النارنج التونسي. أخضر ومرٌّ قليلاً في أعلاه، ناعم مشمس تحته.',
-    },
-    description:
-      'Neroli distilled from Tunisian bitter orange flowers. Green and slightly bitter up top, soft and sunlit underneath.',
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'A touch of Taif rose oil on the wrists turns it into rose and blossom for a summer evening.',
+          ar: 'لمسة من دهن الورد الطائفي على المعصمين تحوّله إلى ورد وزهر لأمسية صيفية.',
+        },
+      },
+    ],
+    formats: [format('full', 77000), format('spray50', 48000), format('sample', 3500)],
+    palette: { from: '#4a4a22', via: '#a8b06a', to: '#f4efd0', glass: '#22240f' },
+    year: 2020,
+    bestseller: false,
+    isNew: false,
   },
   {
     id: 'musc-blanc',
-    name: 'Musc Blanc',
-    tagline: 'Skin musk, cashmere and clean iris',
-    family: 'Oriental',
-    concentration: 'Eau de Parfum',
-    intensity: 'Soft',
-    year: 2024,
-    rating: 4.8,
-    reviews: 132,
-    isNew: true,
-    notes: {
-      top: ['Aldehydes', 'Bergamot'],
-      heart: ['Iris Pallida', 'Cashmeran'],
-      base: ['White Musk', 'Ambrette Seed', 'Vanilla'],
+    name: { en: 'Musc Blanc', ar: 'المسك الأبيض' },
+    tagline: { en: 'Skin musk, cashmere and clean iris', ar: 'مسك البشرة والكشمير والسوسن النقي' },
+    description: {
+      en: 'A second-skin musk built on ambrette and iris. Quiet enough for close quarters, persistent enough to notice at the end of the day.',
+      ar: 'مسك كبشرة ثانية، مبنيٌّ على حبّ المسك والسوسن. هادئ بما يكفي للأماكن الضيّقة، وثابت بما يكفي ليُلاحَظ في آخر اليوم.',
     },
-    sizes: [
-      { ml: 50, price: 57.500 },
-      { ml: 100, price: 91.000 },
-    ],
-    palette: { from: '#3d3a3c', via: '#8f8a8c', to: '#efe9e6', glass: '#1c1a1b' },
-    ar: {
-      name: 'المسك الأبيض',
-      tagline: 'مسك البشرة والكشمير والسوسن النقي',
-      notes: {
-        top: ['ألدهيدات', 'برغموت'],
-        heart: ['سوسن باليدا', 'كشميران'],
-        base: ['مسك أبيض', 'حبّ المسك', 'فانيلا'],
+    family: 'oud-musk',
+    familyProfile: { 'oud-musk': 65, rose: 20, gourmand: 15 },
+    concentration: 'edp',
+    gender: 'unisex',
+    longevity: 8,
+    projectionSillage: 'intimate',
+    heatResistance: 5,
+    seasons: ['summer', 'winter'],
+    occasions: ['everyday', 'office'],
+    topNotes: notes('aldehydes', 'bergamot'),
+    heartNotes: notes('iris-pallida', 'cashmeran'),
+    baseNotes: notes('white-musk', 'ambrette-seed', 'vanilla'),
+    layering: [
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'Spray Musc Blanc first and add a single drop of Dehn Al Oud on top: musk under oud, the way the Gulf has always worn them.',
+          ar: 'رُشّ «المسك الأبيض» أولاً ثم قطرة واحدة من دهن العود فوقه: المسك تحت العود، كما لبسهما أهل الخليج دائماً.',
+        },
       },
-      description:
-        'مسك كبشرة ثانية، مبنيٌّ على حبّ المسك والسوسن. هادئ بما يكفي للأماكن الضيّقة، وثابت بما يكفي ليُلاحَظ في آخر اليوم.',
-    },
-    description:
-      'A second-skin musk built on ambrette and iris. Quiet enough for close quarters, persistent enough to notice at the end of the day.',
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'A drop of Taif rose oil over it makes a clean rose musk for every day.',
+          ar: 'قطرة من دهن الورد الطائفي فوقه تصنع مسكاً وردياً نقياً لكل يوم.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'oud-noir',
+        how: {
+          en: 'Worn under Oud Noir, it softens the smoke and lengthens the trail.',
+          ar: 'تحت «العود الأسود» يليّن الدخان ويُطيل الأثر.',
+        },
+      },
+    ],
+    formats: [format('full', 91000), format('spray50', 57500), format('sample', 3500)],
+    palette: { from: '#3d3a3c', via: '#8f8a8c', to: '#efe9e6', glass: '#1c1a1b' },
+    year: 2024,
+    bestseller: false,
+    isNew: true,
   },
   {
     id: 'vetiver-noir',
-    name: 'Vétiver Noir',
-    tagline: 'Haitian vetiver, earth-damp and green',
-    family: 'Woody',
-    concentration: 'Extrait de Parfum',
-    intensity: 'Moderate',
-    year: 2019,
-    rating: 4.6,
-    reviews: 209,
-    notes: {
-      top: ['Grapefruit', 'Green Cardamom'],
-      heart: ['Haitian Vetiver', 'Iris Root'],
-      base: ['Guaiac Wood', 'Tobacco Leaf', 'Ambergris'],
+    name: { en: 'Vétiver Noir', ar: 'النجيل الأسود' },
+    tagline: { en: 'Haitian vetiver, earth-damp and green', ar: 'نجيل هايتي، ندي التراب وأخضر' },
+    description: {
+      en: 'Vetiver kept rooty and green rather than smoked. Tobacco leaf and ambergris carry it into a dry, resinous close.',
+      ar: 'نجيل الهند يبقى جذرياً أخضر لا مدخّناً. ورق التبغ والعنبر الرمادي يحملانه إلى خاتمة جافّة راتنجية.',
     },
-    sizes: [
-      { ml: 50, price: 67.000 },
-      { ml: 100, price: 108.000 },
-    ],
-    palette: { from: '#1f3326', via: '#4f7a52', to: '#cfd9b4', glass: '#0f1c14' },
-    ar: {
-      name: 'النجيل الأسود',
-      tagline: 'نجيل هايتي، ندي التراب وأخضر',
-      notes: {
-        top: ['جريب فروت', 'هيل أخضر'],
-        heart: ['نجيل هايتي', 'جذر السوسن'],
-        base: ['خشب الغاياك', 'ورق التبغ', 'عنبر'],
+    family: 'french-arabic',
+    familyProfile: { 'french-arabic': 60, amber: 25, 'oud-musk': 15 },
+    concentration: 'extrait',
+    gender: 'men',
+    longevity: 10,
+    projectionSillage: 'moderate',
+    heatResistance: 3,
+    seasons: ['winter'],
+    occasions: ['office', 'diwaniya'],
+    topNotes: notes('grapefruit', 'cardamom'),
+    heartNotes: notes('haitian-vetiver', 'orris-root'),
+    baseNotes: notes('guaiac-wood', 'tobacco', 'ambergris'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: "Mu'attar bukhoor", ar: 'بخور معطّر' },
+        how: {
+          en: "Pass the dishdasha over mu'attar bukhoor before the diwaniya, then spray Vétiver Noir on the collar.",
+          ar: 'بخّر الدشداشة بالبخور المعطّر قبل الديوانية، ثم رُشّ «النجيل الأسود» على الياقة.',
+        },
       },
-      description:
-        'نجيل الهند يبقى جذرياً أخضر لا مدخّناً. ورق التبغ والعنبر الخام يحملانه إلى خاتمة جافّة راتنجية.',
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'Dehn Al Oud on the wrists and vetiver over it gives an earthy, resinous scent for winter evenings.',
+          ar: 'دهن العود على المعصمين والنجيل فوقه يمنحان رائحة ترابية راتنجية لأمسيات الشتاء.',
+        },
+      },
+    ],
+    formats: [format('full', 108000), format('spray50', 67000), format('sample', 4500)],
+    palette: { from: '#1f3326', via: '#4f7a52', to: '#cfd9b4', glass: '#0f1c14' },
+    year: 2019,
+    bestseller: false,
+    isNew: false,
+  },
+  {
+    id: 'qahwa',
+    name: { en: 'Qahwa', ar: 'قهوة' },
+    tagline: { en: 'Cardamom coffee, dates and dark vanilla', ar: 'قهوة بالهيل وتمر وفانيلا داكنة' },
+    description: {
+      en: 'Coffee as the diwaniya pours it: a light Arabic roast boiled with cardamom and a few threads of saffron, with a plate of dates beside it. Madagascan vanilla and tonka keep it warm rather than sweet, and a thread of Cambodi oud stops it short of dessert.',
+      ar: 'القهوة كما تُصبّ في الديوانية: بنّ عربي خفيف التحميص يُغلى مع الهيل وشعيرات من الزعفران، وإلى جانبه صحن تمر. الفانيلا المدغشقرية والتونكا تمنحانه دفئاً لا حلاوة، وخيط من العود الكمبودي يمنعه أن يصير حلوى.',
     },
-    description:
-      'Vetiver kept rooty and green rather than smoked. Tobacco leaf and ambergris carry it into a dry, resinous close.',
+    family: 'gourmand',
+    familyProfile: { gourmand: 60, amber: 25, 'oud-musk': 15 },
+    concentration: 'edp',
+    gender: 'unisex',
+    longevity: 10,
+    projectionSillage: 'strong',
+    heatResistance: 2,
+    seasons: ['winter'],
+    occasions: ['diwaniya', 'everyday'],
+    topNotes: notes('cardamom', 'saffron'),
+    heartNotes: notes('arabic-coffee', 'dates'),
+    baseNotes: notes('madagascan-vanilla', 'tonka', 'cambodi-oud'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Oud bukhoor', ar: 'بخور العود' },
+        how: {
+          en: 'Coffee and bukhoor are the two scents of the diwaniya: smoke the dishdasha first, then spray Qahwa on the chest.',
+          ar: 'القهوة والبخور رائحتا الديوانية: بخّر الدشداشة أولاً، ثم رُشّ «قهوة» على الصدر.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'A drop of Dehn Al Oud on the wrists turns the thread of oud in the base into a full line.',
+          ar: 'قطرة من دهن العود على المعصمين تحوّل خيط العود في القاعدة إلى حضور كامل.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'ambre-royale',
+        how: {
+          en: 'Ambre Royale on the neck with Qahwa on the chest, for long winter nights.',
+          ar: '«العنبر الملكي» على الرقبة و«قهوة» على الصدر، لليالي الشتاء الطويلة.',
+        },
+      },
+    ],
+    formats: [format('full', 98000), format('spray50', 62000), format('sample', 4000)],
+    palette: { from: '#2b1611', via: '#7a3f2c', to: '#dcb48c', glass: '#160b08' },
+    year: 2025,
+    bestseller: false,
+    isNew: true,
+  },
+  {
+    id: 'dehn-al-oud',
+    name: { en: 'Dehn Al Oud', ar: 'دهن العود' },
+    tagline: { en: 'Cambodi oud oil, honeyed and resinous', ar: 'دهن عود كمبودي، عسليّ وراتنجي' },
+    description: {
+      en: 'Pure Cambodi oud oil, distilled from soaked agarwood and rested in glass for a year before it is bottled. Dried plum and wild honey at first, then soft leather and resin that stay on the skin well into the next day. One drop on each wrist is enough.',
+      ar: 'دهن عود كمبودي صافٍ، مقطَّر من خشب عود منقوع، يرتاح في الزجاج عاماً كاملاً قبل تعبئته. برقوق مجفّف وعسل برّي في البداية، ثم جلد ناعم وراتنج يبقيان على البشرة حتى اليوم التالي. قطرة على كل معصم تكفي.',
+    },
+    family: 'bukhoor-oils',
+    familyProfile: { 'bukhoor-oils': 55, 'oud-musk': 45 },
+    concentration: 'attar',
+    gender: 'unisex',
+    longevity: 18,
+    projectionSillage: 'strong',
+    heatResistance: 4,
+    seasons: ['summer', 'winter'],
+    occasions: ['diwaniya', 'wedding'],
+    topNotes: notes('dried-plum', 'honey'),
+    heartNotes: notes('cambodi-oud'),
+    baseNotes: notes('leather', 'resinous-woods'),
+    layering: [
+      {
+        kind: 'bukhoor',
+        name: { en: 'Oud bukhoor', ar: 'بخور العود' },
+        how: {
+          en: 'Smoke the dishdasha or abaya over oud bukhoor, then a drop of oil on the wrists and behind the ears.',
+          ar: 'بخّر الدشداشة أو العباءة ببخور العود، ثم قطرة من الدهن على المعصمين وخلف الأذنين.',
+        },
+      },
+      {
+        kind: 'spray',
+        productId: 'musc-blanc',
+        how: {
+          en: 'Spray Musc Blanc first and put the oil over it: musk under oud keeps the oud going into the night.',
+          ar: 'رُشّ «المسك الأبيض» أولاً وضع الدهن فوقه: المسك تحت العود يمدّ أثره إلى الليل.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'ward-taifi',
+        how: {
+          en: 'One drop each of Dehn Al Oud and Taif rose oil on the same pulse point makes the classic ward and oud.',
+          ar: 'قطرة من دهن العود وقطرة من دهن الورد الطائفي على نقطة النبض نفسها تصنعان الورد والعود الكلاسيكي.',
+        },
+      },
+    ],
+    formats: [format('tola', 120000), format('quarter-tola', 35000), format('sample', 6500)],
+    palette: { from: '#120c0a', via: '#3f2a1e', to: '#9c7a52', glass: '#0a0605' },
+    year: 2023,
+    bestseller: false,
+    isNew: false,
+  },
+  {
+    id: 'ward-taifi',
+    name: { en: 'Ward Taifi', ar: 'ورد طائفي' },
+    tagline: { en: 'Taif rose, picked before sunrise', ar: 'ورد الطائف، يُقطف قبل الشروق' },
+    description: {
+      en: 'Rose oil from Taif, where the thirty-petal damask rose is picked before sunrise on the terraces of Al Hada and distilled in copper the same morning. Green and peppery as the vial opens, then honeyed and full, it settles on a little sandalwood and white musk that let it sit softly on the skin.',
+      ar: 'دهن ورد من الطائف، حيث يُقطف الورد الدمشقي ذو الثلاثين بتلة قبل الشروق من مدرّجات الهدا، ويُقطَّر في قدور النحاس صباح اليوم نفسه. أخضر بلمسة فلفل عند فتح القارورة، ثم عسليّ ممتلئ، يستقرّ على قليل من الصندل والمسك الأبيض فيجلس ناعماً على البشرة.',
+    },
+    family: 'bukhoor-oils',
+    familyProfile: { 'bukhoor-oils': 50, rose: 50 },
+    concentration: 'attar',
+    gender: 'unisex',
+    longevity: 12,
+    projectionSillage: 'moderate',
+    heatResistance: 4,
+    seasons: ['summer', 'winter'],
+    occasions: ['wedding', 'everyday'],
+    topNotes: notes('pink-pepper', 'rose-leaf'),
+    heartNotes: notes('taif-rose'),
+    baseNotes: notes('sandalwood', 'white-musk'),
+    layering: [
+      {
+        kind: 'spray',
+        productId: 'oud-noir',
+        how: {
+          en: 'A drop on the pulse points under Oud Noir brings the rose in its heart to the front.',
+          ar: 'قطرة على نقاط النبض تحت «العود الأسود» تُقدّم الورد الذي في قلبه.',
+        },
+      },
+      {
+        kind: 'attar',
+        productId: 'dehn-al-oud',
+        how: {
+          en: 'With a drop of Dehn Al Oud on the same wrist: rose and oud, the pairing every Gulf wedding knows.',
+          ar: 'مع قطرة من دهن العود على المعصم نفسه: الورد والعود، الاقتران الذي يعرفه كل عرس خليجي.',
+        },
+      },
+      {
+        kind: 'bukhoor',
+        name: { en: 'Rose bukhoor', ar: 'بخور الورد' },
+        how: {
+          en: 'Perfume the hair and shayla with rose bukhoor, then touch a drop of oil to the nape.',
+          ar: 'بخّري الشعر والشيلة ببخور الورد، ثم ضعي قطرة من الدهن على مؤخرة العنق.',
+        },
+      },
+    ],
+    formats: [format('tola', 85000), format('quarter-tola', 24000), format('sample', 5000)],
+    palette: { from: '#3f0f1d', via: '#b23a55', to: '#f3c9b9', glass: '#200810' },
+    year: 2025,
+    bestseller: false,
+    isNew: true,
   },
 ]
 
+/** Fast lookup used by the cart to re-hydrate line items. */
+export const PRODUCTS_BY_ID = byId(PRODUCTS)
+
 /**
- * Catalogue numbers are positional and stable: the house numbers its extraits
- * in the order they were composed, and the number is printed on every label.
+ * Catalogue numbers are positional and stable: the house numbers its
+ * fragrances in the order they joined the collection, and the number is
+ * printed on every label. New fragrances are appended, never inserted.
  */
 export const CATALOGUE_NUMBERS = Object.fromEntries(
   PRODUCTS.map((product, index) => [product.id, String(index + 1).padStart(2, '0')]),
 )
 
-/** Fast lookup used by the cart to re-hydrate line items. */
-export const PRODUCTS_BY_ID = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]))
+/** The bottles and oils of a fragrance — every format except the sample vial. */
+export const bottleFormats = (product) =>
+  product.formats.filter((entry) => FORMAT_BY_ID[entry.id]?.kind !== 'sample')
 
-/** Inclusive price bounds across every size of every fragrance. */
-export const PRICE_BOUNDS = PRODUCTS.reduce(
-  (acc, product) => {
-    for (const size of product.sizes) {
-      acc.min = Math.min(acc.min, size.price)
-      acc.max = Math.max(acc.max, size.price)
-    }
-    return acc
-  },
-  { min: Infinity, max: 0 },
+/** The "from" price: the cheapest bottle or oil, never the sample. */
+export const fromPriceFils = (product) =>
+  Math.min(...bottleFormats(product).map((entry) => entry.priceFils))
+
+/** One format of a fragrance, or null when it is not offered. */
+export const formatOf = (product, formatId) =>
+  product?.formats.find((entry) => entry.id === formatId) ?? null
+
+/** Oils are always attar; every other format is the fragrance's own concentration. */
+export const concentrationFor = (product, formatId) =>
+  FORMAT_BY_ID[formatId]?.kind === 'oil' ? 'attar' : product.concentration
+
+/** Top, heart and base notes in pyramid order. */
+export const allNotes = (product) => [
+  ...product.topNotes,
+  ...product.heartNotes,
+  ...product.baseNotes,
+]
+
+/**
+ * Price filter bounds across every bottle and oil (samples excluded), in fils,
+ * rounded out to whole dinars so a one-dinar slider step lands on both ends.
+ */
+const BOTTLE_PRICES = PRODUCTS.flatMap((product) =>
+  bottleFormats(product).map((entry) => entry.priceFils),
 )
+
+export const PRICE_BOUNDS = {
+  minFils: Math.floor(Math.min(...BOTTLE_PRICES) / 1000) * 1000,
+  maxFils: Math.ceil(Math.max(...BOTTLE_PRICES) / 1000) * 1000,
+}

@@ -9,6 +9,9 @@ import { classNames } from '../lib/format'
  * wax seal at the neck. The glass is achromatic and the only colour is the
  * fragrance's own `palette`, so twelve of these read as one collection.
  *
+ * `label` is the concentration printed under the N ('EXTRAIT', 'EDP', 'EDT',
+ * 'ATTAR' — CONCENTRATIONS[].abbr); without one that line stays blank.
+ *
  * Swap this component for an <img> once real photography exists.
  */
 
@@ -22,7 +25,7 @@ const SILHOUETTE =
 
 const STOPPER = 'M80 4 L120 4 L123 18 C123 25 113 30 100 30 C87 30 77 25 77 18 Z'
 
-export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, className }) {
+export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, label, className }) {
   const uid = useId().replace(/:/g, '')
   const liquid = `lq-${uid}`
   const glass = `gl-${uid}`
@@ -36,9 +39,9 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
   const labelFill = '#fbfaf7'
 
   return (
+    // Decorative: the product's name is always beside it in text.
     <svg
       viewBox="0 0 200 300"
-      role="img"
       aria-hidden="true"
       className={classNames('h-full w-full', className)}
     >
@@ -128,18 +131,20 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, cla
         N
       </text>
       <line x1="78" y1="199" x2="122" y2="199" stroke="#08140f" strokeOpacity="0.3" strokeWidth="0.6" />
-      <text
-        x="100"
-        y="210"
-        textAnchor="middle"
-        fontFamily="Jost, Futura, sans-serif"
-        fontSize="6"
-        letterSpacing="1.5"
-        fill="#08140f"
-        fillOpacity="0.72"
-      >
-        EXTRAIT
-      </text>
+      {label && (
+        <text
+          x="100"
+          y="210"
+          textAnchor="middle"
+          fontFamily="Jost, Futura, sans-serif"
+          fontSize="6"
+          letterSpacing="1.5"
+          fill="#08140f"
+          fillOpacity="0.72"
+        >
+          {label}
+        </text>
+      )}
       {catalogue && (
         <text
           x="100"

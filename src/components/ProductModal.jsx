@@ -1,13 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
-import { Plus, Star, X } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Plus, X } from 'lucide-react'
 import BottleVisual from './BottleVisual'
+import FormatToggle from './product/FormatToggle'
 import { useCart } from '../context/cart-context'
-import { CATALOGUE_NUMBERS, CONCENTRATION_AR, FAMILY_AR, INTENSITY_AR } from '../data/products'
+import { CATALOGUE_NUMBERS, concentrationFor, formatOf } from '../data/products'
+import { CONCENTRATION_BY_ID, FAMILY_BY_ID, SILLAGE_BY_ID } from '../data/taxonomy'
 import { useOverlay } from '../hooks/useOverlay'
 import { useLocale } from '../i18n/locale-context'
-import { classNames, formatNumber, formatOrdinal, formatPrice } from '../lib/format'
+import { formatNumber, formatOrdinal, formatPrice } from '../lib/format'
 
-const NOTE_ROWS = ['top', 'heart', 'base']
+const NOTE_ROWS = [
+  ['top', 'topNotes'],
+  ['heart', 'heartNotes'],
+  ['base', 'baseNotes'],
+]
 
 /**
  * The product page, as an overlay. There is no router here and no second URL:
@@ -16,32 +22,33 @@ const NOTE_ROWS = ['top', 'heart', 'base']
  *
  * It is the only place the long `description` is shown — the cards carry the
  * tagline — so this is where a shopper reads before buying.
+ *
+ * `onOpenProduct(product)` swaps the overlay to another fragrance; the
+ * layering guide's links to partner scents are its caller.
  */
-export default function ProductModal({ product, onClose }) {
+// eslint-disable-next-line no-unused-vars -- wired by App, used by the layering guide (P1)
+export default function ProductModal({ product, onClose, onOpenProduct }) {
   const { addItem } = useCart()
-  const { lang, t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
   const panelRef = useRef(null)
-  const [selectedMl, setSelectedMl] = useState(null)
-
-  // Reopening on a different fragrance must not inherit the last one's size.
-  useEffect(() => {
-    setSelectedMl(product ? product.sizes[0].ml : null)
-  }, [product])
+  // The choice belongs to one fragrance: reopening on another starts on its first format.
+  const [choice, setChoice] = useState({ productId: null, formatId: null })
 
   useOverlay(Boolean(product), onClose, panelRef)
 
   if (!product) return null
 
-  const size = product.sizes.find((entry) => entry.ml === selectedMl) ?? product.sizes[0]
+  const format =
+    (choice.productId === product.id && formatOf(product, choice.formatId)) || product.formats[0]
+  const concentration = CONCENTRATION_BY_ID[concentrationFor(product, format.id)]
   const catalogue = CATALOGUE_NUMBERS[product.id]
-  const name = pick(product.name, product.ar.name)
-  // formatNumber groups thousands, which turns a year into "2,019".
-  const year = formatNumber(product.year, lang).replace(/[,٬]/g, '')
+  const name = tr(product.name)
+  const year = formatNumber(product.year, lang, { useGrouping: false })
 
   const handleAdd = () => {
     // addItem opens the cart drawer, which sits below this overlay, so hand
     // the screen over to it rather than stacking the two.
-    addItem(product, size)
+    addItem(product, format.id)
     onClose()
   }
 
@@ -85,11 +92,11 @@ export default function ProductModal({ product, onClose }) {
             </figcaption>
 
             <div className="relative mx-auto h-[15rem] w-full py-4 sm:h-[21rem] lg:h-auto lg:min-h-0 lg:flex-1 lg:py-8">
-              <BottleVisual palette={product.palette} catalogue={catalogue} />
+              <BottleVisual palette={product.palette} catalogue={catalogue} label={concentration?.abbr} />
             </div>
 
             <p className="ticket relative text-center text-snow-600">
-              {pick(product.family, FAMILY_AR[product.family])}
+              {tr(FAMILY_BY_ID[product.family])}
             </p>
           </figure>
 
@@ -97,22 +104,12 @@ export default function ProductModal({ product, onClose }) {
             <h2 id="product-modal-title" className="t-h2 pe-12">
               {name}
             </h2>
-            <p className="t-body mt-3 text-[17px]">{pick(product.tagline, product.ar.tagline)}</p>
-
-            <p className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="ticket flex items-center gap-1.5 text-ink-950">
-                <Star className="h-3.5 w-3.5 text-green-600" strokeWidth={1.5} fill="currentColor" />
-                {formatNumber(product.rating, lang)}
-              </span>
-              <span className="ticket text-snow-600">
-                {t('reviewsLabel', { count: formatNumber(product.reviews, lang) })}
-              </span>
-            </p>
+            <p className="t-body mt-3 text-[17px]">{tr(product.tagline)}</p>
 
             <dl className="mt-7 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-snow-200 py-6 sm:grid-cols-3">
               {[
-                [t('concentrationLabel'), pick(product.concentration, CONCENTRATION_AR[product.concentration])],
-                [t('intensityLabel'), pick(product.intensity, INTENSITY_AR[product.intensity])],
+                [t('concentrationLabel'), tr(concentration)],
+                [t('intensityLabel'), tr(SILLAGE_BY_ID[product.projectionSillage])],
                 [t('introduced'), year],
               ].map(([label, value]) => (
                 <div key={label}>
@@ -124,20 +121,20 @@ export default function ProductModal({ product, onClose }) {
 
             <section className="mt-7">
               <h3 className="ticket text-green-600">{t('aboutThis')}</h3>
-              <p className="t-body mt-3">{pick(product.description, product.ar.description)}</p>
+              <p className="t-body mt-3">{tr(product.description)}</p>
             </section>
 
             <section className="mt-8">
               <h3 className="ticket text-green-600">{t('theComposition')}</h3>
               <dl className="mt-3 border-t border-snow-200">
-                {NOTE_ROWS.map((key) => (
+                {NOTE_ROWS.map(([key, field]) => (
                   <div
                     key={key}
                     className="flex items-baseline gap-5 border-b border-snow-200 py-3 last:border-b-0"
                   >
                     <dt className="ticket w-16 shrink-0 text-snow-600">{t(key)}</dt>
                     <dd className="t-body text-[14px] text-ink-950">
-                      {pick(product.notes[key], product.ar.notes[key]).join(lang === 'ar' ? '، ' : ', ')}
+                      {product[field].map((note) => tr(note)).join(lang === 'ar' ? '، ' : ', ')}
                     </dd>
                   </div>
                 ))}
@@ -145,32 +142,14 @@ export default function ProductModal({ product, onClose }) {
             </section>
 
             <div className="mt-auto pt-9">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div
-                  role="radiogroup"
-                  aria-label={t('selectSize')}
-                  className="flex border border-snow-200"
-                >
-                  {product.sizes.map((option) => (
-                    <button
-                      key={option.ml}
-                      type="button"
-                      role="radio"
-                      aria-checked={option.ml === size.ml}
-                      onClick={() => setSelectedMl(option.ml)}
-                      className={classNames(
-                        'px-6 py-2.5 font-sans text-[11px] tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:tracking-normal',
-                        option.ml === size.ml
-                          ? 'bg-snow-200 text-ink-950'
-                          : 'text-snow-600 hover:text-ink-950',
-                      )}
-                    >
-                      {option.ml} {lang === 'ar' ? 'مل' : 'ml'}
-                    </button>
-                  ))}
-                </div>
+              <FormatToggle
+                product={product}
+                value={format.id}
+                onChange={(formatId) => setChoice({ productId: product.id, formatId })}
+              />
+              <div className="mt-5 flex items-baseline justify-end">
                 <span className="t-figure text-[1.6rem] leading-none text-ink-950">
-                  {formatPrice(size.price, lang)}
+                  {formatPrice(format.priceFils, lang)}
                 </span>
               </div>
 

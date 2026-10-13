@@ -36,4 +36,13 @@ export default [
     files: ['*.config.js', 'eslint.config.js'],
     languageOptions: { globals: globals.node },
   },
+  // Repo scripts (the i18n parity check) run under plain Node.
+  {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { ecmaVersion: 'latest', sourceType: 'module', globals: globals.node },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-unused-vars': ['error', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
+    },
+  },
 ]

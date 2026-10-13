@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { LocaleContext } from './locale-context'
+import { LocaleContext, translate, translateCount, translateValue } from './locale-context'
 import { STRINGS } from './strings'
 import { classNames } from '../lib/format'
 
+// Also read by the inline pre-paint script in every HTML entry's <head>.
 const STORAGE_KEY = 'nafsah.lang.v1'
 
 // Blur up, swap the script under cover, blur back down. Long enough for the
@@ -24,7 +25,8 @@ function readStoredLang() {
 export function LocaleProvider({ children }) {
   const [lang, setLang] = useState(readStoredLang)
   const [switching, setSwitching] = useState(false)
-  const timers = useRef([])
+  // Pending swap timers; each removes itself once it has fired.
+  const timers = useRef(new Set())
   const busy = useRef(false)
   const dict = STRINGS[lang]
   const dir = dict.dir
@@ -67,16 +69,13 @@ export function LocaleProvider({ children }) {
   }, [lang])
 
   /** Look up a string and interpolate {named} placeholders. */
-  const t = useCallback(
-    (key, vars) => {
-      const raw = dict[key] ?? STRINGS.en[key] ?? key
-      if (!vars || typeof raw !== 'string') return raw
-      return raw.replace(/\{(\w+)\}/g, (match, name) =>
-        name in vars ? String(vars[name]) : match,
-      )
-    },
-    [dict],
-  )
+  const t = useCallback((key, vars) => translate(lang, key, vars), [lang])
+
+  /** A counted string: tc('reviews.count', 3) reads 'reviews.count.few' in Arabic, with {count} as ٣. */
+  const tc = useCallback((key, count, vars) => translateCount(lang, key, count, vars), [lang])
+
+  /** The active language of a { en, ar } value from the catalogue data. */
+  const tr = useCallback((value) => translateValue(lang, value), [lang])
 
   const toggle = useCallback(() => {
     const flip = () => setLang((current) => (current === 'en' ? 'ar' : 'en'))
@@ -89,7 +88,11 @@ export function LocaleProvider({ children }) {
     busy.current = true
     setSwitching(true)
     // The effect on `lang` takes it from here and lifts the veil after paint.
-    timers.current.push(setTimeout(flip, BLUR_IN_MS))
+    const timer = setTimeout(() => {
+      timers.current.delete(timer)
+      flip()
+    }, BLUR_IN_MS)
+    timers.current.add(timer)
   }, [])
 
   const value = useMemo(
@@ -99,13 +102,15 @@ export function LocaleProvider({ children }) {
       isRtl: dir === 'rtl',
       localeTag: dict.localeTag,
       t,
+      tc,
+      tr,
       announce: dict.announce,
       switching,
       toggle,
       /** Pick the Arabic field when it exists, else fall back to English. */
       pick: (en, ar) => (lang === 'ar' && ar ? ar : en),
     }),
-    [lang, dir, dict, t, switching, toggle],
+    [lang, dir, dict, t, tc, tr, switching, toggle],
   )
 
   return (

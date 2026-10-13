@@ -14,7 +14,8 @@ import {
 import { useCart } from '../context/cart-context'
 import { useLocale } from '../i18n/locale-context'
 import { useOverlay } from '../hooks/useOverlay'
-import { classNames, formatNumber, formatPrice } from '../lib/format'
+import { FORMAT_BY_ID } from '../data/taxonomy'
+import { classNames, formatMl, formatNumber, formatPrice } from '../lib/format'
 
 const STEPS = [
   { id: 'contact', label: 'contactStep', icon: User },
@@ -112,7 +113,7 @@ function Field({ id, label, error, className, ...props }) {
 
 export default function CheckoutModal() {
   const { lines, totals, isCheckoutOpen, closeCheckout, clearCart } = useCart()
-  const { lang, t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
   const [stepIndex, setStepIndex] = useState(0)
   const [form, setForm] = useState(EMPTY_FORM)
   const [errors, setErrors] = useState({})
@@ -187,7 +188,7 @@ export default function CheckoutModal() {
     const snapshot = {
       reference: `NFS-${Math.floor(100000 + Math.random() * 900000)}`,
       items: totals.count,
-      total: totals.total,
+      totalFils: totals.totalFils,
       email: form.email,
     }
     payTimer.current = setTimeout(() => {
@@ -244,7 +245,7 @@ export default function CheckoutModal() {
               <div className="mt-2.5 flex items-baseline justify-between gap-4">
                 <span className="ticket text-snow-600">{t('paid')}</span>
                 <span className="t-figure text-[1.25rem] text-ink-950">
-                  {formatPrice(receipt.total, lang)}
+                  {formatPrice(receipt.totalFils, lang)}
                 </span>
               </div>
             </div>
@@ -378,15 +379,16 @@ export default function CheckoutModal() {
                   <ul className="mt-4 space-y-2.5">
                     {lines.map((line) => (
                       <li key={line.id} className="flex justify-between gap-4 text-sm">
-                        <span className="min-w-0 truncate text-ink-950">
-                          {pick(line.product.name, line.product.ar.name)}
+                        <span className="min-w-0 text-ink-950">
+                          {tr(line.product.name)}
                           <span className="text-snow-600">
                             {' '}
-                            · {line.ml}{lang === 'ar' ? ' مل' : 'ml'} × {formatNumber(line.qty, lang)}
+                            · {tr(FORMAT_BY_ID[line.formatId])} · {formatMl(line.format.ml, lang)} ×{' '}
+                            {formatNumber(line.qty, lang)}
                           </span>
                         </span>
                         <span className="shrink-0 tabular-nums text-ink-950">
-                          {formatPrice(line.subtotal, lang)}
+                          {formatPrice(line.subtotalFils, lang)}
                         </span>
                       </li>
                     ))}
@@ -395,13 +397,19 @@ export default function CheckoutModal() {
                     <div className="flex justify-between text-snow-600">
                       <span>{t('shipping')}</span>
                       <span className="tabular-nums">
-                        {totals.shipping === 0 ? t('complimentary') : formatPrice(totals.shipping, lang)}
+                        {totals.shippingFils === 0 ? t('complimentary') : formatPrice(totals.shippingFils, lang)}
                       </span>
                     </div>
+                    {totals.remoteSurchargeFils > 0 && (
+                      <div className="flex justify-between text-snow-600">
+                        <span>{t('delivery.remoteSurcharge')}</span>
+                        <span className="tabular-nums">{formatPrice(totals.remoteSurchargeFils, lang)}</span>
+                      </div>
+                    )}
                     <div className="flex items-baseline justify-between pt-1.5">
                       <span className="ticket text-ink-950">{t('total')}</span>
                       <span className="t-figure text-[1.75rem] text-ink-950">
-                        {formatPrice(totals.total, lang)}
+                        {formatPrice(totals.totalFils, lang)}
                       </span>
                     </div>
                   </div>
@@ -429,7 +437,7 @@ export default function CheckoutModal() {
                   </>
                 ) : (
                   <>
-                    {isLast ? `${t('pay')} ${formatPrice(totals.total, lang)}` : t('continue')}
+                    {isLast ? `${t('pay')} ${formatPrice(totals.totalFils, lang)}` : t('continue')}
                     <ArrowRight
                       className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                       strokeWidth={2}

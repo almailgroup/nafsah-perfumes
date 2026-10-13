@@ -1,14 +1,16 @@
 import { forwardRef } from 'react'
 import { ChevronDown, Search, X } from 'lucide-react'
-import { FAMILY_AR, PRICE_BOUNDS, SCENT_FAMILIES } from '../data/products'
+import { PRICE_BOUNDS, PRODUCTS } from '../data/products'
+import { FAMILIES } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatOrdinal, formatPrice } from '../lib/format'
 
-const STEP = 1
+/** One dinar, in fils. PRICE_BOUNDS are whole dinars, so the step lands on both ends. */
+const STEP = 1000
 
 function PriceSlider({ range, onChange }) {
   const { lang, t, isRtl } = useLocale()
-  const { min: floor, max: ceiling } = PRICE_BOUNDS
+  const { minFils: floor, maxFils: ceiling } = PRICE_BOUNDS
   const span = ceiling - floor
   const leftPct = ((range[0] - floor) / span) * 100
   const rightPct = ((range[1] - floor) / span) * 100
@@ -52,13 +54,12 @@ const Filters = forwardRef(function Filters(
     resultCount, onReset, isFiltered },
   searchRef,
 ) {
-  const { lang, t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
 
   const SORT_OPTIONS = [
     { value: 'featured', label: t('sortFeatured') },
     { value: 'price-asc', label: t('sortPriceAsc') },
     { value: 'price-desc', label: t('sortPriceDesc') },
-    { value: 'rating', label: t('sortRating') },
     { value: 'newest', label: t('sortNewest') },
   ]
 
@@ -108,17 +109,17 @@ const Filters = forwardRef(function Filters(
 
       <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
         <span className="ticket text-snow-600">{t('family')}</span>
-        {SCENT_FAMILIES.map((family) => {
-          const active = families.includes(family)
+        {FAMILIES.map(({ id, short }) => {
+          const active = families.includes(id)
           return (
             <button
-              key={family} type="button" onClick={() => onToggleFamily(family)} aria-pressed={active}
+              key={id} type="button" onClick={() => onToggleFamily(id)} aria-pressed={active}
               className={classNames(
                 'relative py-1 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal',
                 active ? 'text-green-600' : 'text-snow-600 hover:text-ink-950',
               )}
             >
-              {pick(family, FAMILY_AR[family])}
+              {tr(short)}
               <span className={classNames(
                 'absolute -bottom-0.5 start-0 h-px bg-green-600 transition-all duration-300',
                 active ? 'w-full' : 'w-0',
@@ -129,7 +130,7 @@ const Filters = forwardRef(function Filters(
 
         <div className="flex w-full items-center justify-between gap-6 sm:ms-auto sm:w-auto">
           <span className="ticket text-snow-600">
-            {formatOrdinal(resultCount, lang)} {t('of')} {formatOrdinal(12, lang)}
+            {formatOrdinal(resultCount, lang)} {t('of')} {formatOrdinal(PRODUCTS.length, lang)}
           </span>
           {isFiltered && (
             <button

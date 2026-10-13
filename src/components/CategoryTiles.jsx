@@ -1,23 +1,23 @@
 import BottleVisual from './BottleVisual'
-import { FAMILY_AR, PRODUCTS, SCENT_FAMILIES } from '../data/products'
+import { fromPriceFils, PRODUCTS } from '../data/products'
+import { CONCENTRATION_BY_ID, FAMILIES } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber, formatPrice } from '../lib/format'
 
-const FACE = Object.fromEntries(
-  SCENT_FAMILIES.map((f) => [f, PRODUCTS.find((p) => p.family === f)]),
-)
-const COUNTS = Object.fromEntries(
-  SCENT_FAMILIES.map((f) => [f, PRODUCTS.filter((p) => p.family === f).length]),
-)
-const FROM = Object.fromEntries(
-  SCENT_FAMILIES.map((f) => [
-    f,
-    Math.min(...PRODUCTS.filter((p) => p.family === f).flatMap((p) => p.sizes.map((s) => s.price))),
-  ]),
-)
+// One tile per family, in display order. A family with nothing in it yet
+// still gets its tile, just without a bottle or a price.
+const TILES = FAMILIES.map((family) => {
+  const members = PRODUCTS.filter((p) => p.family === family.id)
+  return {
+    family,
+    face: members[0] ?? null,
+    count: members.length,
+    fromFils: members.length > 0 ? Math.min(...members.map(fromPriceFils)) : null,
+  }
+})
 
 export default function CategoryTiles({ onSelectFamily }) {
-  const { lang, t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
 
   return (
     <section className="bg-snow-50 py-16 sm:py-24">
@@ -34,31 +34,40 @@ export default function CategoryTiles({ onSelectFamily }) {
         </div>
 
         <ul className="mt-8 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-          {SCENT_FAMILIES.map((family) => (
-            <li key={family}>
+          {TILES.map(({ family, face, count, fromFils }) => (
+            <li key={family.id}>
               <button
                 type="button"
-                onClick={() => onSelectFamily(family)}
-                className="group relative flex w-full items-center gap-4 overflow-hidden border border-snow-200 bg-snow-100 p-4 text-start transition-[border-color,box-shadow] duration-300 hover:border-green-600/50 hover:shadow-[0_14px_34px_-24px_rgba(8,20,15,0.45)] sm:gap-5 sm:p-5"
+                onClick={() => onSelectFamily(family.id)}
+                className="group relative flex h-full w-full items-center gap-3 overflow-hidden border border-snow-200 bg-snow-100 p-3 text-start transition-[border-color,box-shadow] duration-300 hover:border-green-600/50 hover:shadow-[0_14px_34px_-24px_rgba(8,20,15,0.45)] sm:gap-5 sm:p-5"
               >
                 <span
                   aria-hidden="true"
                   className="mashrabiya-band pointer-events-none absolute inset-0"
                 />
-                <span className="relative h-20 w-14 shrink-0 sm:h-24 sm:w-16">
-                  <BottleVisual palette={FACE[family].palette} fillLevel={0.9} />
+                <span className="relative h-16 w-11 shrink-0 sm:h-24 sm:w-16">
+                  {face && (
+                    <BottleVisual
+                      palette={face.palette}
+                      fillLevel={0.9}
+                      label={CONCENTRATION_BY_ID[face.concentration]?.abbr}
+                    />
+                  )}
                 </span>
                 <span className="relative min-w-0">
-                  <span className="t-title block">{pick(family, FAMILY_AR[family])}</span>
+                  {/* Two columns on a phone leave little room for the longer family names. */}
+                  <span className="t-title block max-sm:!text-[1.125rem]">{tr(family.short)}</span>
                   <span className="ticket mt-2 block text-snow-600">
-                    {formatNumber(COUNTS[family], lang)} {t('extraits')}
+                    {formatNumber(count, lang)} {t('extraits')}
                   </span>
-                  <span className="ticket mt-2 block text-snow-600">
-                    {t('from')}{' '}
-                    <span className="t-figure text-[14px] text-ink-950">
-                      {formatPrice(FROM[family], lang)}
+                  {fromFils !== null && (
+                    <span className="ticket mt-2 block text-snow-600">
+                      {t('from')}{' '}
+                      <span className="t-figure text-[14px] text-ink-950">
+                        {formatPrice(fromFils, lang)}
+                      </span>
                     </span>
-                  </span>
+                  )}
                 </span>
               </button>
             </li>

@@ -1,4 +1,4 @@
-import { FREE_SHIPPING_KD, SHIPPING_KD } from '../context/CartProvider'
+import { FREE_SHIPPING_FILS, SHIPPING_FILS } from '../data/delivery'
 
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatDate, formatOrdinal, formatPrice } from '../lib/format'
@@ -27,8 +27,8 @@ export default function DocumentPage({ doc, note }) {
 
   const fill = (text) =>
     text
-      .replace('{threshold}', formatPrice(FREE_SHIPPING_KD, lang))
-      .replace('{shipping}', formatPrice(SHIPPING_KD, lang))
+      .replace('{threshold}', formatPrice(FREE_SHIPPING_FILS, lang))
+      .replace('{shipping}', formatPrice(SHIPPING_FILS, lang))
 
   const paragraph = (entry, index) => (
     <p key={index} className="t-body mt-4 first:mt-0">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Truck } from 'lucide-react'
-import { FREE_SHIPPING_KD } from '../context/CartProvider'
+import { FREE_SHIPPING_FILS } from '../data/delivery'
 import { useLocale } from '../i18n/locale-context'
 import { formatPrice } from '../lib/format'
 
@@ -17,7 +17,7 @@ export default function AnnouncementBar() {
 
   const message = (announce[index] ?? '').replace(
     '{threshold}',
-    formatPrice(FREE_SHIPPING_KD, lang),
+    formatPrice(FREE_SHIPPING_FILS, lang),
   )
 
   return (

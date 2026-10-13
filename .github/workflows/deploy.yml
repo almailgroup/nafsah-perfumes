@@ -31,6 +31,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Nothing reaches nafsah.com unless lint, the EN/AR string parity check
+      # and the unit tests all pass.
+      - name: Lint
+        run: npm run lint
+
+      - name: Check EN/AR string parity
+        run: npm run check:i18n
+
+      - name: Unit tests
+        run: npm test
+
       - name: Build
         run: npm run build
 

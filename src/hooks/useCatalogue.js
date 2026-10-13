@@ -1,36 +1,49 @@
 import { useCallback, useMemo, useState } from 'react'
-import { PRICE_BOUNDS, PRODUCTS } from '../data/products'
+import { allNotes, bottleFormats, fromPriceFils, PRICE_BOUNDS, PRODUCTS } from '../data/products'
+import { CONCENTRATION_BY_ID, FAMILY_BY_ID } from '../data/taxonomy'
 
-export const DEFAULT_RANGE = [PRICE_BOUNDS.min, PRICE_BOUNDS.max]
+/** Prices are fils; samples are never filtered on, so the range covers bottles and oils. */
+export const DEFAULT_RANGE = [PRICE_BOUNDS.minFils, PRICE_BOUNDS.maxFils]
 
-/** Everything a fragrance can be matched against by the search box. */
-const searchIndex = (product) =>
-  [
-    product.name,
-    product.tagline,
-    product.family,
-    product.concentration,
-    product.description,
-    ...product.notes.top,
-    ...product.notes.heart,
-    ...product.notes.base,
-  ]
-    .join(' ')
+/**
+ * Search text in both scripts, folded so a shopper need not type it exactly:
+ * case, Arabic short vowels and tatweel are ignored, and the alef, yaa and
+ * taa marbuta variants are read as one.
+ */
+const fold = (text) =>
+  String(text ?? '')
     .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f\u064b-\u065f\u0670\u0640]/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+
+const both = (value) => [value?.en, value?.ar]
+
+/** Everything a fragrance can be matched against by the search box, in English and Arabic. */
+const searchIndex = (product) =>
+  fold(
+    [
+      ...both(product.name),
+      ...both(product.tagline),
+      ...both(product.description),
+      ...both(FAMILY_BY_ID[product.family]),
+      ...both(CONCENTRATION_BY_ID[product.concentration]),
+      ...allNotes(product).flatMap((note) => [...both(note), ...(note.aliases ?? [])]),
+    ].join(' '),
+  )
 
 const INDEX = Object.fromEntries(PRODUCTS.map((product) => [product.id, searchIndex(product)]))
 
-const cheapest = (product) => Math.min(...product.sizes.map((size) => size.price))
-
+// Array.prototype.sort is stable, so ties keep catalogue order.
 const SORTERS = {
-  'price-asc': (a, b) => cheapest(a) - cheapest(b),
-  'price-desc': (a, b) => cheapest(b) - cheapest(a),
-  rating: (a, b) => b.rating - a.rating || b.reviews - a.reviews,
-  newest: (a, b) => b.year - a.year || b.rating - a.rating,
+  'price-asc': (a, b) => fromPriceFils(a) - fromPriceFils(b),
+  'price-desc': (a, b) => fromPriceFils(b) - fromPriceFils(a),
+  newest: (a, b) => b.year - a.year,
   featured: (a, b) =>
     Number(Boolean(b.bestseller)) - Number(Boolean(a.bestseller)) ||
-    Number(Boolean(b.isNew)) - Number(Boolean(a.isNew)) ||
-    b.rating - a.rating,
+    Number(Boolean(b.isNew)) - Number(Boolean(a.isNew)),
 }
 
 /**
@@ -69,14 +82,14 @@ export function useCatalogue() {
     sort !== 'featured'
 
   const results = useMemo(() => {
-    const needle = query.trim().toLowerCase()
+    const needle = fold(query.trim())
 
     const matched = PRODUCTS.filter((product) => {
       if (families.length > 0 && !families.includes(product.family)) return false
 
-      // A fragrance qualifies if any of its sizes falls inside the range.
-      const inRange = product.sizes.some(
-        (size) => size.price >= priceRange[0] && size.price <= priceRange[1],
+      // A fragrance qualifies if any of its bottles or oils falls inside the range.
+      const inRange = bottleFormats(product).some(
+        (format) => format.priceFils >= priceRange[0] && format.priceFils <= priceRange[1],
       )
       if (!inRange) return false
 

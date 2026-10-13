@@ -1,8 +1,24 @@
 /**
  * UI dictionary. Product copy lives in src/data/products.js alongside the
  * English so the two can never drift apart.
+ *
+ * CORE holds the site-wide strings. Each feature keeps its own dictionary in
+ * ./dict/, with keys prefixed by its namespace ('checkout.err.required'), and
+ * STRINGS merges them per language. A key may live in one place only.
+ *
+ * The imports carry their .js extension so plain Node can load this file for
+ * `npm run check:i18n`.
  */
-export const STRINGS = {
+import catalogue from './dict/catalogue.js'
+import checkout from './dict/checkout.js'
+import delivery from './dict/delivery.js'
+import finder from './dict/finder.js'
+import gifting from './dict/gifting.js'
+import product from './dict/product.js'
+import reviews from './dict/reviews.js'
+import trust from './dict/trust.js'
+
+export const CORE = {
   en: {
     dir: 'ltr',
     localeTag: 'en-KW',
@@ -344,3 +360,33 @@ export const STRINGS = {
     whatsappLabel: 'واتساب',
   },
 }
+
+/** Feature dictionaries by namespace; every key in dict/<name>.js starts with '<name>.'. */
+export const DICTIONARIES = { catalogue, product, reviews, trust, finder, checkout, gifting, delivery }
+
+export const LANGUAGES = ['en', 'ar']
+
+// import.meta.env exists under Vite and Vitest; plain Node (the i18n check)
+// has none and reports duplicates itself.
+const DEV = Boolean(import.meta.env?.DEV)
+
+/**
+ * CORE plus every feature dictionary, per language. A key defined twice
+ * throws in development (one copy would silently lose); in production the
+ * first definition wins.
+ */
+export function mergeStrings(core, dictionaries, { strict = DEV } = {}) {
+  const mergeLanguage = (lang) => {
+    const merged = { ...core[lang] }
+    for (const [name, dict] of Object.entries(dictionaries)) {
+      for (const [key, value] of Object.entries(dict[lang] ?? {})) {
+        if (!Object.hasOwn(merged, key)) merged[key] = value
+        else if (strict) throw new Error(`i18n: "${key}" (${lang}) in dict/${name}.js is already defined`)
+      }
+    }
+    return merged
+  }
+  return Object.fromEntries(LANGUAGES.map((lang) => [lang, mergeLanguage(lang)]))
+}
+
+export const STRINGS = mergeStrings(CORE, DICTIONARIES)

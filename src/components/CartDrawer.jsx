@@ -1,18 +1,20 @@
 import { useRef } from 'react'
 import { ArrowRight, Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react'
 import BottleVisual from './BottleVisual'
+import DeliveryBadge from './trust/DeliveryBadge'
 import { useCart } from '../context/cart-context'
 import { useLocale } from '../i18n/locale-context'
-import { FREE_SHIPPING_KD } from '../context/CartProvider'
-import { FAMILY_AR } from '../data/products'
+import { FREE_SHIPPING_FILS } from '../data/delivery'
+import { concentrationFor } from '../data/products'
+import { CONCENTRATION_BY_ID, FAMILY_BY_ID, FORMAT_BY_ID } from '../data/taxonomy'
 import { useOverlay } from '../hooks/useOverlay'
-import { classNames, formatNumber, formatPrice } from '../lib/format'
+import { classNames, formatMl, formatNumber, formatPrice } from '../lib/format'
 
 
 export default function CartDrawer() {
-  const { lines, totals, maxQty, isCartOpen, closeCart, setQty, removeItem, openCheckout } =
+  const { lines, totals, maxQty, isCartOpen, closeCart, setQty, removeItem, openCheckout, deliveryAreaId } =
     useCart()
-  const { lang, t, pick, switching } = useLocale()
+  const { lang, t, tr, switching } = useLocale()
 
   const panelRef = useRef(null)
 
@@ -22,8 +24,8 @@ export default function CartDrawer() {
   // order and the accessibility tree without disturbing its slide transition.
   const inertWhenClosed = isCartOpen ? {} : { inert: '' }
 
-  const remaining = Math.max(0, FREE_SHIPPING_KD - totals.subtotal)
-  const progress = Math.min(100, (totals.subtotal / FREE_SHIPPING_KD) * 100)
+  const remaining = totals.remainingForFreeFils
+  const progress = Math.min(100, (totals.subtotalFils / FREE_SHIPPING_FILS) * 100)
 
   return (
     <div
@@ -105,27 +107,34 @@ export default function CartDrawer() {
                   className="h-full bg-green-700 transition-[width] duration-500" style={{ width: `${progress}%` }}
                 />
               </div>
+              <div className="mt-3">
+                <DeliveryBadge areaId={deliveryAreaId} variant="compact" />
+              </div>
             </div>
 
             <ul className="flex-1 divide-y divide-snow-200 overflow-y-auto px-6">
               {lines.map((line) => (
                 <li key={line.id} className="flex animate-fade-in gap-4 py-5">
                   <div className="h-24 w-16 shrink-0 overflow-hidden  border border-snow-200 bg-snow-50">
-                    <BottleVisual palette={line.product.palette} />
+                    <BottleVisual
+                      palette={line.product.palette}
+                      label={CONCENTRATION_BY_ID[concentrationFor(line.product, line.formatId)]?.abbr}
+                    />
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <h3 className="truncate font-display text-[1.35rem] font-medium leading-tight text-ink-950">
-                          {pick(line.product.name, line.product.ar.name)}
+                          {tr(line.product.name)}
                         </h3>
                         <p className="ticket mt-1.5 text-snow-600">
-                          {line.ml}{lang === 'ar' ? ' مل' : 'ml'} · {pick(line.product.family, FAMILY_AR[line.product.family])}
+                          {tr(FORMAT_BY_ID[line.formatId])} · {formatMl(line.format.ml, lang)} ·{' '}
+                          {tr(FAMILY_BY_ID[line.product.family]?.short)}
                         </p>
                       </div>
                       <button type="button"
-                        onClick={() => removeItem(line.id)} aria-label={`${t('remove')} ${pick(line.product.name, line.product.ar.name)}`}
+                        onClick={() => removeItem(line.id)} aria-label={`${t('remove')} ${tr(line.product.name)}`}
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-snow-600 transition-colors hover:bg-alert-600/15 hover:text-alert-600"
                       >
                         <Trash2 className="h-3.5 w-3.5" strokeWidth={1.5} />
@@ -135,7 +144,7 @@ export default function CartDrawer() {
                     <div className="mt-3 flex items-center justify-between gap-3">
                       <div className="inline-flex items-center border rule">
                         <button type="button"
-                          onClick={() => setQty(line.id, line.qty - 1)} aria-label={`${t('decrease')} ${pick(line.product.name, line.product.ar.name)}`}
+                          onClick={() => setQty(line.id, line.qty - 1)} aria-label={`${t('decrease')} ${tr(line.product.name)}`}
                           className="grid h-8 w-8 place-items-center text-snow-600 transition-colors hover:bg-white/5 hover:text-ink-950"
                         >
                           <Minus className="h-3.5 w-3.5" strokeWidth={2} />
@@ -146,7 +155,7 @@ export default function CartDrawer() {
                           {formatNumber(line.qty, lang)}
                         </span>
                         <button type="button"
-                          onClick={() => setQty(line.id, line.qty + 1)} disabled={line.qty >= maxQty} aria-label={`${t('increase')} ${pick(line.product.name, line.product.ar.name)}`}
+                          onClick={() => setQty(line.id, line.qty + 1)} disabled={line.qty >= maxQty} aria-label={`${t('increase')} ${tr(line.product.name)}`}
                           className="grid h-8 w-8 place-items-center text-snow-600 transition-colors hover:bg-white/5 hover:text-ink-950 disabled:cursor-not-allowed disabled:opacity-30"
                         >
                           <Plus className="h-3.5 w-3.5" strokeWidth={2} />
@@ -154,7 +163,7 @@ export default function CartDrawer() {
                       </div>
 
                       <span className="t-figure text-[1.35rem] text-ink-950">
-                        {formatPrice(line.subtotal, lang)}
+                        {formatPrice(line.subtotalFils, lang)}
                       </span>
                     </div>
                   </div>
@@ -166,22 +175,28 @@ export default function CartDrawer() {
               <dl className="space-y-2 font-sans text-[14px] font-normal">
                 <div className="flex justify-between text-snow-600">
                   <dt>{t('subtotal')}</dt>
-                  <dd className="tabular-nums text-ink-950">{formatPrice(totals.subtotal, lang)}</dd>
+                  <dd className="tabular-nums text-ink-950">{formatPrice(totals.subtotalFils, lang)}</dd>
                 </div>
                 <div className="flex justify-between text-snow-600">
                   <dt>{t('shipping')}</dt>
                   <dd className="tabular-nums">
-                    {totals.shipping === 0 ? (
+                    {totals.shippingFils === 0 ? (
                       <span className="text-ink-950">{t('complimentary')}</span>
                     ) : (
-                      <span className="text-ink-950">{formatPrice(totals.shipping, lang)}</span>
+                      <span className="text-ink-950">{formatPrice(totals.shippingFils, lang)}</span>
                     )}
                   </dd>
                 </div>
+                {totals.remoteSurchargeFils > 0 && (
+                  <div className="flex justify-between text-snow-600">
+                    <dt>{t('delivery.remoteSurcharge')}</dt>
+                    <dd className="tabular-nums text-ink-950">{formatPrice(totals.remoteSurchargeFils, lang)}</dd>
+                  </div>
+                )}
                 <div className="flex items-baseline justify-between border-t rule pt-3">
                   <dt className="ticket text-ink-950">{t('total')}</dt>
                   <dd className="t-figure text-[2rem] leading-none text-ink-950">
-                    {formatPrice(totals.total, lang)}
+                    {formatPrice(totals.totalFils, lang)}
                   </dd>
                 </div>
               </dl>

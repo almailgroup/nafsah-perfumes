@@ -6,6 +6,7 @@ export const PRIVACY = '/privacy'
 export const TERMS = '/terms'
 export const SHIPPING = '/shipping'
 export const FAQ = '/faq'
+export const SCENT_FINDER = '/scent-finder'
 
 /** Every address the site claims. Anything else resolves to the homepage. */
 export const ROUTES = [HOME, CONTACT, PRIVACY, TERMS, SHIPPING, FAQ]

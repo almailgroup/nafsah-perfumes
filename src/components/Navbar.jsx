@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, Search, ShoppingBag, User, X } from 'lucide-react'
 import { useCart } from '../context/cart-context'
-import { SCENT_FAMILIES, FAMILY_AR } from '../data/products'
+import { FAMILIES } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
 import { HEADER_LOGO } from '../brand'
@@ -14,7 +14,7 @@ import { CONTACT, HOME, useRouter } from '../router/router-context'
  */
 export default function Navbar({ query, onQueryChange, families, onSelectFamily, onSubmitSearch }) {
   const { totals, openCart, lastAddedAt } = useCart()
-  const { lang, t, pick, toggle } = useLocale()
+  const { lang, t, tr, toggle } = useLocale()
   const { path } = useRouter()
   // A category is only 'current' while the catalogue is the page you are on.
   const onHome = path === HOME
@@ -145,7 +145,8 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
       </div>
 
       <nav className="hidden border-t border-snow-200 lg:block">
-        <div className="mx-auto flex max-w-[1560px] items-center gap-9 px-9">
+        {/* Seven families share this row: tighter until xl so it fits from 1024px on one line. */}
+        <div className="mx-auto flex max-w-[1560px] items-center gap-4 whitespace-nowrap px-9 xl:gap-9">
           <button
             type="button"
             onClick={() => onSelectFamily(null)}
@@ -158,19 +159,19 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
           >
             {t('allPerfumes')}
           </button>
-          {SCENT_FAMILIES.map((family) => (
+          {FAMILIES.map((family) => (
             <button
-              key={family}
+              key={family.id}
               type="button"
-              onClick={() => onSelectFamily(family)}
+              onClick={() => onSelectFamily(family.id)}
               className={classNames(
                 'nav-link nav-link-label t-label py-3 transition-colors duration-300',
-                onHome && families.includes(family)
+                onHome && families.includes(family.id)
                   ? 'nav-link-active text-green-600'
                   : 'text-snow-600 hover:text-ink-950',
               )}
             >
-              {pick(family, FAMILY_AR[family])}
+              {tr(family.short)}
             </button>
           ))}
           <span className="ms-auto flex items-center gap-9">
@@ -198,8 +199,11 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
 
       <div
         className={classNames(
-          'overflow-hidden border-t border-snow-200 bg-snow-50 transition-[max-height,opacity] duration-400 lg:hidden',
-          mobileOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0',
+          'border-t border-snow-200 bg-snow-50 transition-[max-height,opacity] duration-400 lg:hidden',
+          // Never taller than the screen below the header, scrolling inside if it must.
+          mobileOpen
+            ? 'max-h-[calc(100dvh-4rem)] overflow-y-auto opacity-100 sm:max-h-[calc(100dvh-4.5rem)]'
+            : 'max-h-0 overflow-hidden opacity-0',
         )}
       >
         <div className="px-5 py-4 sm:px-9">
@@ -233,17 +237,17 @@ export default function Navbar({ query, onQueryChange, families, onSelectFamily,
             >
               {t('allPerfumes')}
             </button>
-            {SCENT_FAMILIES.map((family) => (
+            {FAMILIES.map((family) => (
               <button
-                key={family}
+                key={family.id}
                 type="button"
                 onClick={() => {
-                  onSelectFamily(family)
+                  onSelectFamily(family.id)
                   setMobileOpen(false)
                 }}
                 className="t-label border-b border-snow-200 py-4 text-start text-ink-950"
               >
-                {pick(family, FAMILY_AR[family])}
+                {tr(family.short)}
               </button>
             ))}
             <button

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 import BottleVisual from './BottleVisual'
-import { CATALOGUE_NUMBERS, PRODUCTS_BY_ID } from '../data/products'
+import { CATALOGUE_NUMBERS, fromPriceFils, PRODUCTS_BY_ID } from '../data/products'
+import { CONCENTRATION_BY_ID } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatPrice } from '../lib/format'
 
@@ -44,7 +45,7 @@ const SLIDES = [
 const INTERVAL = 6500
 
 export default function HeroSlider({ onShopNow }) {
-  const { lang, t, isRtl, pick } = useLocale()
+  const { lang, t, isRtl, pick, tr } = useLocale()
   const [index, setIndex] = useState(0)
   const [paused, setPaused] = useState(false)
   const reduced = useRef(false)
@@ -66,7 +67,7 @@ export default function HeroSlider({ onShopNow }) {
 
   const slide = SLIDES[index]
   const product = PRODUCTS_BY_ID[slide.id]
-  const from = Math.min(...product.sizes.map((s) => s.price))
+  const from = fromPriceFils(product)
   const Forward = isRtl ? ArrowLeft : ArrowRight
 
   return (
@@ -115,7 +116,7 @@ export default function HeroSlider({ onShopNow }) {
               />
             </button>
             <span className="ticket text-snow-600">
-              {pick(product.name, product.ar.name)} · {t('from')}{' '}
+              {tr(product.name)} · {t('from')}{' '}
               <span className="t-figure text-[15px] text-ink-950">{formatPrice(from, lang)}</span>
             </span>
           </div>
@@ -126,6 +127,7 @@ export default function HeroSlider({ onShopNow }) {
             <BottleVisual
               palette={product.palette}
               catalogue={CATALOGUE_NUMBERS[product.id]}
+              label={CONCENTRATION_BY_ID[product.concentration]?.abbr}
               fillLevel={0.9}
               className="h-[240px] w-auto drop-shadow-[0_44px_64px_rgba(0,0,0,0.65)] sm:h-[330px] lg:h-[390px]"
             />
@@ -139,7 +141,7 @@ export default function HeroSlider({ onShopNow }) {
             <button
               key={s.id}
               type="button"
-              aria-label={`${i + 1} — ${pick(PRODUCTS_BY_ID[s.id].name, PRODUCTS_BY_ID[s.id].ar.name)}`}
+              aria-label={`${i + 1} — ${tr(PRODUCTS_BY_ID[s.id].name)}`}
               aria-current={i === index}
               onClick={() => setIndex(i)}
               className="grid h-8 w-8 place-items-center"

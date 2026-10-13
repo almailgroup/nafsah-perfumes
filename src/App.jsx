@@ -25,15 +25,10 @@ import { useCatalogue } from './hooks/useCatalogue'
 import { RouterProvider } from './router/RouterProvider'
 import { CONTACT, FAQ, HOME, PRIVACY, SHIPPING, TERMS, useRouter } from './router/router-context'
 
-// Only three fragrances carry each flag, so the rows are topped up to a full
-// four by the next best candidate — otherwise the 4-up grid shows a hole.
-const topUp = (flagged, rank) =>
-  [...flagged, ...[...PRODUCTS].filter((p) => !flagged.includes(p)).sort(rank)].slice(0, 4)
-
-const BESTSELLERS = topUp(
-  PRODUCTS.filter((p) => p.bestseller),
-  (a, b) => b.rating - a.rating || b.reviews - a.reviews,
-)
+// The rows show only what carries the flag: with no real sales or review
+// data, topping a "Bestsellers" row up with unflagged fragrances would
+// present a guess as a fact.
+const BESTSELLERS = PRODUCTS.filter((p) => p.bestseller)
 const PAGE_TITLE = {
   [CONTACT]: 'titleContact',
   [PRIVACY]: 'titlePrivacy',
@@ -42,10 +37,8 @@ const PAGE_TITLE = {
   [FAQ]: 'titleFaq',
 }
 
-const NEW_ARRIVALS = topUp(
-  PRODUCTS.filter((p) => p.isNew),
-  (a, b) => b.year - a.year || b.rating - a.rating,
-)
+// Newest first; the sort is stable, so a year's releases keep catalogue order.
+const NEW_ARRIVALS = PRODUCTS.filter((p) => p.isNew).sort((a, b) => b.year - a.year)
 
 function Storefront({ catalogue, searchRef, onViewAll, onOpenProduct }) {
   const { t } = useLocale()
@@ -57,7 +50,7 @@ function Storefront({ catalogue, searchRef, onViewAll, onOpenProduct }) {
         title={t('bestsellers')}
         caption={t('bestsellersCaption')}
         products={BESTSELLERS}
-        onViewAll={() => onViewAll('rating')}
+        onViewAll={() => onViewAll('featured')}
         onOpenProduct={onOpenProduct}
         tone="tint"
       />
@@ -175,7 +168,11 @@ function Shell() {
 
       <Footer onGoToSection={goToSection} />
 
-      <ProductModal product={openProduct} onClose={() => setOpenProduct(null)} />
+      <ProductModal
+        product={openProduct}
+        onClose={() => setOpenProduct(null)}
+        onOpenProduct={setOpenProduct}
+      />
       <CartDrawer />
       <CheckoutModal />
     </CartProvider>

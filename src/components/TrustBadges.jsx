@@ -1,5 +1,5 @@
 import { BadgeCheck, Headset, RotateCcw, Truck } from 'lucide-react'
-import { FREE_SHIPPING_KD } from '../context/CartProvider'
+import { FREE_SHIPPING_FILS } from '../data/delivery'
 import { useLocale } from '../i18n/locale-context'
 import { formatPrice } from '../lib/format'
 
@@ -12,7 +12,7 @@ const BADGES = [
 
 export default function TrustBadges() {
   const { lang, t } = useLocale()
-  const threshold = formatPrice(FREE_SHIPPING_KD, lang)
+  const threshold = formatPrice(FREE_SHIPPING_FILS, lang)
 
   return (
     <section className="relative overflow-hidden bg-green-600">

@@ -1,0 +1,49 @@
+// Delivery promise badge and fees (foundation; read-only in fan-out). Keys: 'delivery.*'
+//
+// {time} is built from delivery.hours / delivery.minutes with tc(), so Arabic
+// agrees the noun with the number ("ساعتين و٥ دقائق"). {day} is a weekday
+// from formatWeekday(), {fee} a formatted price, {area} an area name.
+export default {
+  en: {
+    'delivery.sameDay': 'Same-day delivery across Kuwait — order within {time}',
+    'delivery.nextDay': 'Order now for delivery tomorrow',
+    'delivery.later': 'Order now for delivery on {day}',
+    'delivery.remote': 'Delivery to {area} on {day}',
+    'delivery.remoteFee': 'Outlying-area fee: +{fee}',
+    'delivery.remoteNote.one': 'Al Khiran, Al Wafra, Sabah Al-Ahmad and other outlying areas: delivery in {count} day, +{fee}',
+    'delivery.remoteNote.other': 'Al Khiran, Al Wafra, Sabah Al-Ahmad and other outlying areas: delivery in {count} days, +{fee}',
+    'delivery.remoteSurcharge': 'Outlying-area delivery',
+    'delivery.hoursMinutes': '{hours} {minutes}',
+    'delivery.hours.one': '{count} h',
+    'delivery.hours.other': '{count} h',
+    'delivery.minutes.one': '{count} min',
+    'delivery.minutes.other': '{count} min',
+  },
+  ar: {
+    'delivery.sameDay': 'توصيل في اليوم نفسه داخل الكويت — اطلب خلال {time}',
+    'delivery.nextDay': 'اطلب الآن ليصلك طلبك غداً',
+    'delivery.later': 'اطلب الآن ليصلك طلبك يوم {day}',
+    'delivery.remote': 'التوصيل إلى {area} يوم {day}',
+    'delivery.remoteFee': 'رسوم إضافية للمناطق البعيدة: {fee}',
+    'delivery.remoteNote.zero': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال {count} يوم برسوم إضافية {fee}',
+    'delivery.remoteNote.one': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال يوم واحد برسوم إضافية {fee}',
+    'delivery.remoteNote.two': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال يومين برسوم إضافية {fee}',
+    'delivery.remoteNote.few': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال {count} أيام برسوم إضافية {fee}',
+    'delivery.remoteNote.many': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال {count} يوماً برسوم إضافية {fee}',
+    'delivery.remoteNote.other': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال {count} يوم برسوم إضافية {fee}',
+    'delivery.remoteSurcharge': 'رسوم المناطق البعيدة',
+    'delivery.hoursMinutes': '{hours} و{minutes}',
+    'delivery.hours.zero': '{count} ساعة',
+    'delivery.hours.one': 'ساعة',
+    'delivery.hours.two': 'ساعتين',
+    'delivery.hours.few': '{count} ساعات',
+    'delivery.hours.many': '{count} ساعة',
+    'delivery.hours.other': '{count} ساعة',
+    'delivery.minutes.zero': '{count} دقيقة',
+    'delivery.minutes.one': 'دقيقة',
+    'delivery.minutes.two': 'دقيقتين',
+    'delivery.minutes.few': '{count} دقائق',
+    'delivery.minutes.many': '{count} دقيقة',
+    'delivery.minutes.other': '{count} دقيقة',
+  },
+}
