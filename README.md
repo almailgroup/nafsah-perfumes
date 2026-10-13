@@ -1,20 +1,29 @@
-# Nafsah — Luxury Perfume House
+# Nafsah — a perfume house storefront for Kuwait
 
-A storefront for a fictional luxury perfume house, built with React, Tailwind CSS and Lucide
-icons. Dark, minimal and fully responsive: deep blacks, muted golds and warm off-whites.
+A bilingual (English / Arabic, right-to-left) storefront for Nafsah, a perfume house that
+composes its sprays in Grasse and sells from a boutique in Kuwait. Fifteen fragrances across
+seven Gulf families, sold as full bottles, 50ml sprays, tola and quarter-tola oils and 2ml
+sample vials; same-day delivery inside Kuwait; Try First test vials; gifting; real customer
+reviews; and a Scent Finder.
+
+It is a static site: React 18, Vite 5, Tailwind CSS 3.4 and lucide-react, published to GitHub
+Pages. There is no backend yet — prices, the catalogue and every policy figure are data
+modules, the checkout is a demonstration that transmits nothing, and `db/` holds the
+PostgreSQL schema for the day a server arrives.
 
 ## Getting started
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173/nafsah-perfumes/
-npm run build    # production bundle in dist/
-npm run preview  # serve the production bundle
-npm run lint     # ESLint
+npm run dev          # http://localhost:5173/
+npm run build        # production bundle in dist/, one HTML entry per route
+npm run preview      # serve the production bundle
+npm run lint         # ESLint over the whole repository
+npm test             # Vitest: data, libraries, i18n, cart, components
+npm run check:i18n   # English and Arabic dictionaries must match key for key
 ```
 
-Node 18+ is required. The dev server is served under `/nafsah-perfumes/` rather than `/` because
-`base` is set for GitHub Pages (see Deployment); Vite prints the full URL on start.
+Node 18 or later (the project is developed on Node 22).
 
 ## Deployment
 
@@ -41,172 +50,225 @@ provisioned a certificate for the domain, after which *Enforce HTTPS* can be ena
 Only `dist/` is published; build output is never committed. A deploy can be re-run by hand
 from the Actions tab via `workflow_dispatch`.
 
-## Features
+## What the site does
 
-**Hero.** Layered radial washes over a masked grid, a gilded headline treatment, house statistics
-and a `Shop Now` call-to-action that scrolls to the catalogue.
+- **Catalogue.** Seven families — Oud & Musk, Amber, Rose & Florals, French-Arabic Hybrids,
+  Bukhoor & Oils, Gourmand 2.0, Fresh & Aquatic Beast Mode — in the navigation, the category
+  tiles and the filters. Search reads English and Arabic (diacritics, tashkeel and letter
+  variants folded), and filters cover family, notes, concentration, projection, gender and
+  price, with live counts.
+- **Product page.** The vial, a format toggle (Full Bottle, 50ml Spray, Tola Oil, Quarter Tola
+  Oil, 2ml Sample Vial) with its price, the facts strip, a visual olfactory pyramid, the scent
+  profile (family shares, heat resistance, longevity, projection — every meter with its value
+  in text), Gulf layering suggestions, and reviews.
+- **Try First.** Every full bottle, 50ml spray and tola ships with a free 2ml test vial of the
+  same fragrance; a sealed bottle can come back within the return window.
+- **Delivery promise.** Worked out on Kuwait time: same-day before the cut-off, next delivery
+  day after it, no deliveries on Fridays, outlying areas one delivery day later with a fee.
+- **Gifting.** Three gift boxes, a printed message card, prices left off the packing slip,
+  and delivery straight to the recipient.
+- **Checkout.** A Kuwaiti address (governorate, area, block, street, avenue, building, floor,
+  apartment), an 8-digit mobile, gift recipient details, and KNET / card / Apple Pay / cash on
+  delivery. It is a demonstration: nothing is charged or sent.
+- **Reviews.** Real customer reviews only, with four ratings (overall, longevity in the heat,
+  projection, compliment factor). Until a review service is connected, a submitted review is
+  kept in the visitor's browser and the page says so. Nothing is seeded.
+- **Scent Finder** at `/scent-finder`: five questions, ranked matches, answers kept in the
+  address so a result can be shared.
+- **Help and legal pages**: Shipping & Returns, FAQ, Privacy Policy, Terms of Sale, Contact.
 
-**Product catalogue.** Twelve fragrances in a responsive grid — one column on mobile, two on
-tablet, three on wide screens. Each card carries the full fragrance pyramid (top, heart and base
-notes), concentration and intensity, a rating, 50ml / 100ml size toggle with live price, and an
-add-to-cart button.
-
-**Filter and search.** Search matches names, taglines, descriptions and any individual note, so
-typing `bergamot` or `oud` finds every composition carrying it. Filter by scent family (Woody,
-Floral, Citrus, Oriental — multi-select), narrow a dual-thumb price range, and sort by featured,
-price, rating or release year. An empty state offers a one-click reset.
-
-**Cart drawer.** A slide-out panel with quantity steppers, per-line removal, a free-shipping
-progress meter, and a running subtotal, shipping, tax and total. The cart persists to
-`localStorage` and rehydrates against the live catalogue, so stale lines are dropped rather than
-resurrected. Escape closes it; while closed it is `inert`, keeping its controls out of the tab
-order.
-
-**Checkout.** A three-step modal — contact, shipping, payment — with per-step validation, card
-number and expiry formatting, a live order summary, a mock authorisation delay and a confirmation
-screen with an order reference. No network request is made and no card is charged.
-
-## Product imagery
-
-The catalogue ships no binary image assets. `BottleVisual` renders each flacon as an SVG tinted
-from the fragrance's own `palette` — glass shell, clipped liquid fill with a meniscus, catch-light,
-embossed house mark and a surface reflection. Every product therefore gets a distinct, high-quality
-placeholder that scales cleanly from a 64px cart thumbnail to the 520px hero.
-
-To swap in real photography, replace `BottleVisual` with an `<img>` and add an image field to each
-entry in `src/data/products.js`.
-
-## Project structure
+## Architecture
 
 ```
+index.html, contact/, faq/, privacy/, shipping/, terms/, scent-finder/
+                         # one HTML entry per route (GitHub Pages has no server routing);
+                         # each carries its own <title>, description and a pre-paint
+                         # script that sets lang/dir before the first frame
 src/
-├── App.jsx                     # Layout, skip link, scroll/focus wiring
-├── components/
-│   ├── BottleVisual.jsx        # SVG flacon used as the image placeholder
-│   ├── Navbar.jsx              # Sticky header, cart badge, mobile menu
-│   ├── Hero.jsx                # Landing section and Shop Now CTA
-│   ├── Collection.jsx          # Filter/sort state and the product grid
-│   ├── Filters.jsx             # Search, scent family, price range, sort
-│   ├── ProductCard.jsx         # Notes pyramid, size toggle, add to cart
-│   ├── CartDrawer.jsx          # Slide-out cart
-│   ├── CheckoutModal.jsx       # Three-step checkout
-│   ├── Story.jsx               # House narrative
-│   ├── NotesGuide.jsx          # How to read a fragrance pyramid
-│   └── Footer.jsx              # Newsletter, contact, site links
-├── context/
-│   ├── cart-context.js         # Context object and useCart hook
-│   └── CartProvider.jsx        # Cart reducer, totals, persistence
-├── data/products.js            # Catalogue, scent families, price bounds
-├── hooks/
-│   ├── useOverlay.js           # Scroll lock, Escape, focus management
-│   └── useReveal.js            # Scroll-triggered section reveals
-├── lib/format.js               # Currency formatting and small helpers
-└── index.css                   # Tailwind layers, component classes, slider
+├── main.jsx, App.jsx    # providers, layout, the page for each route
+├── router/              # routes.js (the route table, shared with vite.config.js),
+│                        # a small pushState router with query and hash support
+├── data/                # the catalogue and every policy figure — see "Data model"
+├── lib/                 # pure logic, unit-tested: format, delivery, address,
+│                        # catalogue (search, filters, sorts), reviews, scent-finder
+├── context/             # the cart: reducer, persistence, totals, gift options
+├── hooks/               # useCatalogue, useReviews, useOverlay (dialog stack,
+│                        # focus trap, Escape, scroll lock), useReveal
+├── i18n/                # strings.js (core copy) + dict/<feature>.js, LocaleProvider
+├── components/          # page sections, plus feature folders:
+│   ├── product/         #   format toggle, pyramid, scent profile, layering
+│   ├── catalogue/       #   search, facets, price range, filter sheet
+│   ├── reviews/         #   reviews section, form, star input, rating badge
+│   ├── trust/           #   Try First banner and modal, delivery badge
+│   ├── gifting/         #   gift panel, box swatches, card preview
+│   ├── checkout/        #   steps, Kuwaiti address fields, order summary
+│   └── finder/          #   Scent Finder page and homepage teaser
+└── index.css            # Tailwind layers and the house type and button classes
+db/                      # PostgreSQL schema for a future backend (see db/README.md)
+scripts/check-i18n.mjs   # the dictionary audit behind npm run check:i18n
 ```
+
+State is small and local: a cart context (lines, totals, gift options, which overlay is open)
+and a locale context (language, direction, `t`, `tc`, `tr`). Everything a shopper sets that
+must survive a refresh is in `localStorage`: `nafsah.cart.v2` (a v1 cart migrates once),
+`nafsah.gift.v1`, `nafsah.lang.v1` and `nafsah.reviews.v1`.
+
+## Data model
+
+All in `src/data`, plain modules with no React, validated by `src/data/schema.js` in tests.
+
+- **`taxonomy.js`** — every enumerated value as `{ id, en, ar, … }`: `FAMILIES` (display
+  order), `CONCENTRATIONS` (extrait 20–30%, EDP 15–20%, EDT 5–15%, attar 100% oil),
+  `SILLAGE` (intimate → beast mode, `level` 1–4), `GENDERS`, `SEASONS`, `OCCASIONS`,
+  `FORMATS` (with `kind`, standard `ml` and the `tryFirst` flag), `HEAT_SCALE` (1–5),
+  `LONGEVITY_BANDS`, `LAYERING_KINDS`, and `*_BY_ID` lookups.
+- **`notes.js`** — one entry per material, one English and one Arabic name each, with
+  search aliases (`Cambodian Oud`, `ورد الطائف`).
+- **`products.js`** — the fifteen fragrances:
+
+  ```js
+  {
+    id: 'oud-noir', name: { en, ar }, tagline: { en, ar }, description: { en, ar },
+    family: 'oud-musk', familyProfile: { 'oud-musk': 60, rose: 20, amber: 20 },   // percents, sum 100
+    concentration: 'extrait', gender: 'unisex',
+    longevity: 12, projectionSillage: 'strong', heatResistance: 3,      // hours, SILLAGE id, 1–5
+    seasons: ['winter'], occasions: ['diwaniya', 'wedding'],
+    topNotes: [NOTES.bergamot, …], heartNotes: […], baseNotes: […],
+    layering: [{ kind: 'bukhoor', name, how }, { kind: 'attar', productId: 'ward-taifi', how }],
+    formats: [{ id: 'full', ml: 100, priceFils: 119000 }, …, { id: 'sample', ml: 2, priceFils: 4500 }],
+    palette: { from, via, to, glass }, year: 2019, bestseller: true, isNew: false,
+  }
+  ```
+
+  Helpers: `PRODUCTS_BY_ID`, `CATALOGUE_NUMBERS` (positional, `01`…), `PRICE_BOUNDS`,
+  `bottleFormats`, `fromPriceFils`, `formatOf`, `concentrationFor` (oil formats are attar),
+  `allNotes`. There are no rating fields: ratings come only from real reviews.
+- **`kuwait.js`** — the six governorates and their residential areas in both languages;
+  outlying areas carry `remote: true`. `areasIn(governorate, lang)`, `isRemoteArea(id)`.
+- **`delivery.js`** — the policy: `SAME_DAY_CUTOFF_HOUR` (14), `NO_DELIVERY_WEEKDAYS`
+  (Friday), `SHIPPING_FILS`, `FREE_SHIPPING_FILS` (free when the fragrances come to this or
+  more), `REMOTE_SURCHARGE_FILS`, `REMOTE_EXTRA_DAYS`, `RETURN_WINDOW_DAYS`.
+- **`gifting.js`** — `GIFT_BOXES` (Signature, complimentary; Al Sadu keepsake; Majlis chest
+  with bukhoor) and `GIFT_MESSAGE_MAX`.
+- **`help.js`, `legal.js`** — the Shipping & Returns page, the FAQ and the legal pages as
+  bilingual prose. No figure is typed into a sentence: `{threshold}`, `{cutoff}`,
+  `{returnPeriod}`, `{remoteFee}`, `{vial}` and the rest are filled by `fillPolicy()` from the
+  modules above, so the pages cannot promise anything the checkout does not apply.
+
+Reviews are not data: `src/lib/reviews.js` keeps them in the browser behind a small store
+(`createLocalReviewStore`) that a real review service can replace.
+
+**Money** is integer fils everywhere (1 KWD = 1000 fils). `formatPrice(fils, lang)` prints
+`KWD 75.000` and `د.ك. ٧٥٫٠٠٠`; `ARABIC_DIGITS` in `src/lib/format.js` switches Arabic mode to
+Latin digits if the house prefers.
+
+## Language and direction
+
+- Arabic and English are peers. `LocaleProvider` sets `lang` and `dir` on the document; every
+  HTML entry also sets them before the first paint for a returning Arabic visitor.
+- Interface copy lives in dictionaries: `src/i18n/strings.js` holds the site-wide core and
+  each feature has `src/i18n/dict/<feature>.js` with keys prefixed by its namespace
+  (`checkout.err.required`). English and Arabic must have the same keys and the same
+  `{placeholders}`; `npm run check:i18n` and the tests enforce it, and a key defined twice
+  throws in development.
+- Catalogue text is `{ en, ar }` data rendered with `tr()`. Counts use `tc(key, n)` with
+  `.one/.other` in English and `.zero/.one/.two/.few/.many/.other` in Arabic.
+- Every number shown goes through `formatNumber`, `formatPrice`, `formatMl`, `formatHours`
+  or `formatDate`, so Arabic mode shows Arabic-Indic digits.
+- Layout uses logical utilities (`ms/me`, `ps/pe`, `start/end`, `border-s`, `text-start`);
+  directional icons carry `rtl:rotate-180` or are swapped; Arabic drops uppercase and wide
+  tracking (the `.t-*` and `.ticket` classes do this for you).
+
+## Changing things
+
+- **A fragrance.** Edit `src/data/products.js`. Keep the id once published (carts and links use
+  it), use note objects from `notes.js` (add the note there first), make `familyProfile` sum to
+  100 with `family` as its largest share, and give every product a `sample` format. Sprays
+  offer `full`, `spray50` and `sample` (signature extraits may add `quarter-tola`); attars
+  offer `tola`, `quarter-tola` and `sample`. `npm test` runs the catalogue validator. New
+  products are appended, because catalogue numbers are positional.
+- **Delivery fees, the cut-off, rest days, the return window.** Change the constant in
+  `src/data/delivery.js`. The delivery badge, cart, checkout, announcement bar, FAQ, Shipping
+  & Returns page and terms all follow.
+- **Areas.** `src/data/kuwait.js`: add a row under its governorate as `[id, English, Arabic]`,
+  with `REMOTE` as a fourth value for an outlying area.
+- **Gift boxes.** `src/data/gifting.js`: name, blurb and price in fils; the FAQ quotes them.
+- **Copy.** Core interface copy and the homepage's house story, hero and reading guide are in
+  `src/i18n/strings.js`; feature copy is in `src/i18n/dict/`; policy prose in
+  `src/data/help.js` and `src/data/legal.js`; meta descriptions in each `*/index.html`.
 
 ## Design system
 
-A bilingual Gulf identity. The house is named Nafsah, ships from Kuwait and prices in
-dinar, so the design says so: Arabic and English are peers, not a translation layer bolted
-on afterwards.
+Paper, ink, Arab Green and a little gold. Square corners, hairline rules, generous space.
 
-### Colour — Rolex brand palette
+| Token | Value | Use |
+| --- | --- | --- |
+| `snow-50` | `#fbfaf7` | the page |
+| `snow-100` / `200` / `300` | panels / hairlines / strong hairlines | |
+| `snow-600` | `#4a5550` | muted text on paper (7.3:1) |
+| `ink-950` | `#08140f` | type (18:1 on paper) |
+| `green-600` | `#006039` | Arab Green: actions, links, the announcement strip; carries text on paper (7.4:1) |
+| `green-700` | `#004d2e` | the deep bands and the footer |
+| `green-300` | `#79c3a5` | the only accent on green-700 |
+| `gold-500` | `#a37e2c` | Boy Gold: hairlines, rules and seals only — never text on paper |
+| `gold-300` | `#dabb77` | gold text, on green-700 only |
+| `alert-600` | `#b0452f` | errors |
 
-Two official brand values, used exactly:
+Type: **Jost** for Latin display and interface, **Reem Kufi** for Arabic display and **IBM Plex
+Sans Arabic** for Arabic text. The classes `.t-display .t-h2 .t-title .t-body .t-label
+.ticket .t-figure` and the buttons `.btn-green .btn-ink .btn-outline .btn-paper` re-tune size,
+leading and tracking for Arabic under `[dir="rtl"]`. Icons are lucide-react at a 1.25–1.75
+stroke. The mashrabiya star is the house motif, used as a faint watermark behind the vials
+and the green bands, never behind copy.
 
-| Name           | Hex       | RGB             | Pantone |
-| -------------- | --------- | --------------- | ------- |
-| **Arab Green** | `#006039` | `0, 96, 57`     | 3425 C  |
-| **Boy Gold**   | `#A37E2C` | `163, 126, 44`  | 7754 C  |
-
-| Token      | Role                                                                    |
-| ---------- | ----------------------------------------------------------------------- |
-| `midnight` | `#08140f` → `#345548`. Surfaces, carrying the brand green's own 155.6° hue, so the ground reads as darkened Arab Green rather than grey. |
-| `green`    | `600` **is** Arab Green. Tints 200–500 are derived. |
-| `gold`     | `500` **is** Boy Gold. Tints 200–400 are derived. |
-| `pearl`    | `#f6f2e9` → `#8b8e85`. All text. |
-
-Two constraints govern how the brand values are allowed to be used:
-
-**Arab Green is a fill, never text.** At `2.45:1` against the ground it cannot carry
-type. It is the action fill — buttons, the cart badge, the full-bleed trust band — where
-pearl on it measures `6.88:1`. Green *text* uses the derived tints (`green-300` at
-`9.1:1`). The tints are also deliberately desaturated: at the brand's own 100% saturation
-they render neon, which is the opposite of what this palette is for.
-
-**Boy Gold is rationed.** `#A37E2C` is `4.99:1` on the ground — passing, but tight for an
-11px label — so it is used for fills, borders and the vial's wax seal, while gold *text*
-takes `gold-300` at `10.16:1`. Gold appears on eyebrow labels, the secondary button and the
-seal, and nowhere else. This brand was rejected once for looking like a gold merchant;
-green does the structural work and gold stays a punctuation mark.
-
-### Type — four faces, two scripts
-
-Chosen for legibility, measured rather than assumed. The ratio that matters is
-x-height over cap-height: it governs how large a face *looks* at a given nominal size.
-
-| Role         | Face                    | x/cap | Replaces                  |
-| ------------ | ----------------------- | ----- | ------------------------- |
-| Latin display| **Marcellus**           | 0.666 | Cormorant Garamond (0.618)|
-| Latin UI/body| **Inter**               | 0.751 | Jost (0.657)              |
-| Arabic display| **Reem Kufi**          | —     | —                         |
-| Arabic UI    | **IBM Plex Sans Arabic**| —     | —                         |
-
-Marcellus is Roman inscriptional — luxurious, but with an x-height 21% larger than
-Cormorant's and far sturdier strokes, so it survives sizes where Cormorant disintegrated.
-It has one weight and no italic, which the ramp treats as a discipline rather than a gap.
-Inter is drawn specifically for interface legibility and is 19% larger on the eye than Jost
-at the same setting.
-
-Body weight is **400, not 300**. A hairline body weight reversed out of a dark ground was
-the other half of why the previous type was hard to read. Prices use Inter rather than a
-serif, with `lnum`/`tnum` so columns align.
-
-Arabic sits lower and wider than Latin at the same nominal size, so every `.t-*` class in
-`src/index.css` has a `[dir="rtl"]` block that re-tunes size and leading. Arabic has no
-case, so `uppercase` and wide tracking are dropped under RTL — applied to Arabic they break
-joined letterforms.
-
-### Chrome — the white header
-
-An Arab Green announcement strip sits above a warm-white header (`snow-50` `#fbfaf7`,
-never pure white), closed with a Boy Gold hairline, over the dark page.
-
-The inversion changes what the brand colours can do. On the dark ground Arab Green is
-`2.45:1` and cannot carry text; **on white it is `7.36:1`**, so the header uses it directly
-for the active category. Boy Gold runs the other way: `4.99:1` on dark but only `3.61:1` on
-white, so on the header it is the hairline rule and nothing else — never small text.
-
-### Direction
-
-`LocaleProvider` sets `lang` and `dir` on the document element and persists the choice.
-Layout is written in **logical properties** (`ms/me`, `ps/pe`, `start/end`, `border-s/e`)
-rather than left/right, so the whole page mirrors from that one attribute. Directional
-glyphs — carousel chevrons, the arrow in a button — carry `rtl:rotate-180` or a swapped
-icon. The price rail's fill is computed per direction, since it is drawn from the logical
-start.
-
-Numbers follow the script: `formatPrice` gives `KD 75.000` in English and `‏٧٥٫٠٠٠ د.ك` in
-Arabic, and catalogue numbers render as `04` or `٠٤`.
-
-### Signature
-
-The **mashrabiya** — the eight-point khatim star, two overlapping squares on a 56px tile —
-replaces the hairline rule as the structural motif. It appears as a masked 5% watermark on
-panels and bands, never behind body copy.
-
-Every UI string lives in `src/i18n/strings.js` with full key parity between the two
-languages; product names, taglines and all fragrance notes carry an `ar` counterpart in
-`src/data/products.js` so the two can never drift apart.
+Bottles are drawn, not photographed: `BottleVisual` renders each as an SVG tinted from the
+product's `palette` with its concentration on the label. To use photography, replace it
+with an `<img>` and add an image field to each product.
 
 ## Accessibility
 
-Semantic landmarks and heading order, a skip link, labelled controls throughout, visible
-gold focus rings, `aria-pressed` filter chips, a `radiogroup` size selector, `aria-live` quantity
-readouts, focus moved into and restored out of overlays, and a `prefers-reduced-motion` block that
-disables animation.
+Landmarks and a skip link on every route; real buttons and labels; radio groups (the format
+toggle, star ratings, Scent Finder answers) with arrow keys and a single tab stop, mirrored in
+Arabic; every meter has its value in text; dialogs trap focus, close on Escape from the top
+of a stack and restore focus and scroll; the hero carousel and the announcement strip stop on
+hover and focus and have a pause control; reduced-motion preferences are honoured; visible
+green focus rings throughout.
+
+## Tests
+
+`npm test` runs Vitest over the catalogue validator, Kuwait data, formatting, the delivery
+promise (on fixed Kuwait clocks), address validation, search and filters, reviews, the Scent
+Finder ranking, the cart reducer and migration, the dictionaries, and the main interactive
+components.
+
+## Placeholders the owner must replace
+
+This storefront is a working template. Before trading on it, replace or confirm:
+
+- **Heritage story** — founded 1974, Yusuf Nafsah, the three-bench atelier, the Grasse bench,
+  four-week maceration, the named material sources (Al Hada, Tamil Nadu, Florence), "never
+  reformulated", and the Kuwait boutique decanting oils and vials (`src/i18n/strings.js`,
+  the terms' "Who you are dealing with").
+- **Contact details** — the boutique address, `+965 2200 0000`, `atelier@nafsah.example`,
+  WhatsApp, opening hours and the Grasse atelier (`ContactPage.jsx`, `Footer.jsx`,
+  `strings.js`).
+- **Prices** — every format price and the gift box prices (`products.js`, `gifting.js`).
+- **Product facts** — notes, longevity, projection, heat resistance, seasons, occasions,
+  layering pairings and the descriptions' claims ("rested in glass for a year", "distilled
+  in copper the same morning") (`products.js`).
+- **Delivery policy** — the fee, the free-delivery threshold, the outlying-area fee and
+  extra day, the 14:00 cut-off, Friday rest, which areas are outlying (`delivery.js`,
+  `kuwait.js`), plus refund timings (five working days) and the fourteen-day damage window
+  in the help and terms prose.
+- **Legal templates** — the privacy policy and terms of sale are drafts, not legal advice;
+  have them reviewed under Kuwaiti law (`legal.js`).
+- **Services not yet connected** — payments (KNET, cards, Apple Pay), order handling, the
+  review service and the newsletter. Checkout and the newsletter are demonstrations.
+- **Arabic copy and the area list** — have a native copy editor review the Arabic, and check
+  the residential area names and governorate assignments in `kuwait.js`.
 
 ## Notes
 
 This is a front-end demonstration. There is no backend: prices, inventory and orders are local
-state, and the checkout is a mock that never transmits payment details.
+state, and the checkout never transmits payment details. `db/schema.sql` describes the
+database it would use.

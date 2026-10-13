@@ -26,7 +26,7 @@ describe('FormatToggle', () => {
 
   it('is a radiogroup with one radio per format and a single tab stop on the selected one', () => {
     const html = render('en', { product: oudNoir, value: 'spray50' })
-    expect(html).toMatch(/role="radiogroup"[^>]*aria-label="Select a size"/)
+    expect(html).toMatch(/role="radiogroup"[^>]*aria-label="Choose a size or format"/)
     const tags = radios(html)
     expect(tags).toHaveLength(oudNoir.formats.length)
     expect(tags.filter((tag) => tag.includes('tabindex="0"'))).toHaveLength(1)
@@ -43,7 +43,7 @@ describe('FormatToggle', () => {
 
   it('shows label, volume and price for every option', () => {
     expect(text(render('en', { product: oudNoir, value: 'full' }))).toBe(
-      'Full Bottle 100 ml KWD 119.000 50ml Spray 50 ml KWD 75.000 Quarter Tola Oil 3 ml KWD 29.000 2ml Sample Vial 2 ml KWD 4.500',
+      'Full Bottle 100 ml · with a free 2 ml test vial KWD 119.000 50ml Spray 50 ml · with a free 2 ml test vial KWD 75.000 Quarter Tola Oil 3 ml KWD 29.000 2ml Sample Vial 2 ml KWD 4.500',
     )
   })
 

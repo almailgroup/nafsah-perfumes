@@ -16,6 +16,7 @@ const COMPACT_COLUMNS = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3' }
  * Home and End jump to the ends. `full` stacks every option with its label,
  * volume and price; `compact` is the small segmented control on the cards,
  * where the price is read out but shown once, above, by the card itself.
+ * The full variant also says which formats carry the free Try First vial.
  */
 export default function FormatToggle({ product, value, onChange, variant = 'full', labelledBy }) {
   const { lang, t, tr, isRtl } = useLocale()
@@ -49,7 +50,7 @@ export default function FormatToggle({ product, value, onChange, variant = 'full
     <div
       role="radiogroup"
       aria-labelledby={labelledBy}
-      aria-label={labelledBy ? undefined : t('selectSize')}
+      aria-label={labelledBy ? undefined : t('product.formatLabel')}
       className={classNames(
         compact
           ? `grid gap-px border border-snow-300 bg-snow-300 ${COMPACT_COLUMNS[formats.length] ?? 'grid-cols-2'}`
@@ -60,6 +61,10 @@ export default function FormatToggle({ product, value, onChange, variant = 'full
         const checked = index === selected
         const label = tr(FORMAT_BY_ID[entry.id])
         const volume = formatMl(entry.ml, lang)
+        // Try First formats ship with a 2 ml vial of the same scent.
+        const vial = FORMAT_BY_ID[entry.id]?.tryFirst
+          ? t('product.format.vial', { volume: formatMl(FORMAT_BY_ID.sample.ml, lang) })
+          : null
         const price = formatPrice(entry.priceFils, lang)
 
         const common = {
@@ -122,6 +127,7 @@ export default function FormatToggle({ product, value, onChange, variant = 'full
                 </span>
                 <span className="block font-sans text-[12px] leading-snug text-snow-600 rtl:font-sans-ar">
                   {volume}
+                  {vial && ` · ${vial}`}
                 </span>
               </span>
             </span>

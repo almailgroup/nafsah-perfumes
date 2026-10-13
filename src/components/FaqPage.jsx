@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
-import { FREE_SHIPPING_FILS, SHIPPING_FILS } from '../data/delivery'
-import { FAQ } from '../data/help'
+import { ProseLink } from './DocumentPage'
+import { FAQ, fillPolicy } from '../data/help'
 import { useLocale } from '../i18n/locale-context'
-import { formatOrdinal, formatPrice } from '../lib/format'
+import { formatOrdinal } from '../lib/format'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, SHIPPING } from '../router/router-context'
 
@@ -11,14 +11,13 @@ import { CONTACT, SHIPPING } from '../router/router-context'
  * announced correctly without any of that being written here, and Chrome will
  * open a closed answer when find-in-page matches inside it — which a div with
  * an onClick will not do.
+ *
+ * Each group carries its own anchor (/faq#gifting), and every {placeholder}
+ * in an answer is filled from the delivery, return and gifting constants.
  */
 export default function FaqPage() {
-  const { lang, t, pick } = useLocale()
-
-  const fill = (text) =>
-    text
-      .replace('{threshold}', formatPrice(FREE_SHIPPING_FILS, lang))
-      .replace('{shipping}', formatPrice(SHIPPING_FILS, lang))
+  const { lang, t, tr } = useLocale()
+  const fill = (entry) => fillPolicy(tr(entry), lang)
 
   return (
     <main id="main">
@@ -32,10 +31,15 @@ export default function FaqPage() {
 
           <div className="mt-12 max-w-3xl lg:mt-16">
             {FAQ.groups.map((group, groupIndex) => (
-              <section key={group.group.en} className="mt-14 first:mt-0">
-                <h2 className="ticket flex items-center gap-3 text-green-600">
-                  <span>{formatOrdinal(groupIndex + 1, lang)}</span>
-                  <span className="text-snow-600">{pick(group.group.en, group.group.ar)}</span>
+              <section
+                key={group.id}
+                id={group.id}
+                aria-labelledby={`faq-${group.id}`}
+                className="mt-14 scroll-mt-40 first:mt-0"
+              >
+                <h2 id={`faq-${group.id}`} className="ticket flex items-center gap-3 text-green-600">
+                  <span aria-hidden="true">{formatOrdinal(groupIndex + 1, lang)}</span>
+                  <span className="text-snow-600">{tr(group.group)}</span>
                 </h2>
 
                 <div className="mt-5 border-t border-snow-300">
@@ -43,7 +47,7 @@ export default function FaqPage() {
                     <details key={item.q.en} className="group border-b border-snow-200">
                       <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-5 [&::-webkit-details-marker]:hidden">
                         <h3 className="t-title text-[1.2rem] transition-colors duration-300 group-hover:text-green-600">
-                          {pick(item.q.en, item.q.ar)}
+                          {tr(item.q)}
                         </h3>
                         <ChevronDown
                           aria-hidden="true"
@@ -51,7 +55,10 @@ export default function FaqPage() {
                           strokeWidth={1.5}
                         />
                       </summary>
-                      <p className="t-body max-w-2xl pb-6 pt-1 pe-10">{fill(pick(item.a.en, item.a.ar))}</p>
+                      <div className="max-w-2xl pb-7 pe-10 pt-1">
+                        <p className="t-body">{fill(item.a)}</p>
+                        {item.link && <ProseLink link={item.link} />}
+                      </div>
                     </details>
                   ))}
                 </div>

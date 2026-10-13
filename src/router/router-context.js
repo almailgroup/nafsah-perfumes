@@ -1,20 +1,29 @@
 import { createContext, useContext } from 'react'
 
-export const HOME = '/'
-export const CONTACT = '/contact'
-export const PRIVACY = '/privacy'
-export const TERMS = '/terms'
-export const SHIPPING = '/shipping'
-export const FAQ = '/faq'
-export const SCENT_FINDER = '/scent-finder'
+// The route table is plain data shared with vite.config.js; it is re-exported
+// here so components keep importing every route from one place.
+export {
+  CONTACT,
+  FAQ,
+  HOME,
+  PRIVACY,
+  ROUTES,
+  ROUTE_TABLE,
+  SCENT_FINDER,
+  SHIPPING,
+  TERMS,
+  TITLE_KEY,
+  normalise,
+  parseLocation,
+} from './routes'
 
-/** Every address the site claims. Anything else resolves to the homepage. */
-export const ROUTES = [HOME, CONTACT, PRIVACY, TERMS, SHIPPING, FAQ]
-
-/* GitHub Pages serves a directory at /contact/, so a trailing slash has to
-   resolve to the same route a pushState to /contact produces. */
-export const normalise = (pathname) => pathname.replace(/\/+$/, '') || '/'
-
+/**
+ * { path, search, hash, key, navigate(to, { scroll, replace }), replaceSearch(search) }
+ *
+ * `key` changes on every navigation (a link, back or forward) but not when a
+ * page rewrites its own query string, so a page can be keyed on it to start
+ * afresh from the address it was opened at.
+ */
 export const RouterContext = createContext(null)
 
 export function useRouter() {

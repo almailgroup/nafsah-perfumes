@@ -1,57 +1,86 @@
-import { useState } from 'react'
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { ArrowLeft, ArrowRight, Check, CircleAlert } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
-import { formatNumber } from '../lib/format'
+import { classNames, formatNumber } from '../lib/format'
 import { FOOTER_LOGO } from '../brand'
 import { Link } from '../router/RouterProvider'
-import { CONTACT, FAQ, PRIVACY, SHIPPING, TERMS } from '../router/router-context'
+import { CONTACT, FAQ, PRIVACY, SCENT_FINDER, SHIPPING, TERMS } from '../router/router-context'
 
-/* Each link carries its own destination now that Client Care has real pages
-   behind it: two of the four are pages, two still reach a person. */
+const EMAIL = 'atelier@nafsah.example'
+const PHONE = '+965 2200 0000'
+const FOUNDED = 1974
+
+/* Every link goes somewhere real: a page, a section of the homepage, or the
+   contact form with its subject already chosen. */
 const COLUMNS = [
   {
-    title: { en: 'Catalogue', ar: 'الفهرس' },
+    title: 'finder.footer.col.catalogue',
     links: [
-      { en: 'New Arrivals', ar: 'وصل حديثاً', section: 'collection' },
-      { en: 'Bestsellers', ar: 'الأكثر مبيعاً', section: 'collection' },
-      { en: 'Discovery Sets', ar: 'أطقم الاكتشاف', section: 'collection' },
-      { en: 'Gifting', ar: 'الهدايا', section: 'collection' },
+      { label: 'finder.footer.link.catalogue', section: 'collection' },
+      { label: 'finder.footer.link.newArrivals', section: 'new-arrivals' },
+      { label: 'finder.footer.link.bestsellers', section: 'bestsellers' },
+      { label: 'finder.footer.link.scentFinder', to: SCENT_FINDER },
+      { label: 'finder.footer.link.gifting', to: `${FAQ}#gifting` },
     ],
   },
   {
-    title: { en: 'The House', ar: 'الدار' },
+    title: 'finder.footer.col.house',
     links: [
-      { en: 'Our Story', ar: 'قصتنا', section: 'house' },
-      { en: 'Sourcing', ar: 'مصادر المواد', section: 'house' },
-      { en: 'Sustainability', ar: 'الاستدامة', section: 'house' },
-      { en: 'Ateliers', ar: 'المعامل', section: 'house' },
+      { label: 'finder.footer.link.story', section: 'house' },
+      { label: 'finder.footer.link.sourcing', section: 'house' },
+      { label: 'finder.footer.link.reading', section: 'notes' },
     ],
   },
   {
-    title: { en: 'Client Care', ar: 'خدمة العملاء' },
+    title: 'finder.footer.col.care',
     links: [
-      { en: 'Shipping & Returns', ar: 'الشحن والإرجاع', to: SHIPPING },
-      { en: 'FAQ', ar: 'الأسئلة الشائعة', to: FAQ },
-      { en: 'Track an Order', ar: 'تتبّع الطلب', to: CONTACT },
-      { en: 'Consultation', ar: 'استشارة', to: CONTACT },
+      { label: 'finder.footer.link.shipping', to: SHIPPING },
+      { label: 'finder.footer.link.faq', to: FAQ },
+      { label: 'finder.footer.link.track', to: `${CONTACT}?subject=order` },
+      { label: 'finder.footer.link.consultation', to: `${CONTACT}?subject=consultation` },
+      { label: 'finder.footer.link.international', to: `${CONTACT}?subject=international` },
     ],
   },
 ]
 
-const PAYMENTS = ['KNET', 'Visa', 'Mastercard', 'Amex', 'Apple Pay']
+// The methods the checkout offers. Brand names stay in their own script.
+const PAYMENTS = ['KNET', 'Visa', 'Mastercard', 'Apple Pay']
+
+// How long the button reads "Subscribed" before it offers to join again.
+const SUBSCRIBED_MS = 3500
+
+const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
+
+const LINK_CLASS =
+  'nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300'
 
 export default function Footer({ onGoToSection }) {
-  const { lang, t, isRtl, pick } = useLocale()
+  const { lang, t, isRtl } = useLocale()
+  const uid = useId()
   const [email, setEmail] = useState('')
+  const [error, setError] = useState(null)
   const [subscribed, setSubscribed] = useState(false)
+  const timer = useRef(null)
+  const inputRef = useRef(null)
   const Forward = isRtl ? ArrowLeft : ArrowRight
+  const errorId = `${uid}-error`
 
+  useEffect(() => () => clearTimeout(timer.current), [])
+
+  // Our own messages, in the page's language, rather than the browser's bubble.
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (!/^\S+@\S+\.\S+$/.test(email)) return
+    const value = email.trim()
+    const problem = !value ? 'required' : !EMAIL_PATTERN.test(value) ? 'invalidEmail' : null
+    setError(problem)
+    if (problem) {
+      inputRef.current?.focus()
+      return
+    }
     setSubscribed(true)
     setEmail('')
-    setTimeout(() => setSubscribed(false), 3500)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setSubscribed(false), SUBSCRIBED_MS)
   }
 
   return (
@@ -66,34 +95,64 @@ export default function Footer({ onGoToSection }) {
           </div>
           <div className="lg:ps-10">
             <p className="t-body max-w-md text-snow-200">{t('newsletterBody')}</p>
-            <form onSubmit={handleSubmit} className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <label htmlFor="newsletter" className="sr-only">{t('emailAddress')}</label>
-              <input
-                id="newsletter" type="email" required value={email}
-                onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com"
-                className="field flex-1"
-              />
-              <button type="submit" className="btn-paper group shrink-0">
-                {subscribed ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" strokeWidth={1.75} />
-                    {t('subscribed')}
-                  </>
-                ) : (
-                  <>
-                    {t('join')}
-                    <Forward className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1" strokeWidth={1.5} />
-                  </>
-                )}
-              </button>
+            <form onSubmit={handleSubmit} noValidate className="mt-7">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <label htmlFor={`${uid}-email`} className="sr-only">
+                  {t('emailAddress')}
+                </label>
+                <input
+                  ref={inputRef}
+                  id={`${uid}-email`}
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value)
+                    if (error) setError(null)
+                  }}
+                  placeholder={t('finder.footer.emailPlaceholder')}
+                  aria-invalid={Boolean(error)}
+                  aria-describedby={error ? errorId : undefined}
+                  className={classNames('field flex-1', error && 'border-gold-300')}
+                />
+                <button type="submit" className="btn-paper group shrink-0">
+                  {subscribed ? (
+                    <>
+                      <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.75} />
+                      {t('subscribed')}
+                    </>
+                  ) : (
+                    <>
+                      {t('join')}
+                      <Forward
+                        aria-hidden="true"
+                        className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 rtl:group-hover:-translate-x-1"
+                        strokeWidth={1.5}
+                      />
+                    </>
+                  )}
+                </button>
+              </div>
+              {/* On the green band the house's alert red cannot be read, so an
+                  error is gold-300 with an icon: never colour alone. */}
+              {error && (
+                <p id={errorId} role="alert" className="mt-3 flex items-center gap-2 font-sans text-[14px] text-gold-300 rtl:font-sans-ar">
+                  <CircleAlert aria-hidden="true" className="h-4 w-4 shrink-0" strokeWidth={1.5} />
+                  {t(error)}
+                </p>
+              )}
+              <p role="status" className="sr-only">
+                {subscribed ? t('finder.footer.subscribedNote') : ''}
+              </p>
             </form>
           </div>
         </div>
       </div>
 
       <div className="relative mx-auto max-w-[1560px] px-5 py-14 sm:px-9">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div>
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+          <div className="sm:col-span-2 md:col-span-1">
             {/* The plain wordmark reversed out in paper — see src/brand.js for
                 why the footer does not follow the header's logo. */}
             <img
@@ -104,68 +163,76 @@ export default function Footer({ onGoToSection }) {
               className="block h-9 w-auto"
             />
             <p className="t-body mt-5 max-w-xs text-snow-200">
-              {lang === 'ar'
-                ? 'دار عطور تأسست عام ١٩٧٤. تُركَّب في غراس، وتُعبّأ بدفعات صغيرة، وتُشحن من الكويت إلى العالم.'
-                : 'Maison de parfum, founded 1974. Composed in Grasse, bottled in small batches, shipped worldwide from Kuwait.'}
+              {t('finder.footer.tagline', { year: formatNumber(FOUNDED, lang, { useGrouping: false }) })}
             </p>
-            <ul className="mt-6 space-y-2">
-              {[
-                lang === 'ar' ? 'شارع الخليج العربي، مدينة الكويت' : '12 Boulevard du Jeu de Ballon, Grasse',
-                'atelier@nafsah.example',
-                '+965 2200 0000',
-              ].map((line) => (
-                <li key={line} className="t-body text-[14px] text-snow-200" dir={line.startsWith('+') ? 'ltr' : undefined}>
-                  {line}
-                </li>
-              ))}
-            </ul>
+            {/* One address in both languages: the Kuwait boutique. */}
+            <address className="mt-6 space-y-2 not-italic">
+              <p className="t-body text-[14px] text-snow-200">{t('finder.site.boutiqueAddress')}</p>
+              <p>
+                <a href={`mailto:${EMAIL}`} className={LINK_CLASS} dir="ltr">
+                  {EMAIL}
+                </a>
+              </p>
+              <p>
+                <a href={`tel:${PHONE.replace(/\s/g, '')}`} className={LINK_CLASS} dir="ltr">
+                  {PHONE}
+                </a>
+              </p>
+            </address>
           </div>
 
           {COLUMNS.map((column) => (
-            <div key={column.title.en}>
-              <h3 className="ticket text-snow-50">{pick(column.title.en, column.title.ar)}</h3>
+            <nav key={column.title} aria-labelledby={`${uid}-${column.title}`}>
+              <h3 id={`${uid}-${column.title}`} className="ticket text-snow-50">
+                {t(column.title)}
+              </h3>
               <ul className="mt-5 space-y-3">
-                {column.links.map((link) => {
-                  const className =
-                    'nav-link nav-link-body t-body text-[14px] text-snow-200 transition-colors duration-300 hover:text-green-300'
-                  return (
-                    <li key={link.en}>
-                      {link.to ? (
-                        <Link to={link.to} className={className}>
-                          {pick(link.en, link.ar)}
-                        </Link>
-                      ) : (
-                        <a
-                          href={`#${link.section}`}
-                          onClick={(event) => {
-                            event.preventDefault()
-                            onGoToSection(link.section)
-                          }}
-                          className={className}
-                        >
-                          {pick(link.en, link.ar)}
-                        </a>
-                      )}
-                    </li>
-                  )
-                })}
+                {column.links.map((link) => (
+                  <li key={link.label}>
+                    {link.to ? (
+                      <Link to={link.to} className={LINK_CLASS}>
+                        {t(link.label)}
+                      </Link>
+                    ) : (
+                      <a
+                        href={`/#${link.section}`}
+                        onClick={(event) => {
+                          if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return
+                          event.preventDefault()
+                          onGoToSection(link.section)
+                        }}
+                        className={LINK_CLASS}
+                      >
+                        {t(link.label)}
+                      </a>
+                    )}
+                  </li>
+                ))}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 
         <div className="mt-12 flex flex-wrap items-center gap-x-3 gap-y-3 border-t border-snow-50/20 pt-8">
           <span className="ticket me-2 text-snow-300">{t('weAccept')}</span>
           {PAYMENTS.map((method) => (
-            <span key={method} className="border border-snow-50/20 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-snow-200">
+            <span
+              key={method}
+              lang="en"
+              dir="ltr"
+              className="border border-snow-50/20 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-snow-200"
+            >
               {method}
             </span>
           ))}
+          <span className="border border-snow-50/20 px-3 py-1.5 font-sans text-[10px] uppercase tracking-wide2 text-snow-200 rtl:font-sans-ar rtl:text-[12px] rtl:normal-case rtl:tracking-normal">
+            {t('finder.footer.cod')}
+          </span>
         </div>
 
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-snow-50/20 pt-8 sm:flex-row">
-          <p className="ticket text-snow-300">
-            {t('rights', { year: formatNumber(new Date().getFullYear(), lang).replace(/[,٬]/g, '') })}
+          <p className="ticket text-center text-snow-300 sm:text-start">
+            {t('rights', { year: formatNumber(new Date().getFullYear(), lang, { useGrouping: false }) })}
           </p>
           <div className="flex items-center gap-6">
             {[

@@ -1,49 +1,46 @@
+import { Droplet, Flame, SprayCan } from 'lucide-react'
+import { NOTES } from '../data/notes'
 import { useReveal } from '../hooks/useReveal'
 import { useLocale } from '../i18n/locale-context'
-import { classNames } from '../lib/format'
+import { classNames, formatNumber, formatOrdinal } from '../lib/format'
 
-const LAYERS = [
+/*
+ * The three tiers of a pyramid. Timings are numbers so Arabic prints them in
+ * its own digits; the examples are real notes from the catalogue's note
+ * dictionary, so their names match the product pages in both languages.
+ */
+const TIERS = [
   {
     key: 'top',
-    window: { en: 'First 15 minutes', ar: 'أول ١٥ دقيقة' },
-    body: {
-      en: 'The opening. Volatile citruses and aromatics that announce the fragrance and then step aside.',
-      ar: 'الافتتاحية. حمضيات وعطريات متطايرة تُعلن العطر ثم تنسحب.',
-    },
-    examples: {
-      en: ['Bergamot', 'Yuzu', 'Pink Pepper', 'Saffron'],
-      ar: ['برغموت', 'يوزو', 'فلفل وردي', 'زعفران'],
-    },
+    window: (lang) => ['notesTopWindow', { minutes: formatNumber(15, lang) }],
+    body: 'notesTopBody',
+    examples: ['bergamot', 'saffron', 'pink-pepper', 'cardamom'],
   },
   {
     key: 'heart',
-    window: { en: 'Hours one to four', ar: 'من الساعة الأولى إلى الرابعة' },
-    body: {
-      en: 'The character of the composition — florals, spices and resins that carry it through the day.',
-      ar: 'شخصية التركيبة — زهور وتوابل وراتنجات تحملها طوال اليوم.',
-    },
-    examples: {
-      en: ['Damask Rose', 'Sambac Jasmine', 'Iris', 'Oud'],
-      ar: ['وردة دمشقية', 'ياسمين سمبك', 'سوسن', 'عود'],
-    },
+    window: (lang) => ['notesHeartWindow', { from: formatNumber(1, lang), to: formatNumber(4, lang) }],
+    body: 'notesHeartBody',
+    examples: ['taif-rose', 'jasmine-sambac', 'cambodi-oud', 'iris'],
   },
   {
     key: 'base',
-    window: { en: 'Four hours onward', ar: 'بعد أربع ساعات' },
-    body: {
-      en: 'What remains on skin and fabric. Heavy molecules that fix the fragrance and give it a memory.',
-      ar: 'ما يبقى على البشرة والقماش. جزيئات ثقيلة تثبّت العطر وتمنحه ذاكرة.',
-    },
-    examples: {
-      en: ['Sandalwood', 'Vanilla', 'Ambergris', 'Vetiver'],
-      ar: ['خشب الصندل', 'فانيلا', 'عنبر رمادي', 'نجيل الهند'],
-    },
+    window: (lang) => ['notesBaseWindow', { hour: formatNumber(4, lang) }],
+    body: 'notesBaseBody',
+    examples: ['sandalwood', 'ambergris', 'white-musk', 'madagascan-vanilla'],
   },
+]
+
+// The Gulf order of layering, first to last; each is `${key}Title` / `${key}Body`.
+const LAYERS = [
+  { key: 'layeringBukhoor', Icon: Flame },
+  { key: 'layeringOil', Icon: Droplet },
+  { key: 'layeringSpray', Icon: SprayCan },
 ]
 
 export default function NotesGuide() {
   const [ref, visible] = useReveal()
-  const { t, pick } = useLocale()
+  const { lang, t, tr } = useLocale()
+  const reveal = visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
 
   return (
     <section
@@ -58,30 +55,60 @@ export default function NotesGuide() {
         </header>
 
         <div className="mt-14 grid border-t border-gold-500/60 md:grid-cols-3">
-          {LAYERS.map((layer, index) => (
+          {TIERS.map((tier, index) => (
             <article
-              key={layer.key}
+              key={tier.key}
               className={classNames(
-                'border-b border-snow-200 py-9 transition-all duration-700 md:border-b-0 md:border-s md:py-11 md:ps-9 md:first:border-s-0 md:first:ps-0',
-                visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+                'border-b border-snow-200 py-9 transition-all duration-700 last:border-b-0 md:border-b-0 md:border-s md:py-11 md:ps-9 md:first:border-s-0 md:first:ps-0',
+                reveal,
               )}
               style={{ transitionDelay: `${index * 140}ms` }}
             >
-              <span className="ticket text-snow-600">{pick(layer.window.en, layer.window.ar)}</span>
-              <h3 className="t-h2 mt-4 text-[1.9rem]">{t(layer.key)}</h3>
-              <p className="t-body mt-5 max-w-xs">{pick(layer.body.en, layer.body.ar)}</p>
+              <span className="ticket text-snow-600">{t(...tier.window(lang))}</span>
+              <h3 className="t-h2 mt-4 text-[1.9rem]">{t(tier.key)}</h3>
+              <p className="t-body mt-5 max-w-xs">{t(tier.body)}</p>
               <ul className="mt-7 border-t border-snow-200 pt-4">
-                {pick(layer.examples.en, layer.examples.ar).map((example) => (
-                  <li
-                    key={example}
-                    className="t-body border-b border-snow-200 py-2 text-ink-950 last:border-b-0"
-                  >
-                    {example}
-                  </li>
-                ))}
+                {tier.examples
+                  .filter((id) => NOTES[id])
+                  .map((id) => (
+                    <li key={id} className="t-body border-b border-snow-200 py-2 text-ink-950 last:border-b-0">
+                      {tr(NOTES[id])}
+                    </li>
+                  ))}
               </ul>
             </article>
           ))}
+        </div>
+
+        <div
+          className={classNames(
+            'mt-16 grid gap-10 border-t border-gold-500/60 pt-12 transition-all delay-300 duration-700 sm:mt-20 lg:grid-cols-[0.9fr_2.1fr] lg:gap-20 lg:pt-14',
+            reveal,
+          )}
+        >
+          <div className="max-w-sm">
+            <p className="ticket text-green-600">{t('layeringEyebrow')}</p>
+            <h3 className="t-h2 mt-4 text-[1.9rem]">{t('layeringTitle')}</h3>
+            <p className="t-body mt-5">{t('layeringBody')}</p>
+          </div>
+
+          <ol className="grid sm:grid-cols-3">
+            {LAYERS.map(({ key, Icon }, index) => (
+              <li
+                key={key}
+                className="border-t border-snow-200 py-7 first:border-t-0 first:pt-0 sm:border-s sm:border-t-0 sm:py-0 sm:ps-7 sm:first:border-s-0 sm:first:ps-0 lg:ps-9"
+              >
+                <div className="flex items-center gap-3 text-green-600">
+                  <span aria-hidden="true" className="ticket">
+                    {formatOrdinal(index + 1, lang)}
+                  </span>
+                  <Icon aria-hidden="true" className="h-4 w-4" strokeWidth={1.25} />
+                </div>
+                <h4 className="t-title mt-4">{t(`${key}Title`)}</h4>
+                <p className="t-body mt-2.5 max-w-xs">{t(`${key}Body`)}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>

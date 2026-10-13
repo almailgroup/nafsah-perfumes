@@ -1,148 +1,152 @@
-import { forwardRef } from 'react'
-import { ChevronDown, Search, X } from 'lucide-react'
-import { PRICE_BOUNDS, PRODUCTS } from '../data/products'
-import { FAMILIES } from '../data/taxonomy'
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
+import ActiveFilters from './catalogue/ActiveFilters'
+import CheckboxList from './catalogue/CheckboxList'
+import FacetPopover from './catalogue/FacetPopover'
+import FilterSheet from './catalogue/FilterSheet'
+import NotePicker from './catalogue/NotePicker'
+import PriceRange from './catalogue/PriceRange'
+import SearchField from './catalogue/SearchField'
+import SortSelect from './catalogue/SortSelect'
+import { CHECKBOX_FACETS } from './catalogue/facets'
 import { useLocale } from '../i18n/locale-context'
-import { classNames, formatOrdinal, formatPrice } from '../lib/format'
+import { formatNumber } from '../lib/format'
 
-/** One dinar, in fils. PRICE_BOUNDS are whole dinars, so the step lands on both ends. */
-const STEP = 1000
-
-function PriceSlider({ range, onChange }) {
-  const { lang, t, isRtl } = useLocale()
-  const { minFils: floor, maxFils: ceiling } = PRICE_BOUNDS
-  const span = ceiling - floor
-  const leftPct = ((range[0] - floor) / span) * 100
-  const rightPct = ((range[1] - floor) / span) * 100
-
-  const setMin = (v) => onChange([Math.min(Number(v), range[1] - STEP), range[1]])
-  const setMax = (v) => onChange([range[0], Math.max(Number(v), range[0] + STEP)])
-
-  // The rail is drawn from the logical start, so it must flip with direction.
-  const fill = isRtl
-    ? { right: `${leftPct}%`, left: `${100 - rightPct}%` }
-    : { left: `${leftPct}%`, right: `${100 - rightPct}%` }
-
+/** "8 of 15", announced politely as the results change. */
+function ResultCount({ shown, total, className }) {
+  const { lang, t } = useLocale()
   return (
-    <div className="w-full lg:w-60">
-      <div className="mb-3 flex items-baseline justify-between gap-4">
-        <span className="ticket text-snow-600">{t('price')}</span>
-        <span className="t-figure text-[14px] text-ink-950">
-          {formatPrice(range[0], lang)} – {formatPrice(range[1], lang)}
-        </span>
-      </div>
-      <div className="relative h-10">
-        <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-snow-300" />
-        <div className="absolute top-1/2 h-px -translate-y-1/2 bg-green-600" style={fill} />
-        <input
-          type="range" min={floor} max={ceiling} step={STEP} value={range[0]}
-          onChange={(e) => setMin(e.target.value)} aria-label={`${t('price')} — min`}
-          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2 touch-none"
-        />
-        <input
-          type="range" min={floor} max={ceiling} step={STEP} value={range[1]}
-          onChange={(e) => setMax(e.target.value)} aria-label={`${t('price')} — max`}
-          className="range-input absolute inset-x-0 top-1/2 w-full -translate-y-1/2 touch-none"
-        />
-      </div>
-    </div>
+    <p aria-live="polite" aria-atomic="true" className={className}>
+      {t('catalogue.showing', { shown: formatNumber(shown, lang), total: formatNumber(total, lang) })}
+    </p>
   )
 }
 
-const Filters = forwardRef(function Filters(
-  { query, onQueryChange, families, onToggleFamily, priceRange, onPriceChange, sort, onSortChange,
-    resultCount, onReset, isFiltered },
-  searchRef,
-) {
-  const { lang, t, tr } = useLocale()
+/**
+ * The catalogue's filter bar.
+ *
+ * From lg: search, price and sort; then the facets as buttons opening panels
+ * of choices with counts (notes as a combobox), and the result count; then
+ * the active filters as chips with "Clear all".
+ *
+ * Below lg: a bar that stays under the header while the grid scrolls, with
+ * "Filters (n)", the count and the sort; the chips beneath it; and every
+ * filter in a sheet. The pieces are siblings of the grid (a fragment), so the
+ * bar can stick for the whole length of the catalogue.
+ */
+const Filters = forwardRef(function Filters({ catalogue }, searchRef) {
+  const { lang, t } = useLocale()
+  const [openFacet, setOpenFacet] = useState(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
+  const topRef = useRef(null)
 
-  const SORT_OPTIONS = [
-    { value: 'featured', label: t('sortFeatured') },
-    { value: 'price-asc', label: t('sortPriceAsc') },
-    { value: 'price-desc', label: t('sortPriceDesc') },
-    { value: 'newest', label: t('sortNewest') },
-  ]
+  // Closing the sheet on fewer results can leave the shopper scrolled past
+  // the end of a now shorter grid. Bring the top of the results back under
+  // the header when it has gone above it.
+  const closeSheet = useCallback(() => {
+    setSheetOpen(false)
+    requestAnimationFrame(() => {
+      const anchor = topRef.current
+      const header = document.querySelector('header')
+      if (!anchor) return
+      const below = header ? header.getBoundingClientRect().bottom : 0
+      const top = anchor.getBoundingClientRect().top
+      if (top < below) window.scrollTo({ top: window.scrollY + top - below, behavior: 'instant' })
+    })
+  }, [])
+
+  // The sheet is for narrow screens; widening past lg puts the bar back.
+  useEffect(() => {
+    if (!sheetOpen) return undefined
+    const wide = window.matchMedia('(min-width: 1024px)')
+    const onChange = () => wide.matches && setSheetOpen(false)
+    onChange()
+    wide.addEventListener('change', onChange)
+    return () => wide.removeEventListener('change', onChange)
+  }, [sheetOpen])
+
+  const {
+    filters, counts, results, total, sort, sorts, setSort, setQuery, setPriceRange, toggle, toggleNote,
+    activeChips, removeChip, reset, activeCount,
+  } = catalogue
+
+  const popover = (facet) => ({
+    open: openFacet === facet,
+    onOpenChange: (open) => setOpenFacet(open ? facet : null),
+  })
+
+  const [families, ...rest] = CHECKBOX_FACETS
+  const facetPanel = (config) => (
+    <FacetPopover
+      key={config.facet}
+      label={t(config.labelKey)}
+      count={filters[config.facet].length}
+      {...popover(config.facet)}
+    >
+      <CheckboxList
+        name={`filter-${config.facet}`}
+        options={config.options}
+        selected={filters[config.facet]}
+        counts={counts[config.facet]}
+        steps={config.steps}
+        onToggle={(id) => toggle(config.facet, id)}
+      />
+    </FacetPopover>
+  )
 
   return (
-    <div className="border-y border-snow-200 py-6">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
-        <div className="relative flex-1 lg:max-w-xs">
-          <label htmlFor="fragrance-search" className="ticket mb-3 block text-snow-600">
-            {t('search')}
-          </label>
-          <Search className="pointer-events-none absolute bottom-2.5 start-0 h-3.5 w-3.5 text-snow-600" strokeWidth={1.25} />
-          <input
-            id="fragrance-search" ref={searchRef} type="search" value={query}
-            onChange={(e) => onQueryChange(e.target.value)}
-            placeholder={t('searchShort')} aria-label={t('search')}
-            className="w-full border-b border-snow-200 bg-transparent pb-2 pe-6 ps-6 font-sans text-[16px] font-normal text-ink-950 placeholder:text-snow-600 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
-          />
-          {query && (
-            <button
-              type="button" onClick={() => onQueryChange('')} aria-label={t('reset')}
-              className="absolute bottom-1.5 end-0 grid h-6 w-6 place-items-center text-snow-600 transition-colors hover:text-ink-950"
-            >
-              <X className="h-3 w-3" strokeWidth={1.75} />
-            </button>
-          )}
+    <>
+      {/* Desktop */}
+      <div className="hidden border-y border-snow-200 py-7 lg:block">
+        <div className="flex items-end justify-between gap-10 xl:gap-16">
+          <SearchField ref={searchRef} value={filters.query} onChange={setQuery} className="max-w-sm flex-1" />
+          <PriceRange range={filters.priceRange} onChange={setPriceRange} className="max-w-[20rem] flex-1" />
+          <SortSelect value={sort} options={sorts} onChange={setSort} className="w-56 shrink-0" />
         </div>
 
-        <PriceSlider range={priceRange} onChange={onPriceChange} />
-
-        <div className="relative lg:w-52">
-          <label htmlFor="fragrance-sort" className="ticket mb-3 block text-snow-600">
-            {t('sort')}
-          </label>
-          <select
-            id="fragrance-sort" value={sort} onChange={(e) => onSortChange(e.target.value)}
-            className="w-full cursor-pointer appearance-none border-b border-snow-200 bg-transparent pb-2 pe-6 font-sans text-[16px] font-normal text-ink-950 focus:border-green-600 focus:outline-none focus:ring-0 rtl:font-sans-ar"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value} className="bg-snow-50 text-ink-950">
-                {o.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="pointer-events-none absolute bottom-2.5 end-0 h-3.5 w-3.5 text-snow-600" strokeWidth={1.25} />
+        <div className="mt-7 flex flex-wrap items-center gap-3">
+          {facetPanel(families)}
+          <FacetPopover label={t('catalogue.facet.notes')} count={filters.notes.length} wide {...popover('notes')}>
+            <NotePicker selected={filters.notes} counts={counts.notes} onToggle={toggleNote} />
+          </FacetPopover>
+          {rest.map(facetPanel)}
+          <ResultCount shown={results.length} total={total} className="ticket ms-auto text-snow-600" />
         </div>
+
+        {/* With nothing found, the empty state lists the filters instead. */}
+        {results.length > 0 && (
+          <ActiveFilters chips={activeChips} onRemove={removeChip} onClear={reset} className="mt-5" />
+        )}
       </div>
 
-      <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
-        <span className="ticket text-snow-600">{t('family')}</span>
-        {FAMILIES.map(({ id, short }) => {
-          const active = families.includes(id)
-          return (
-            <button
-              key={id} type="button" onClick={() => onToggleFamily(id)} aria-pressed={active}
-              className={classNames(
-                'relative py-1 font-sans text-[11px] uppercase tracking-label transition-colors duration-300 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal',
-                active ? 'text-green-600' : 'text-snow-600 hover:text-ink-950',
-              )}
-            >
-              {tr(short)}
-              <span className={classNames(
-                'absolute -bottom-0.5 start-0 h-px bg-green-600 transition-all duration-300',
-                active ? 'w-full' : 'w-0',
-              )} />
-            </button>
-          )
-        })}
-
-        <div className="flex w-full items-center justify-between gap-6 sm:ms-auto sm:w-auto">
-          <span className="ticket text-snow-600">
-            {formatOrdinal(resultCount, lang)} {t('of')} {formatOrdinal(PRODUCTS.length, lang)}
-          </span>
-          {isFiltered && (
-            <button
-              type="button" onClick={onReset}
-              className="ticket text-green-600 underline underline-offset-4 transition-colors hover:text-ink-950"
-            >
-              {t('reset')}
-            </button>
+      {/* Phones and tablets */}
+      <div ref={topRef} aria-hidden="true" className="lg:hidden" />
+      <div className="sticky top-[65px] z-20 -mx-5 flex items-center gap-3 border-y border-snow-200 bg-snow-50/95 px-5 py-3 backdrop-blur-sm sm:top-[73px] sm:-mx-9 sm:px-9 lg:hidden">
+        <button
+          type="button"
+          onClick={() => setSheetOpen(true)}
+          aria-haspopup="dialog"
+          className="inline-flex h-10 shrink-0 items-center gap-2.5 border border-snow-300 px-4 font-sans text-[11px] font-medium uppercase tracking-wide2 text-ink-950 transition-colors hover:border-green-600 hover:text-green-600 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal"
+        >
+          <SlidersHorizontal aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
+          {t('catalogue.filters')}
+          {activeCount > 0 && (
+            <span className="t-figure grid h-[18px] min-w-[18px] place-items-center rounded-full bg-green-600 px-1 text-[10px] leading-none text-snow-50">
+              <span className="sr-only">{' ('}</span>
+              {formatNumber(activeCount, lang)}
+              <span className="sr-only">)</span>
+            </span>
           )}
-        </div>
+        </button>
+        <ResultCount shown={results.length} total={total} className="ticket min-w-0 truncate text-snow-600" />
+        <SortSelect value={sort} options={sorts} onChange={setSort} compact className="ms-auto min-w-0 max-w-[11.5rem] flex-1" />
       </div>
-    </div>
+      {results.length > 0 && (
+        <ActiveFilters chips={activeChips} onRemove={removeChip} onClear={reset} className="mt-4 lg:hidden" />
+      )}
+
+      <FilterSheet open={sheetOpen} onClose={closeSheet} catalogue={catalogue} />
+    </>
   )
 })
 
