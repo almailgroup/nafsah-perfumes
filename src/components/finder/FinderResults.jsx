@@ -8,7 +8,7 @@ import { useCart } from '../../context/cart-context'
 import { CATALOGUE_NUMBERS, PRODUCTS, concentrationFor, fromPriceFils } from '../../data/products'
 import { CONCENTRATION_BY_ID, FAMILY_BY_ID, FORMAT_BY_ID } from '../../data/taxonomy'
 import { useLocale } from '../../i18n/locale-context'
-import { QUESTIONS, familiesFor, optionOf, recommend } from '../../lib/scent-finder'
+import { QUESTIONS, optionOf, recommend, seeAllFamilies } from '../../lib/scent-finder'
 import { classNames, formatMl, formatOrdinal, formatPrice } from '../../lib/format'
 
 // How long a button says "Added" or "Link copied" before it resets.
@@ -78,7 +78,8 @@ function MatchCard({ result, rank, onOpenProduct }) {
   const formatName = tr(FORMAT_BY_ID[format.id])
   const sample = product.formats.find((entry) => FORMAT_BY_ID[entry.id]?.kind === 'sample' && entry !== format)
   const sampleName = sample ? tr(FORMAT_BY_ID[sample.id]) : ''
-  const open = () => onOpenProduct(product)
+  // The product page opens on the format this card is pricing.
+  const open = () => onOpenProduct(product, format.id)
 
   const add = (entry, entryName) => {
     addItem(product, entry.id)
@@ -133,7 +134,7 @@ function MatchCard({ result, rank, onOpenProduct }) {
           <div className="mt-auto pt-6">
             <p className="flex items-baseline justify-between gap-4 border-t border-snow-200 pt-4">
               <span className="ticket text-snow-600">
-                {formatName} · {formatMl(format.ml, lang)}
+                {t('product.selection', { format: formatName, volume: formatMl(format.ml, lang) })}
               </span>
               <span className="t-figure whitespace-nowrap text-[1.2rem] text-ink-950">
                 {formatPrice(format.priceFils, lang)}
@@ -165,7 +166,7 @@ function MatchCard({ result, rank, onOpenProduct }) {
               >
                 <span>
                   {t('finder.results.sample', { format: sampleName })}
-                  <span aria-hidden="true"> · </span>
+                  <span aria-hidden="true">{t('finder.results.priceSeparator')}</span>
                   <span className="whitespace-nowrap tabular-nums">{formatPrice(sample.priceFils, lang)}</span>
                   <span className="sr-only"> — {name}</span>
                 </span>
@@ -243,7 +244,7 @@ export default function FinderResults({ answers, onEdit, onRestart, onSeeAll, on
   const results = useMemo(() => recommend(answers, PRODUCTS), [answers])
   const top = results.slice(0, 3)
   const more = results.slice(3, 6)
-  const families = familiesFor(answers)
+  const families = seeAllFamilies(answers, results)
   const Forward = isRtl ? ArrowLeft : ArrowRight
   const canCopy = typeof navigator !== 'undefined' && Boolean(navigator.clipboard?.writeText)
 

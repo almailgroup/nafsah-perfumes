@@ -265,15 +265,15 @@ describe('t / tc / tr', () => {
 describe('LocaleProvider', () => {
   afterEach(() => vi.restoreAllMocks())
 
-  it('hands t, tc, tr and pick to its children', () => {
+  it('hands t, tc and tr to its children', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     function Probe() {
-      const { lang, dir, isRtl, t, tc, tr, pick } = useLocale()
-      const out = [lang, dir, isRtl, t('brand'), tc('test.provider.count', 2), tr({ en: 'Rose', ar: 'ورد' }), pick('a', 'b')]
+      const { lang, dir, isRtl, t, tc, tr } = useLocale()
+      const out = [lang, dir, isRtl, t('brand'), tc('test.provider.count', 2), tr({ en: 'Rose', ar: 'ورد' })]
       return h('p', null, out.join('|'))
     }
     expect(renderToStaticMarkup(h(LocaleProvider, null, h(Probe)))).toContain(
-      '<p>en|ltr|false|Nafsah|test.provider.count|Rose|a</p>',
+      '<p>en|ltr|false|Nafsah|test.provider.count|Rose</p>',
     )
   })
 

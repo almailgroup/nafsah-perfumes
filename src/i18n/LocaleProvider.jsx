@@ -107,8 +107,6 @@ export function LocaleProvider({ children }) {
       announce: dict.announce,
       switching,
       toggle,
-      /** Pick the Arabic field when it exists, else fall back to English. */
-      pick: (en, ar) => (lang === 'ar' && ar ? ar : en),
     }),
     [lang, dir, dict, t, tc, tr, switching, toggle],
   )

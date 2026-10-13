@@ -77,6 +77,12 @@ describe('FinderQuestion', () => {
   it('reports progress as text and as a progressbar', () => {
     const html = question('en', 1, 'floral')
     expect(text(html)).toContain('Step 2 of 5')
+    // The question is the page's one h1, described by the step it is on, so
+    // focusing it announces "Step 2 of 5" (a remounted live region would not).
+    expect([...html.matchAll(/<h1[\s>]/g)]).toHaveLength(1)
+    const [, stepId] = html.match(/<h1[^>]*aria-describedby="([^"]+)"/)
+    expect(html).toMatch(new RegExp(`<p id="${stepId}"[^>]*>Step 2 of 5</p>`))
+    expect(html).not.toContain('aria-live')
     expect(html).toMatch(/role="progressbar"[^>]*aria-valuemin="1"[^>]*aria-valuemax="5"[^>]*aria-valuenow="2"[^>]*aria-valuetext="Step 2 of 5"/)
   })
 
@@ -113,8 +119,11 @@ describe('FinderResults', () => {
     expect(text(html)).not.toMatch(/\{\w+\}/)
     expect(text(html)).not.toMatch(/finder\./)
     expect(html).toContain('aria-label="Change Occasion: Weddings &amp; occasions"')
-    expect(text(html)).toContain('See all matches in the catalogue')
-    expect(text(html)).toContain('Opens the catalogue showing Rose & Florals.')
+    expect(text(html)).toContain('See your top matches in the catalogue')
+    // The families of the three shown (two roses and Ward Taifi, a rose oil), not only the character's.
+    expect(text(html)).toContain(
+      'Opens the catalogue on Rose & Florals and Bukhoor & Oils, the families of your three closest matches.',
+    )
   })
 
   it('prints every figure in Arabic-Indic digits in Arabic', () => {
@@ -124,6 +133,11 @@ describe('FinderResults', () => {
     expect(visible).toMatch(/توافق [٠-٩]+٪/)
     expect(visible).not.toMatch(/[0-9]/)
     expect(visible).not.toMatch(/\{\w+\}/)
+    // A comma between format and volume: a middle dot beside ١٠٠ reads as another digit.
+    expect(visible).toContain('الزجاجة الكاملة، ١٠٠ مل')
+    expect(visible).not.toMatch(/[٠-٩] ·|· [٠-٩]/)
+    expect(visible).not.toMatch(/· د\.ك\./)
+    expect(visible).toMatch(/أولاً ?، د\.ك\. [٠-٩]/)
   })
 })
 

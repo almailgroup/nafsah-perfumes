@@ -7,7 +7,7 @@ import { useCart } from '../context/cart-context'
 import { bottleFormats, CATALOGUE_NUMBERS, concentrationFor, formatOf } from '../data/products'
 import { CONCENTRATION_BY_ID, FAMILY_BY_ID, FORMAT_BY_ID, SILLAGE_BY_ID } from '../data/taxonomy'
 import { useLocale } from '../i18n/locale-context'
-import { classNames, formatOrdinal, formatPrice } from '../lib/format'
+import { classNames, formatNumber, formatOrdinal, formatPrice } from '../lib/format'
 
 const NOTE_ROWS = [
   ['top', 'topNotes'],
@@ -35,12 +35,13 @@ const inRange = (format, range) => !range || (format.priceFils >= range[0] && fo
  * One tab stop opens the product page: the name. The vial is a larger mouse
  * target for the same action, kept out of the tab order.
  *
- * With a price filter on, the card opens on a bottle inside the range and its
- * "from" price is the cheapest bottle in that range, so it never advertises a
- * price the shopper just filtered out. Samples are never filtered on.
+ * With a price or concentration filter on, the card opens on a bottle that
+ * satisfies both and its "from" price is the cheapest such bottle (the price
+ * the collection sorts on), so it never advertises a bottle or a price the
+ * shopper just filtered out. Samples are never filtered on.
  */
-export default function ProductCard({ product, index = 0, priceRange, compact = false, onOpen }) {
-  const { addItem } = useCart()
+export default function ProductCard({ product, index = 0, priceRange, concentrations = [], compact = false, onOpen }) {
+  const { addItem, maxQty } = useCart()
   const { lang, t, tr } = useLocale()
   const uid = useId()
   const [choice, setChoice] = useState(null)
@@ -50,15 +51,25 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
 
   useEffect(() => () => clearTimeout(addedTimer.current), [])
 
+  const matchesConc = (format) =>
+    !concentrations.length || concentrations.includes(concentrationFor(product, format.id))
   const bottles = bottleFormats(product)
   const bottlesInRange = bottles.filter((format) => inRange(format, priceRange))
-  const preferred = bottlesInRange[0] ?? product.formats[0]
-  // The shopper's own choice stands while the filter allows it.
+  const matching = bottlesInRange.filter(matchesConc)
+  const preferred = matching[0] ?? bottlesInRange[0] ?? product.formats[0]
+  // The shopper's own choice stands while the price filter allows it, even a
+  // bottle outside the concentration filter, picked on purpose.
   const chosen = choice ? formatOf(product, choice) : null
   const format =
     chosen && (FORMAT_BY_ID[chosen.id]?.kind === 'sample' || inRange(chosen, priceRange)) ? chosen : preferred
 
-  const priced = bottlesInRange.length ? bottlesInRange : bottles.length ? bottles : product.formats
+  const priced = matching.length
+    ? matching
+    : bottlesInRange.length
+      ? bottlesInRange
+      : bottles.length
+        ? bottles
+        : product.formats
   const fromFils = Math.min(...priced.map((f) => f.priceFils))
   const showFrom = priced.length > 1
 
@@ -66,12 +77,19 @@ export default function ProductCard({ product, index = 0, priceRange, compact = 
   const catalogue = CATALOGUE_NUMBERS[product.id]
   const name = tr(product.name)
   const formatName = tr(FORMAT_BY_ID[format.id])
-  const open = () => onOpen?.(product)
+  const open = () => onOpen?.(product, format.id)
 
   const handleAdd = () => {
-    addItem(product, format.id)
-    setJustAdded(true)
-    setAnnouncement(t('trust.card.added', { name, format: formatName }))
+    // False when the line already holds the most a cart takes: nothing changed.
+    const added = addItem(product, format.id) !== false
+    setJustAdded(added)
+    setAnnouncement(
+      t(added ? 'trust.card.added' : 'trust.card.atMax', {
+        name,
+        format: formatName,
+        max: formatNumber(maxQty ?? 10, lang),
+      }),
+    )
     clearTimeout(addedTimer.current)
     addedTimer.current = setTimeout(() => {
       setJustAdded(false)

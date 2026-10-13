@@ -119,7 +119,10 @@ export default function CategoryTiles({ onSelectFamily }) {
                 <span className="t-title block !text-snow-50 max-sm:!text-[1.125rem]">
                   {t('catalogue.tiles.all')}
                 </span>
-                <span className="ticket mt-2 block text-gold-300">{tc('catalogue.count', PRODUCTS.length)}</span>
+                {/* Gold reads only on green-700; on the lighter hover green it turns to snow. */}
+                <span className="ticket mt-2 block text-gold-300 transition-colors duration-300 group-hover:text-snow-200">
+                  {tc('catalogue.count', PRODUCTS.length)}
+                </span>
                 {ALL_FROM !== null && <Price fils={ALL_FROM} tone="green" />}
               </span>
             </button>

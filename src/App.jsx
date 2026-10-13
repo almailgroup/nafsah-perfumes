@@ -1,17 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import ROUTE_META from 'virtual:route-meta'
 import AnnouncementBar from './components/AnnouncementBar'
 import CartDrawer from './components/CartDrawer'
 import CategoryTiles from './components/CategoryTiles'
-import CheckoutModal from './components/CheckoutModal'
 import Collection from './components/Collection'
-import ContactPage from './components/ContactPage'
 import Footer from './components/Footer'
 import HeroSlider from './components/HeroSlider'
-import DocumentPage from './components/DocumentPage'
-import FaqPage from './components/FaqPage'
 import FinderTeaser from './components/finder/FinderTeaser'
-import ScentFinderPage from './components/finder/ScentFinderPage'
 import Navbar from './components/Navbar'
 import NotesGuide from './components/NotesGuide'
 import ProductModal from './components/ProductModal'
@@ -19,10 +14,9 @@ import ProductRow from './components/ProductRow'
 import Story from './components/Story'
 import TrustBadges from './components/TrustBadges'
 import { CartProvider } from './context/CartProvider'
+import { useCart } from './context/cart-context'
 import { LocaleProvider } from './i18n/LocaleProvider'
 import { useLocale } from './i18n/locale-context'
-import { LEGAL, LEGAL_NOTE } from './data/legal'
-import { SHIPPING_DOC } from './data/help'
 import { PRODUCTS } from './data/products'
 import { useCatalogue } from './hooks/useCatalogue'
 import { RouterProvider } from './router/RouterProvider'
@@ -37,6 +31,16 @@ import {
   TITLE_KEY,
   useRouter,
 } from './router/router-context'
+
+// The storefront ships in the first load; every other page, and the checkout,
+// is fetched when it is first needed.
+const ContactPage = lazy(() => import('./components/ContactPage'))
+const FaqPage = lazy(() => import('./components/FaqPage'))
+const ScentFinderPage = lazy(() => import('./components/finder/ScentFinderPage'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
+const ShippingPage = lazy(() => import('./pages/ShippingPage'))
+const loadCheckout = () => import('./components/CheckoutModal')
+const CheckoutModal = lazy(loadCheckout)
 
 // The rows show only what carries the flag: with no real sales or review
 // data, topping a "Bestsellers" row up with unflagged fragrances would
@@ -79,6 +83,44 @@ function Storefront({ catalogue, searchRef, onSelectFamily, onViewAll, onOpenPro
 }
 
 /**
+ * The checkout, mounted the first time it opens and kept mounted after, so an
+ * order half filled in survives closing it (it keeps its draft in its own
+ * state and renders nothing while closed). Its code is fetched as soon as the
+ * cart opens, one step ahead of the shopper.
+ */
+function LazyCheckout() {
+  const { isCheckoutOpen, isCartOpen } = useCart()
+  const [wanted, setWanted] = useState(false)
+  if (isCheckoutOpen && !wanted) setWanted(true)
+  useEffect(() => {
+    if (isCartOpen) loadCheckout().catch(() => {})
+  }, [isCartOpen])
+  return wanted ? (
+    <Suspense fallback={null}>
+      <CheckoutModal />
+    </Suspense>
+  ) : null
+}
+
+/** Move focus to a section without moving the view; the caller scrolls. */
+function focusSection(section) {
+  if (!section.hasAttribute('tabindex')) section.setAttribute('tabindex', '-1')
+  section.focus({ preventScroll: true })
+}
+
+/**
+ * Glide to a section of the homepage and continue from there: focus goes
+ * first, so the next Tab starts inside the section and the smooth scroll is
+ * not cut short.
+ */
+function revealSection(id) {
+  const section = document.getElementById(id)
+  if (!section) return
+  focusSection(section)
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+/**
  * The skip link. It moves focus as well as the view — to the catalogue on the
  * homepage, to <main id="main"> everywhere else — so the next Tab continues
  * from there, in either direction of reading.
@@ -116,7 +158,12 @@ function Shell() {
   const catalogue = useCatalogue()
   const { selectFamily: focusFamily, reset, setSort, applyFilters } = catalogue
   const searchRef = useRef(null)
-  const [openProduct, setOpenProduct] = useState(null)
+  // The product page on show, with the format its card was showing.
+  const [opened, setOpened] = useState(null)
+  const openProduct = useCallback(
+    (product, formatId = null) => setOpened(product ? { product, formatId } : null),
+    [],
+  )
   // Holds a section id when a jump fires from another page: the storefront is
   // not mounted yet, so the scroll has to wait for it.
   const pendingScroll = useRef(null)
@@ -137,7 +184,7 @@ function Shell() {
   const goToSection = useCallback(
     (id) => {
       if (onHome) {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        revealSection(id)
         return
       }
       pendingScroll.current = id
@@ -153,9 +200,7 @@ function Shell() {
     const id = pendingScroll.current
     pendingScroll.current = null
     // One frame for the storefront to mount and the section to exist.
-    const frame = requestAnimationFrame(() =>
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }),
-    )
+    const frame = requestAnimationFrame(() => revealSection(id))
     return () => cancelAnimationFrame(frame)
   }, [onHome])
 
@@ -178,8 +223,9 @@ function Shell() {
     [reset, setSort, goToCatalogue],
   )
 
-  // The Scent Finder's "see all matches": the catalogue on the families its
-  // answers point at, and nothing else.
+  // The Scent Finder's "see your top matches": the catalogue on the families
+  // its answers point at plus those of its three closest matches, so every
+  // fragrance it just showed is there.
   const seeFinderMatches = useCallback(
     (families) => {
       applyFilters({ families })
@@ -197,37 +243,43 @@ function Shell() {
         query={catalogue.query}
         onQueryChange={catalogue.setQuery}
         families={catalogue.families}
+        isFiltered={catalogue.isFiltered}
         onSelectFamily={selectFamily}
         onSubmitSearch={goToCatalogue}
       />
 
-      {path === CONTACT && <ContactPage />}
-      {path === PRIVACY && <DocumentPage doc={LEGAL.privacy} note={LEGAL_NOTE} eyebrow={t('legalEyebrow')} />}
-      {path === TERMS && <DocumentPage doc={LEGAL.terms} note={LEGAL_NOTE} eyebrow={t('legalEyebrow')} />}
-      {path === SHIPPING && <DocumentPage doc={SHIPPING_DOC} eyebrow={t('helpEyebrow')} />}
-      {path === FAQ && <FaqPage />}
-      {path === SCENT_FINDER && (
-        <ScentFinderPage key={key} onOpenProduct={setOpenProduct} onSeeAll={seeFinderMatches} />
-      )}
-      {onHome && (
-        <Storefront
-          catalogue={catalogue}
-          searchRef={searchRef}
-          onSelectFamily={selectFamily}
-          onViewAll={viewAll}
-          onOpenProduct={setOpenProduct}
-        />
-      )}
+      {/* No id="main" on the placeholder: the router waits for the page's own
+          <main> to move focus to it. */}
+      <Suspense fallback={<div aria-busy="true" className="min-h-[60vh]" />}>
+        {path === CONTACT && <ContactPage />}
+        {path === PRIVACY && <LegalPage doc="privacy" />}
+        {path === TERMS && <LegalPage doc="terms" />}
+        {path === SHIPPING && <ShippingPage />}
+        {path === FAQ && <FaqPage />}
+        {path === SCENT_FINDER && (
+          <ScentFinderPage key={key} onOpenProduct={openProduct} onSeeAll={seeFinderMatches} />
+        )}
+        {onHome && (
+          <Storefront
+            catalogue={catalogue}
+            searchRef={searchRef}
+            onSelectFamily={selectFamily}
+            onViewAll={viewAll}
+            onOpenProduct={openProduct}
+          />
+        )}
+      </Suspense>
 
       <Footer onGoToSection={goToSection} />
 
       <ProductModal
-        product={openProduct}
-        onClose={() => setOpenProduct(null)}
-        onOpenProduct={setOpenProduct}
+        product={opened?.product ?? null}
+        initialFormatId={opened?.formatId ?? null}
+        onClose={() => setOpened(null)}
+        onOpenProduct={openProduct}
       />
       <CartDrawer />
-      <CheckoutModal />
+      <LazyCheckout />
     </CartProvider>
   )
 }

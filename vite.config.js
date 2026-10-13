@@ -86,6 +86,9 @@ export default defineConfig({
   base: '/',
   plugins: [react(), routeEntries(), spaFallback()],
   build: {
+    // The real floor: Intl.ListFormat (used unguarded) needs Safari 14.1;
+    // Object.hasOwn is polyfilled in src/polyfills.js.
+    target: ['es2020', 'chrome87', 'edge88', 'firefox78', 'safari14.1'],
     rollupOptions: {
       input: Object.fromEntries(ROUTE_TABLE.map((route) => [route.input, here(route.entry)])),
     },

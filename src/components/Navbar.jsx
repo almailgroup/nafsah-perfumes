@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { Menu, Search, ShoppingBag, X } from 'lucide-react'
 import { useCart } from '../context/cart-context'
 import { FAMILIES } from '../data/taxonomy'
@@ -26,6 +27,8 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
   const onHome = path === HOME
   const filtered = isFiltered ?? (families.length > 0 || query.trim() !== '')
   const [mobileOpen, setMobileOpen] = useState(false)
+  // True for the one frame the menu shuts without its transition.
+  const [snapClose, setSnapClose] = useState(false)
   const [pulse, setPulse] = useState(false)
   const inputRef = useRef(null)
   const mobileInputRef = useRef(null)
@@ -38,11 +41,17 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
     return () => clearTimeout(timer)
   }, [lastAddedAt])
 
-  // Escape folds the open menu away and hands focus back to its button.
+  // Escape folds the open menu away and hands focus back to its button —
+  // unless a dialog is open above it (the cart, a fragrance): that one is the
+  // top layer and takes the Escape. Closed dialogs unmount or go inert.
   useEffect(() => {
     if (!mobileOpen) return undefined
     const onKeyDown = (event) => {
       if (event.key !== 'Escape' || event.defaultPrevented) return
+      const overlayOpen = [...document.querySelectorAll('[aria-modal="true"]')].some(
+        (node) => !node.closest('[inert]'),
+      )
+      if (overlayOpen) return
       setMobileOpen(false)
       menuButtonRef.current?.focus()
     }
@@ -50,14 +59,29 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [mobileOpen])
 
+  /**
+   * The open menu pushes the page down. Folded away on its transition, it
+   * would still be in the flow when the catalogue's position is measured for
+   * the scroll, and the shopper would land far past the results. So it shuts
+   * at once, committed before `then` runs, and gets its transition back on
+   * the next frame.
+   */
+  const closeThen = (then) => {
+    flushSync(() => {
+      setSnapClose(true)
+      setMobileOpen(false)
+    })
+    then()
+    requestAnimationFrame(() => setSnapClose(false))
+  }
+
   const submit = (event) => {
     event.preventDefault()
     // Put the phone keyboard away and the menu with it, so the shopper lands
     // on the results rather than on the menu covering them.
     inputRef.current?.blur()
     mobileInputRef.current?.blur()
-    setMobileOpen(false)
-    onSubmitSearch()
+    closeThen(onSubmitSearch)
   }
 
   const LINKS = [{ label: t('contact'), to: CONTACT }]
@@ -66,10 +90,7 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
   const allActive = onHome && !filtered
   const familyActive = (id) => onHome && families.includes(id)
 
-  const pickFamily = (id) => {
-    onSelectFamily(id)
-    setMobileOpen(false)
-  }
+  const pickFamily = (id) => closeThen(() => onSelectFamily(id))
 
   /**
    * The switcher always names the language you are moving TO, so its label is
@@ -155,7 +176,11 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
 
           <button
             type="button"
-            onClick={openCart}
+            onClick={() => {
+              // The cart opens over the page, not over a menu left open beneath it.
+              setMobileOpen(false)
+              openCart()
+            }}
             aria-label={`${t('openCart')} — ${formatNumber(totals.count, lang)}`}
             className="relative grid h-10 w-10 place-items-center text-snow-600 transition-colors hover:text-ink-950"
           >
@@ -242,7 +267,8 @@ export default function Navbar({ query, onQueryChange, families, isFiltered, onS
         // not merely invisible.
         {...(mobileOpen ? {} : { inert: '', 'aria-hidden': true })}
         className={classNames(
-          'border-t border-snow-200 bg-snow-50 transition-[max-height,opacity] duration-400 lg:hidden',
+          'border-t border-snow-200 bg-snow-50 lg:hidden',
+          snapClose ? 'transition-none' : 'transition-[max-height,opacity] duration-400',
           // Never taller than the screen below the header, scrolling inside if it must.
           mobileOpen
             ? 'max-h-[calc(100dvh-4rem)] overflow-y-auto opacity-100 sm:max-h-[calc(100dvh-4.5rem)]'

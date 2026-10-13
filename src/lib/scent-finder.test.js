@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { PRODUCTS } from '../data/products'
 import { NOTES } from '../data/notes'
-import { FAMILY_BY_ID } from '../data/taxonomy'
+import { FAMILIES, FAMILY_BY_ID } from '../data/taxonomy'
 import finder from '../i18n/dict/finder.js'
 import {
   QUESTIONS,
@@ -14,6 +14,7 @@ import {
   recommend,
   sanitizeAnswers,
   searchFromAnswers,
+  seeAllFamilies,
 } from './scent-finder'
 
 const top = (answers, n = 3) => recommend(answers, PRODUCTS).slice(0, n).map((r) => r.product.id)
@@ -23,6 +24,11 @@ const ALL_ANSWERS = QUESTIONS.reduce(
   (sets, question) => sets.flatMap((set) => question.options.map((option) => ({ ...set, [question.id]: option.id }))),
   [{}],
 )
+
+// The heavy-oud character's signature notes: agarwood, incense, resins, smoke and leather.
+const OUD_NOTES = ['cambodi-oud', 'hindi-oud', 'frankincense', 'birch-tar', 'resinous-woods', 'leather', 'amber-resin', 'labdanum']
+const wearsOud = (product) =>
+  [...product.topNotes, ...product.heartNotes, ...product.baseNotes].some((note) => OUD_NOTES.includes(note.id))
 
 describe('QUESTIONS', () => {
   it('asks the five questions of the brief, in order, with the brief’s options', () => {
@@ -138,6 +144,18 @@ describe('recommend', () => {
     for (const id of picks) expect(PRODUCTS.find((p) => p.id === id).occasions).toContain('wedding')
   })
 
+  it('puts a fragrance that wears oud, incense or resin first for "heavy oud"', () => {
+    for (const id of OUD_NOTES) expect(NOTES[id], id).toBeTruthy()
+    for (const answers of ALL_ANSWERS.filter((a) => a.vibe === 'heavy-oud')) {
+      const [first] = recommend(answers, PRODUCTS)
+      expect(wearsOud(first.product), `${first.product.id} for ${JSON.stringify(answers)}`).toBe(true)
+    }
+    // A white musk shares the oud & musk shelf but is not heavy oud.
+    expect(top({ occasion: 'office', vibe: 'heavy-oud', season: 'all-year', projection: 'soft', wearer: 'her' })[0]).not.toBe(
+      'musc-blanc',
+    )
+  })
+
   it('puts beast mode that survives 45°C first for a Kuwaiti summer', () => {
     const [first] = top({ occasion: 'everyday', vibe: 'fresh-blue', season: 'summer', projection: 'beast', wearer: 'him' })
     expect(first).toBe('citron-de-mer')
@@ -213,6 +231,17 @@ describe('reasons', () => {
     }
   })
 
+  it('never name a heavy-oud family for a fragrance with no oud, incense or resin in it', () => {
+    for (const answers of ALL_ANSWERS.filter((a) => a.vibe === 'heavy-oud')) {
+      for (const { product, reasons } of recommend(answers, PRODUCTS)) {
+        if (wearsOud(product)) continue
+        const keys = reasons.map((r) => r.key)
+        expect(keys, `${product.id} for ${JSON.stringify(answers)}`).not.toContain('finder.reason.familyMain')
+        expect(keys, `${product.id} for ${JSON.stringify(answers)}`).not.toContain('finder.reason.familyAccent')
+      }
+    }
+  })
+
   it('name the occasion only when the fragrance is made for it', () => {
     for (const answers of ALL_ANSWERS) {
       for (const { product, reasons } of recommend(answers, PRODUCTS)) {
@@ -238,5 +267,26 @@ describe('familiesFor', () => {
       const families = familiesFor({ vibe: option.id })
       expect(PRODUCTS.filter((p) => families.includes(p.family)).length).toBeGreaterThan(0)
     }
+  })
+})
+
+describe('seeAllFamilies', () => {
+  it('opens the catalogue on a set that holds every one of the three closest matches', () => {
+    for (const answers of ALL_ANSWERS) {
+      const results = recommend(answers, PRODUCTS)
+      const families = seeAllFamilies(answers, results)
+      for (const { product } of results.slice(0, 3)) {
+        expect(families, `${product.id} for ${JSON.stringify(answers)}`).toContain(product.family)
+      }
+    }
+  })
+
+  it('keeps the character’s own families and the display order', () => {
+    const answers = { occasion: 'diwaniya', vibe: 'floral', season: 'summer', projection: 'soft', wearer: 'him' }
+    const families = seeAllFamilies(answers, recommend(answers, PRODUCTS))
+    expect(families).toEqual(expect.arrayContaining(familiesFor(answers)))
+    const order = FAMILIES.map((family) => family.id)
+    expect([...families].sort((a, b) => order.indexOf(a) - order.indexOf(b))).toEqual(families)
+    expect(new Set(families).size).toBe(families.length)
   })
 })

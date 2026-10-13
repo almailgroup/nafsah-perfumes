@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import {
   CART_KEY,
   CartContext,
@@ -6,6 +6,8 @@ import {
   cartTotals,
   detailLines,
   GIFT_KEY,
+  giftForCart,
+  isLineFull,
   MAX_QTY,
   parseStoredGift,
   parseStoredLines,
@@ -17,12 +19,14 @@ import {
   writeStored,
 } from './cart-context'
 import { formatOf } from '../data/products'
+import { lineId } from '../lib/format'
 
 const DEV = Boolean(import.meta.env?.DEV)
 
 export function CartProvider({ children }) {
   const [lines, dispatch] = useReducer(cartReducer, undefined, readStoredCart)
-  const [gift, setGiftState] = useState(readStoredGift)
+  // A gift saved beside an empty cart was left behind by an abandoned order.
+  const [gift, setGiftState] = useState(() => giftForCart(readStoredGift(), lines.length))
   /** The checkout's delivery area; a remote one adds the surcharge to the totals. */
   const [deliveryAreaId, setAreaState] = useState(null)
   const [isCartOpen, setCartOpen] = useState(false)
@@ -34,6 +38,15 @@ export function CartProvider({ children }) {
 
   useEffect(() => writeStored(CART_KEY, lines), [lines])
   useEffect(() => writeStored(GIFT_KEY, gift), [gift])
+
+  // An emptied cart takes its gift with it, just as clearCart does.
+  useEffect(() => {
+    if (lines.length === 0) setGiftState((current) => giftForCart(current, 0))
+  }, [lines.length])
+
+  // addItem reads the lines as they are now, without being rebuilt on every change.
+  const linesRef = useRef(lines)
+  linesRef.current = lines
 
   // Keep every open tab on the same cart. Without this, a cart emptied by a
   // finished checkout in one tab is written back by the next change in another.
@@ -55,19 +68,26 @@ export function CartProvider({ children }) {
 
   /**
    * addItem(product, formatId, { qty = 1, gift = false }). `gift: true` also
-   * switches gift mode on and opens the drawer on its gift panel.
+   * switches gift mode on and opens the drawer on its gift panel. Returns true
+   * when a bottle was added, false when its line already holds MAX_QTY (the
+   * drawer still opens, on a cart that has not changed) or the product or
+   * format is unknown.
    */
   const addItem = useCallback((product, formatId, { qty = 1, gift: asGift = false } = {}) => {
     const known = productById(product?.id)
     if (!known || !formatOf(known, formatId)) {
       if (DEV) console.warn(`[cart] ${product?.id} has no format "${formatId}"`)
-      return
+      return false
     }
-    dispatch({ type: 'add', productId: known.id, formatId, qty: toQty(qty) || 1 })
-    setLastAddedAt(Date.now())
+    const full = isLineFull(linesRef.current, lineId(known.id, formatId))
+    if (!full) {
+      dispatch({ type: 'add', productId: known.id, formatId, qty: toQty(qty) || 1 })
+      setLastAddedAt(Date.now())
+    }
     if (asGift) setGiftState((current) => sanitizeGift({ ...current, enabled: true }))
     setCartSection(asGift ? 'gift' : null)
     setCartOpen(true)
+    return !full
   }, [])
 
   const setQty = useCallback((id, qty) => dispatch({ type: 'setQty', id, qty }), [])

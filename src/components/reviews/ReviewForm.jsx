@@ -203,9 +203,13 @@ export default function ReviewForm({ productName, add, onDone }) {
             dir="auto"
             value={draft.body}
             onChange={set('body')}
+            aria-required="true"
             aria-invalid={Boolean(errors.body) || undefined}
             aria-describedby={describedBy(id('body-help'), id('body-count'), errors.body && id('body-error'))}
-            className={classNames('field mt-2 resize-y', errors.body && 'border-alert-600 focus:border-alert-600')}
+            className={classNames(
+              'field mt-2 resize-y focus:shadow-[inset_0_0_0_1px_#006039]',
+              errors.body && 'border-alert-600',
+            )}
           />
           <div className="mt-2 flex items-start justify-between gap-4">
             <p id={id('body-help')} className="font-sans text-[13px] leading-snug text-snow-600 rtl:font-sans-ar">
@@ -250,7 +254,10 @@ export default function ReviewForm({ productName, add, onDone }) {
               aria-required="true"
               aria-invalid={Boolean(errors.name) || undefined}
               aria-describedby={describedBy(id('name-help'), errors.name && id('name-error'))}
-              className={classNames('field mt-2', errors.name && 'border-alert-600 focus:border-alert-600')}
+              className={classNames(
+                'field mt-2 focus:shadow-[inset_0_0_0_1px_#006039]',
+                errors.name && 'border-alert-600',
+              )}
             />
             <p id={id('name-help')} className="mt-2 font-sans text-[13px] text-snow-600 rtl:font-sans-ar">
               {t('reviews.form.nameHelp')}
@@ -280,7 +287,10 @@ export default function ReviewForm({ productName, add, onDone }) {
               onChange={set('area')}
               aria-invalid={Boolean(errors.area) || undefined}
               aria-describedby={describedBy(id('area-help'), errors.area && id('area-error'))}
-              className={classNames('field mt-2', errors.area && 'border-alert-600 focus:border-alert-600')}
+              className={classNames(
+                'field mt-2 focus:shadow-[inset_0_0_0_1px_#006039]',
+                errors.area && 'border-alert-600',
+              )}
             />
             <p id={id('area-help')} className="mt-2 font-sans text-[13px] text-snow-600 rtl:font-sans-ar">
               {t('reviews.form.areaHelp')}

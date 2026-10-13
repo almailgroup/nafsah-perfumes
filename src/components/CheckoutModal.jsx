@@ -130,12 +130,16 @@ export default function CheckoutModal() {
       return next
     })
 
+  // While the order is being placed its snapshot is already taken: nothing
+  // in the form may change under it.
   const update = (patch) => {
+    if (processing) return
     setForm((current) => ({ ...current, ...patch }))
     clearErrors(Object.keys(patch))
   }
 
   const updateAddress = (patch) => {
+    if (processing) return
     setForm((current) => ({ ...current, address: { ...current.address, ...patch } }))
     clearErrors(Object.keys(patch))
     // The area decides the outlying-area fee in the totals.
@@ -143,6 +147,7 @@ export default function CheckoutModal() {
   }
 
   const goTo = (index) => {
+    if (processing) return
     setStepIndex(index)
     setErrors({})
     setFlagged([])
@@ -313,7 +318,12 @@ export default function CheckoutModal() {
                         </div>
                       )}
 
-                      <div key={step} className="animate-fade-in px-6 py-7 sm:px-10 sm:py-9">
+                      {/* Inert while the order is placed: its snapshot is already taken. */}
+                      <div
+                        key={step}
+                        {...(processing ? { inert: '', 'aria-busy': true } : {})}
+                        className="animate-fade-in px-6 py-7 sm:px-10 sm:py-9"
+                      >
                         {flagged.length > 0 && (
                           <div
                             role="alert"
@@ -379,7 +389,7 @@ export default function CheckoutModal() {
                     type="button"
                     onClick={handleBack}
                     disabled={processing}
-                    className="group inline-flex shrink-0 items-center gap-2 py-2 font-sans text-[11px] font-medium uppercase tracking-wide2 text-snow-600 transition-colors duration-300 hover:text-ink-950 disabled:cursor-not-allowed disabled:opacity-40 rtl:text-[13px] rtl:normal-case rtl:tracking-normal"
+                    className="group inline-flex shrink-0 items-center gap-2 py-2 font-sans text-[11px] font-medium uppercase tracking-wide2 text-snow-600 transition-colors duration-300 hover:text-ink-950 disabled:cursor-not-allowed disabled:opacity-40 rtl:font-sans-ar rtl:text-[13px] rtl:normal-case rtl:tracking-normal"
                   >
                     <Backward
                       aria-hidden="true"
@@ -412,7 +422,7 @@ export default function CheckoutModal() {
                             </span>
                           </>
                         ) : (
-                          <span className="truncate">{t(NEXT_LABELS[step])}</span>
+                          <span className="min-w-0 whitespace-normal text-center leading-snug">{t(NEXT_LABELS[step])}</span>
                         )}
                         <Forward
                           aria-hidden="true"

@@ -46,7 +46,7 @@ export default function OrderSummary({ lines, totals, gift, areaChosen = true, t
                 <span className="t-figure shrink-0 text-[15px] text-ink-950">{price(line.subtotalFils)}</span>
               </div>
               <p className="ticket mt-1.5 text-snow-600">
-                {tr(FORMAT_BY_ID[line.formatId])} · {formatMl(line.format.ml, lang)}
+                {t('product.selection', { format: tr(FORMAT_BY_ID[line.formatId]), volume: formatMl(line.format.ml, lang) })}
                 <span className="whitespace-nowrap">
                   {' × '}
                   {formatNumber(line.qty, lang)}

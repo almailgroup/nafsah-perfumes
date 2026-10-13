@@ -2,7 +2,7 @@
 // carries them (owner P6). Keys: 'gifting.*'
 //
 // {box} is a GIFT_BOXES name, {price} {fee} {amount} {threshold} formatted
-// prices, {item} a line's '{name}, {format}', {max} the card's length limit.
+// prices, {item} a line's '{name}, {format}', {max} the quantity limit of one line.
 export default {
   en: {
     // The gift switch
@@ -44,6 +44,7 @@ export default {
     'gifting.cart.quantity': 'Quantity of {item}',
     'gifting.cart.decrease': 'One fewer {item}',
     'gifting.cart.increase': 'One more {item}',
+    'gifting.cart.maxQty': 'Maximum {max} per item',
     'gifting.cart.each': '{price} each',
     'gifting.cart.vial': 'Includes a free {volume} test vial',
     'gifting.cart.howTryFirst': 'How Try First works',
@@ -103,6 +104,7 @@ export default {
     'gifting.cart.quantity': 'كمية {item}',
     'gifting.cart.decrease': 'إنقاص كمية {item}',
     'gifting.cart.increase': 'زيادة كمية {item}',
+    'gifting.cart.maxQty': 'الحد الأقصى {max} للقطعة',
     'gifting.cart.each': '{price} للقطعة',
     'gifting.cart.vial': 'مع عيّنة تجربة مجانية بحجم {volume}',
     'gifting.cart.howTryFirst': 'كيف تعمل خدمة «جرّب أولاً»',

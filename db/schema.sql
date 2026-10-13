@@ -116,6 +116,23 @@ CREATE TABLE heat_scale (
   name_ar  text NOT NULL
 );
 
+-- The longevity label for a number of hours on skin: the first band, in
+-- sort_order, whose max_hours is at least the product's longevity_hours.
+CREATE TABLE longevity_bands (
+  id          text PRIMARY KEY,                -- 'moderate', 'long', 'very-long', 'all-day'
+  max_hours   numeric(4, 1) UNIQUE CHECK (max_hours > 0),  -- inclusive upper bound; NULL = no bound (Infinity in code)
+  name_en     text NOT NULL,
+  name_ar     text NOT NULL,
+  sort_order  smallint NOT NULL UNIQUE
+);
+
+CREATE TABLE layering_kinds (
+  id          text PRIMARY KEY,                -- 'bukhoor', 'attar', 'spray'
+  name_en     text NOT NULL,
+  name_ar     text NOT NULL,
+  sort_order  smallint NOT NULL UNIQUE         -- card order (src/components/product/derive.js)
+);
+
 -- ---------------------------------------------------------------------------
 -- Notes  (src/data/notes.js)
 -- ---------------------------------------------------------------------------
@@ -227,7 +244,7 @@ CREATE TABLE layering_suggestions (
   id                  bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   product_id          text NOT NULL REFERENCES products (id) ON DELETE CASCADE,
   position            smallint NOT NULL CHECK (position BETWEEN 1 AND 3),
-  kind                text NOT NULL CHECK (kind IN ('bukhoor', 'attar', 'spray')),
+  kind                text NOT NULL REFERENCES layering_kinds (id),
   partner_product_id  text REFERENCES products (id),
   name_en             text,
   name_ar             text,

@@ -173,7 +173,8 @@ export function ChoiceGroup({
             <label
               key={option.value}
               className={classNames(
-                'flex items-start gap-3 border px-4 py-3.5 transition-colors duration-300',
+                // relative: the sr-only radio is placed inside its card, not against the dialog.
+                'relative flex items-start gap-3 border px-4 py-3.5 transition-colors duration-300',
                 FOCUS_RING,
                 option.disabled
                   ? 'cursor-not-allowed border-snow-200 bg-snow-50'

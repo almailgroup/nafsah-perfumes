@@ -7,19 +7,59 @@ const here = () => ({
   hash: window.location.hash,
 })
 
-/** Scroll an in-page target into view; false when the page has no such element. */
-function scrollToHash(hash) {
-  if (!hash || hash === '#') return false
+// A page loaded on demand renders a few frames after its address changes.
+// How long to wait for it, in frames: about two seconds.
+const WAIT_FRAMES = 120
+
+/**
+ * The element with this id, once it is rendered and shown. While Suspense
+ * waits for the next page, the previous one stays in the document hidden, so
+ * an element that is there but has no box does not count.
+ */
+function shownById(id) {
+  const element = document.getElementById(id)
+  return element && element.getClientRects().length > 0 ? element : null
+}
+
+/** The in-page target a '#hash' names, or null. */
+function hashTarget(hash) {
+  if (!hash || hash === '#') return null
   let id = hash.slice(1)
   try {
     id = decodeURIComponent(id)
   } catch {
     // A malformed escape is still a usable id as written.
   }
-  const target = document.getElementById(id)
-  if (!target) return false
-  target.scrollIntoView({ block: 'start' })
-  return true
+  return shownById(id)
+}
+
+/** Scroll an in-page target into view; the element, or null when the page has no such element. */
+function scrollToHash(hash) {
+  const target = hashTarget(hash)
+  target?.scrollIntoView({ block: 'start' })
+  return target
+}
+
+/** Focus without moving the view, making the element focusable first if it is not. */
+function focusQuietly(element) {
+  if (!element.hasAttribute('tabindex')) element.setAttribute('tabindex', '-1')
+  element.focus({ preventScroll: true })
+}
+
+/**
+ * Call `act` with what `find` returns as soon as it returns something: now,
+ * or on one of the next WAIT_FRAMES frames. Returns a cancel function.
+ */
+function whenFound(find, act) {
+  let frames = 0
+  let request = null
+  const attempt = () => {
+    const found = find()
+    if (found) act?.(found)
+    else if (frames++ < WAIT_FRAMES) request = requestAnimationFrame(attempt)
+  }
+  attempt()
+  return () => cancelAnimationFrame(request)
 }
 
 /**
@@ -72,9 +112,10 @@ export function RouterProvider({ children }) {
       setLocation((state) => ({ path: legacy, search: window.location.search, hash: '', key: state.key + 1 }))
       return true
     }
+    let cancel = null
     if (!migrate() && window.location.hash) {
       const hash = window.location.hash
-      requestAnimationFrame(() => scrollToHash(hash))
+      cancel = whenFound(() => scrollToHash(hash))
     }
     // Following an old link from inside the site changes only the hash, which
     // is a same-document navigation: nothing remounts, so the listener is what
@@ -84,15 +125,35 @@ export function RouterProvider({ children }) {
       setLocation((state) => (state.hash === window.location.hash ? state : { ...state, hash: window.location.hash }))
     }
     window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
+    return () => {
+      cancel?.()
+      window.removeEventListener('hashchange', onHashChange)
+    }
   }, [])
 
   // Before paint, so the new page never shows for a frame at the old offset.
+  // Focus moves with the view, so the next Tab continues from the top of the
+  // new page (or the section the address names) rather than from the footer
+  // link that was followed, and a screen reader starts reading there. Focus
+  // goes first so a smooth scroll is not cut short. Back and forward leave
+  // both to the browser.
   useLayoutEffect(() => {
     const pending = pendingScroll.current
     pendingScroll.current = null
-    if (pending === 'top') window.scrollTo({ top: 0 })
-    else if (pending) scrollToHash(pending)
+    if (pending === 'top') {
+      const cancel = whenFound(() => shownById('main'), focusQuietly)
+      window.scrollTo({ top: 0 })
+      return cancel
+    }
+    if (pending) {
+      return whenFound(
+        () => hashTarget(pending),
+        (target) => {
+          focusQuietly(target)
+          target.scrollIntoView({ block: 'start' })
+        },
+      )
+    }
   }, [location.key])
 
   const navigate = useCallback((to, { scroll = true, replace = false } = {}) => {

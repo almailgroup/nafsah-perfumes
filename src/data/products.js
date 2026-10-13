@@ -533,16 +533,16 @@ export const PRODUCTS = [
         kind: 'attar',
         productId: 'dehn-al-oud',
         how: {
-          en: 'Spray Musc Blanc first and add a single drop of Dehn Al Oud on top: musk under oud, the way the Gulf has always worn them.',
-          ar: 'رُشّ «المسك الأبيض» أولاً ثم قطرة واحدة من دهن العود فوقه: المسك تحت العود، كما لبسهما أهل الخليج دائماً.',
+          en: 'A single drop of Dehn Al Oud on the pulse points, then Musc Blanc sprayed over it: the musk softens the oud and carries it, the way the Gulf has always worn them.',
+          ar: 'قطرة واحدة من دهن العود على مواضع النبض، ثم رُشّ «المسك الأبيض» فوقها: المسك يليّن العود ويحمله، كما لبسهما أهل الخليج دائماً.',
         },
       },
       {
         kind: 'attar',
         productId: 'ward-taifi',
         how: {
-          en: 'A drop of Taif rose oil over it makes a clean rose musk for every day.',
-          ar: 'قطرة من دهن الورد الطائفي فوقه تصنع مسكاً وردياً نقياً لكل يوم.',
+          en: 'A drop of Taif rose oil on the pulse points underneath makes a clean rose musk for every day.',
+          ar: 'قطرة من دهن الورد الطائفي على مواضع النبض تحته تصنع مسكاً وردياً نقياً لكل يوم.',
         },
       },
       {
@@ -689,8 +689,8 @@ export const PRODUCTS = [
         kind: 'spray',
         productId: 'musc-blanc',
         how: {
-          en: 'Spray Musc Blanc first and put the oil over it: musk under oud keeps the oud going into the night.',
-          ar: 'رُشّ «المسك الأبيض» أولاً وضع الدهن فوقه: المسك تحت العود يمدّ أثره إلى الليل.',
+          en: 'Put the oil on first and spray Musc Blanc over it: the musk carries the oud into the night.',
+          ar: 'ضع الدهن أولاً ثم رُشّ «المسك الأبيض» فوقه: المسك يحمل العود إلى الليل.',
         },
       },
       {

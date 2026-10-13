@@ -2,8 +2,11 @@
 //
 // Filled in by the components, never typed here: {vial} is formatMl(2),
 // {formats} / {others} the Try First formats from FORMATS as a list,
-// {period} is trust.days with RETURN_WINDOW_DAYS, {cutoff} comes from
-// deliveryVars(). The product card's own strings live under 'trust.card.*'.
+// {period} is trust.days with RETURN_WINDOW_DAYS (all from useTryFirstVars in
+// trust/TryFirst.jsx). The badges (trust.badges.*) also get policyVars() from
+// src/data/help.js: {cutoff} and {restDays}, the days with no delivery. The
+// product card's own strings live under 'trust.card.*': {name}, {format}, and
+// {max} (the cart's per-line limit) in trust.card.atMax.
 export default {
   en: {
     'trust.tryFirst': 'Try First',
@@ -48,13 +51,16 @@ export default {
 
     'trust.badges.heading': 'The house promises',
     'trust.badges.sameDay': 'Same-day delivery',
-    'trust.badges.sameDayBody': 'Order before {cutoff}, Kuwait time, for delivery today. Fridays and outlying areas excepted.',
-    'trust.badges.tryFirstBody': 'A free {vial} vial of the same scent with every bottle. Not for you? Return the bottle sealed.',
+    'trust.badges.sameDayBody':
+      'Order before {cutoff}, Kuwait time, for delivery today — except on {restDays} and in outlying areas.',
+    'trust.badges.tryFirstBody':
+      'A free {vial} vial of the same scent with every {formats}. Not for you? Return the bottle sealed.',
 
     'trust.card.number': 'No. {number}',
     'trust.card.formatLabel': 'Choose a size for {name}',
     'trust.card.addContext': '{name}, {format}',
     'trust.card.added': '{name}, {format}, added to your cart.',
+    'trust.card.atMax': 'Your cart already holds the maximum of {max} of {name}, {format}.',
   },
   ar: {
     'trust.tryFirst': 'جرّب أولاً',
@@ -102,12 +108,14 @@ export default {
 
     'trust.badges.heading': 'وعود الدار',
     'trust.badges.sameDay': 'توصيل في اليوم نفسه',
-    'trust.badges.sameDayBody': 'اطلب قبل {cutoff} بتوقيت الكويت ليصلك اليوم، ما عدا الجمعة والمناطق البعيدة.',
-    'trust.badges.tryFirstBody': 'عيّنة مجانية بحجم {vial} من العطر نفسه مع كل زجاجة. لم يناسبك؟ أعِد الزجاجة مختومة.',
+    'trust.badges.sameDayBody': 'اطلب قبل {cutoff} بتوقيت الكويت ليصلك اليوم، ما عدا {restDays} والمناطق البعيدة.',
+    'trust.badges.tryFirstBody':
+      'تصلك مع كلٍّ من {formats} عيّنة مجانية بحجم {vial} من العطر نفسه. لم يناسبك؟ أعِد الزجاجة مختومة.',
 
     'trust.card.number': 'رقم {number}',
     'trust.card.formatLabel': 'اختر حجم {name}',
     'trust.card.addContext': '{name}، {format}',
     'trust.card.added': 'أُضيف {name} ({format}) إلى سلتك.',
+    'trust.card.atMax': 'سلّتك تضم الحد الأقصى ({max}) من {name} ({format}).',
   },
 }

@@ -114,14 +114,15 @@ const LABELS = {
   ar: { block: 'قطعة', street: 'شارع', avenue: 'جادة', building: 'مبنى', floor: 'الدور', apartment: 'شقة' },
 }
 
-// A value that already names itself ("Tunis Street", "شارع ١٢", "Villa 4")
-// is printed as typed rather than as "Street Tunis Street".
+// A value that already names itself ("Tunis Street", "شارع ١٢", "Villa 4",
+// "Apt.3", "شقة٣") is printed as typed rather than as "Street Tunis Street".
+// The word may run straight into its number; values have Latin digits here.
 const SELF_LABELLED = {
-  street: /(^|\s)(street|st\.?|road|rd\.?|شارع|طريق)(\s|$)/i,
-  avenue: /(^|\s)(avenue|ave\.?|jadda|jaddah|جادة)(\s|$)/i,
-  building: /(^|\s)(building|bldg\.?|house|villa|tower|مبنى|منزل|عمارة|بيت|فيلا|برج)(\s|$)/i,
-  floor: /(^|\s)(floor|fl\.?|الدور|دور|طابق|الطابق)(\s|$)/i,
-  apartment: /(^|\s)(apartment|apt\.?|flat|شقة)(\s|$)/i,
+  street: /(^|\s)(street|st\.?|road|rd\.?|شارع|طريق)(?=$|[\s.#:\-\d])/i,
+  avenue: /(^|\s)(avenue|ave\.?|jadda|jaddah|جادة)(?=$|[\s.#:\-\d])/i,
+  building: /(^|\s)(building|bldg\.?|house|villa|tower|مبنى|منزل|عمارة|بيت|فيلا|برج)(?=$|[\s.#:\-\d])/i,
+  floor: /(^|\s)(floor|fl\.?|الدور|دور|طابق|الطابق)(?=$|[\s.#:\-\d])/i,
+  apartment: /(^|\s)(apartment|apt\.?|flat|شقة)(?=$|[\s.#:\-\d])/i,
 }
 
 const LINE_FIELDS = ['block', 'street', 'avenue', 'building', 'floor', 'apartment']

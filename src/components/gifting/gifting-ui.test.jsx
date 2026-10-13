@@ -185,6 +185,48 @@ describe('CartDrawer', () => {
     expect(html).toContain('aria-label="إزالة العود الأسود، الزجاجة الكاملة"')
   })
 
+  it('names each line format and volume as one phrase, with no middle dot by Arabic digits', () => {
+    const mixed = detailLines([
+      { id: 'oud-noir__full', productId: 'oud-noir', formatId: 'full', qty: 1 },
+      { id: 'ward-taifi__quarter-tola', productId: 'ward-taifi', formatId: 'quarter-tola', qty: 1 },
+    ])
+    const en = visibleText(render('en', <CartDrawer />, { lines: mixed }))
+    expect(en).toContain('Full Bottle, 100 ml')
+    expect(en).toContain('Quarter Tola Oil, 3 ml')
+    const ar = visibleText(render('ar', <CartDrawer />, { lines: mixed }))
+    expect(ar).toContain('الزجاجة الكاملة، ١٠٠ مل')
+    expect(ar).toContain('ربع تولة دهن، ٣ مل')
+    expect(ar).not.toMatch(/·\s*[٠-٩]/)
+  })
+
+  it('says why the plus has stopped at the maximum, and describes the button with it', () => {
+    const full = detailLines([
+      { id: 'oud-noir__full', productId: 'oud-noir', formatId: 'full', qty: MAX_QTY },
+      { id: 'qahwa__sample', productId: 'qahwa', formatId: 'sample', qty: 2 },
+    ])
+    const html = render('en', <CartDrawer />, { lines: full })
+    const id = attr(html, 'aria-label="One more Oud Noir, Full Bottle"', 'aria-describedby')
+    expect(id).toMatch(/oud-noir__full-max$/)
+    expect(html).toContain(`id="${id}" class="ticket mt-1 text-snow-600">Maximum ${MAX_QTY} per item</p>`)
+    // Only the line at the limit carries the note.
+    expect(html.match(/per item/g)).toHaveLength(1)
+    expect(attr(html, 'aria-label="One more Qahwa, 2ml Sample Vial"', 'aria-describedby')).toBeUndefined()
+    expect(visibleText(render('ar', <CartDrawer />, { lines: full }))).toContain('الحد الأقصى ١٠ للقطعة')
+  })
+
+  it('casts its shadow only while open, never from off-screen', () => {
+    const closed = render('en', <CartDrawer />, { lines, isCartOpen: false })
+    const asideClass = (html) => attr(html, '<aside', 'class')
+    expect(asideClass(closed)).not.toContain('shadow-[')
+    expect(asideClass(render('en', <CartDrawer />, { lines }))).toContain('shadow-[0_0_70px_-20px_rgba(0,0,0,0.9)]')
+  })
+
+  it('fills the empty cart text from the policy, leaving no placeholder behind', () => {
+    for (const lang of ['en', 'ar']) {
+      expect(visibleText(render(lang, <CartDrawer />))).not.toMatch(/\{\w+\}/)
+    }
+  })
+
   it('opens on the gift when asked to, focus landing on it rather than on close', () => {
     const html = render('en', <CartDrawer />, { lines, cartSection: 'gift' })
     expect(html).toMatch(/aria-expanded="false"[^>]*data-autofocus="true"/)

@@ -6,11 +6,13 @@ import {
   SORTS,
   activeFilterCount,
   availableSorts,
+  displayPriceFils,
   facetCounts,
   filterProducts,
   hasNote,
   matchesFilters,
   matchesQuery,
+  matchingFormats,
   noteSuggestions,
   normalizeText,
   sanitizeFilters,
@@ -127,6 +129,28 @@ describe('search', () => {
     expect(attar).not.toContain('rose-imperiale')
   })
 
+  it('reads و ب ف ك and the article glued to a word: "والورد", "وعود", "بالورد"', () => {
+    expect(search('عود والورد')).toEqual(search('عود ورد'))
+    expect(search('عود والورد').length).toBeGreaterThan(0)
+    expect(search('وعود')).toEqual(search('عود'))
+    expect(search('زعفران وعود')).toEqual(search('زعفران عود'))
+    expect(search('بالورد')).toEqual(search('ورد'))
+    expect(search('ورد ومسك')).toEqual(search('ورد مسك'))
+  })
+
+  it('asks nothing of a joining "and" or "و", unless it is all that is typed', () => {
+    expect(search('oud and rose')).toEqual(search('oud rose'))
+    expect(search('عود و ورد')).toEqual(search('عود ورد'))
+    // A lone "و" is the start of a word being typed, not a connector.
+    const typed = search('و')
+    expect(typed.length).toBeGreaterThan(0)
+    expect(typed.sort()).toEqual(ids(PRODUCTS.filter((p) => searchIndex(p).some((w) => w.startsWith('و')))).sort())
+  })
+
+  it('does not cut a half-typed word down to the article: "والع" stays narrow', () => {
+    expect(search('والع').length).toBeLessThan(10)
+  })
+
   it('returns everything for an empty query and nothing for nonsense', () => {
     expect(search('   ')).toHaveLength(PRODUCTS.length)
     expect(search('zzqx')).toEqual([])
@@ -192,6 +216,35 @@ describe('facet filters', () => {
     expect(PRODUCTS.filter((p) => matchesFilters(p, { priceRange: [3000, 7000] }))).toEqual([])
   })
 
+  it('meets concentration and price with the same bottle', () => {
+    // Oud Noir, Ambre Royale and Safran Imperial are extraits, but their only
+    // bottles under 35 KWD are quarter-tola attars.
+    expect(filterProducts(PRODUCTS, { concentrations: ['extrait'], priceRange: [24000, 35000] })).toEqual([])
+    // Oud Noir's attar is 29 KWD; its 75 KWD bottle is an extrait spray.
+    expect(ids(filterProducts(PRODUCTS, { concentrations: ['attar'], priceRange: [70000, 80000] }))).not.toContain('oud-noir')
+    expect(facetCounts(PRODUCTS, { priceRange: [24000, 35000] }, 'concentrations').extrait).toBe(0)
+  })
+
+  it('finds exactly the fragrances with one bottle in both filters, for every concentration and range', () => {
+    const prices = [...new Set(PRODUCTS.flatMap((p) => bottleFormats(p).map((f) => f.priceFils)))].sort((a, b) => a - b)
+    const ranges = prices.flatMap((low, i) => prices.slice(i).map((high) => [low, high]))
+    const meets = (product, id, [low, high]) =>
+      bottleFormats(product).some(
+        (f) => f.priceFils >= low && f.priceFils <= high && concentrationFor(product, f.id) === id,
+      )
+    for (const { id } of CONCENTRATIONS) {
+      for (const range of ranges) {
+        const found = filterProducts(PRODUCTS, { concentrations: [id], priceRange: range })
+        for (const product of found) expect(meets(product, id, range)).toBe(true)
+        expect(ids(found).sort()).toEqual(ids(PRODUCTS.filter((p) => meets(p, id, range))).sort())
+        expect(facetCounts(PRODUCTS, { priceRange: range }, 'concentrations')[id]).toBe(found.length)
+        for (const product of found) {
+          expect(matchingFormats(product, { concentrations: [id], priceRange: range }).length).toBeGreaterThan(0)
+        }
+      }
+    }
+  })
+
   it('combines facets with AND', () => {
     const found = filterProducts(PRODUCTS, { families: ['french-arabic'], genders: ['men'], query: 'cedre' })
     expect(ids(found)).toEqual(['cedre-fume'])
@@ -247,6 +300,18 @@ describe('sorting', () => {
     expect(prices).toEqual([...prices].sort((a, b) => a - b))
     expect(asc[0].id).toBe('ward-taifi')
     expect(sortProducts(PRODUCTS, 'price-desc').map(fromPriceFils)).toEqual([...prices].reverse())
+  })
+
+  it('sorts by the price each card shows under the filters', () => {
+    const filters = { priceRange: [100000, 135000] }
+    const asc = filterProducts(PRODUCTS, { ...filters, sort: 'price-asc' })
+    expect(asc.map((p) => displayPriceFils(p, filters))).toEqual([105000, 108000, 119000, 120000, 125000, 129000, 135000])
+    expect(ids(filterProducts(PRODUCTS, { ...filters, sort: 'price-desc' }))).toEqual(ids(asc).reverse())
+    // Attar only: a spray's quarter-tola oil is the price it shows.
+    const attar = { concentrations: ['attar'] }
+    const oils = filterProducts(PRODUCTS, { ...attar, sort: 'price-asc' }).map((p) => displayPriceFils(p, attar))
+    expect(oils).toEqual([...oils].sort((a, b) => a - b))
+    expect(displayPriceFils(PRODUCTS_BY_ID['oud-noir'], attar)).toBe(29000)
   })
 
   it('sorts newest by year and featured by bestseller then new, keeping catalogue order on ties', () => {

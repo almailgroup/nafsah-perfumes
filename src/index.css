@@ -81,6 +81,15 @@
   :focus-visible {
     @apply outline-none ring-2 ring-green-600 ring-offset-2 ring-offset-snow-50;
   }
+
+  /* <main> takes focus after the skip link or a page change only so reading
+     starts there; a ring round the whole page would mark nothing. */
+  main[tabindex='-1']:focus,
+  main[tabindex='-1']:focus-visible {
+    outline: none;
+    --tw-ring-shadow: 0 0 #0000;
+    box-shadow: none;
+  }
 }
 
 @layer components {
@@ -427,12 +436,14 @@
   --tw-ring-shadow: 0 0 #0000;
 }
 
+/* The thumbs' only focus cue: a solid green ring on a paper gap, drawn
+   outside the 40px hit box. */
 .range-input:focus-visible::-webkit-slider-thumb {
-  box-shadow: 0 0 0 4px rgba(0, 96, 57, 0.28);
+  box-shadow: 0 0 0 2px #fbfaf7, 0 0 0 4px #006039;
 }
 
 .range-input:focus-visible::-moz-range-thumb {
-  box-shadow: 0 0 0 4px rgba(0, 96, 57, 0.28);
+  box-shadow: 0 0 0 2px #fbfaf7, 0 0 0 4px #006039;
 }
 
 .range-input::-webkit-slider-thumb {

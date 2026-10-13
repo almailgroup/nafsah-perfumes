@@ -19,6 +19,7 @@ import { useCart } from '../context/cart-context'
 import { useLocale } from '../i18n/locale-context'
 import { FREE_SHIPPING_FILS, REMOTE_SURCHARGE_FILS } from '../data/delivery'
 import { GIFT_BOX_BY_ID } from '../data/gifting'
+import { policyVars } from '../data/help'
 import { concentrationFor } from '../data/products'
 import { CONCENTRATION_BY_ID, FORMAT_BY_ID } from '../data/taxonomy'
 import { useOverlay } from '../hooks/useOverlay'
@@ -127,15 +128,19 @@ export default function CartDrawer() {
         tabIndex={-1}
         {...inertWhenClosed}
         className={classNames(
-          'absolute end-0 top-0 flex h-full w-full max-w-md flex-col border-s border-snow-200 bg-snow-50 shadow-[0_0_70px_-20px_rgba(0,0,0,0.9)] focus:outline-none',
+          'absolute end-0 top-0 flex h-full w-full max-w-md flex-col border-s border-snow-200 bg-snow-50 focus:outline-none',
           // A direction flip moves the side the closed drawer is parked on,
           // from translateX(+100%) off the right to -100% off the left. With
           // the transition armed that is animated, so the panel sweeps the
           // full width of the viewport on every language switch. Cut the
           // transition while the scripts swap; the transform has settled by
           // the time it is re-armed, so nothing animates.
-          switching ? 'transition-none' : 'transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]',
-          isCartOpen ? 'translate-x-0' : 'translate-x-full rtl:-translate-x-full',
+          switching ? 'transition-none' : 'transition-[transform,box-shadow] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          // The shadow only while open: parked off-screen it would still fall
+          // across the page's inline-end edge.
+          isCartOpen
+            ? 'translate-x-0 shadow-[0_0_70px_-20px_rgba(0,0,0,0.9)]'
+            : 'translate-x-full rtl:-translate-x-full',
         )}
       >
         <header className="flex items-center justify-between gap-4 border-b rule px-6 py-5">
@@ -179,7 +184,7 @@ export default function CartDrawer() {
             <h3 className="mt-6 font-display text-[1.75rem] font-medium leading-tight text-ink-950 rtl:font-display-ar rtl:text-[1.6rem]">
               {t('cartEmpty')}
             </h3>
-            <p className="t-body mt-3 max-w-xs text-snow-600">{t('cartEmptyBody')}</p>
+            <p className="t-body mt-3 max-w-xs text-snow-600">{t('cartEmptyBody', policyVars(lang))}</p>
             <button type="button" onClick={closeCart} className="btn-green mt-8">
               {t('browseCatalogue')}
             </button>
@@ -221,6 +226,7 @@ export default function CartDrawer() {
                   const item = itemName(line)
                   const atMin = line.qty <= 1
                   const atMax = line.qty >= maxQty
+                  const maxNoteId = `${uid}-${line.id}-max`
                   return (
                     <li key={line.id} className="flex animate-fade-in gap-4 py-5">
                       <div aria-hidden="true" className="h-24 w-16 shrink-0 overflow-hidden border border-snow-200 bg-snow-50">
@@ -237,7 +243,7 @@ export default function CartDrawer() {
                               {tr(line.product.name)}
                             </h3>
                             <p className="ticket mt-1.5 text-snow-600">
-                              {tr(FORMAT_BY_ID[line.formatId])} · {formatMl(line.format.ml, lang)}
+                              {t('product.selection', { format: tr(FORMAT_BY_ID[line.formatId]), volume: formatMl(line.format.ml, lang) })}
                             </p>
                           </div>
                           <button
@@ -290,6 +296,7 @@ export default function CartDrawer() {
                               onClick={() => !atMax && setQty(line.id, line.qty + 1)}
                               aria-disabled={atMax || undefined}
                               aria-label={t('gifting.cart.increase', { item })}
+                              aria-describedby={atMax ? maxNoteId : undefined}
                               className={classNames(
                                 STEP_BUTTON,
                                 atMax ? 'cursor-not-allowed opacity-40' : 'hover:bg-snow-100 hover:text-ink-950',
@@ -310,6 +317,12 @@ export default function CartDrawer() {
                             )}
                           </div>
                         </div>
+                        {/* Why the plus has gone quiet. */}
+                        {atMax && (
+                          <p id={maxNoteId} className="ticket mt-1 text-snow-600">
+                            {t('gifting.cart.maxQty', { max: formatNumber(maxQty, lang) })}
+                          </p>
+                        )}
                       </div>
                     </li>
                   )

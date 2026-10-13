@@ -1,39 +1,41 @@
 import { useId, useState } from 'react'
 import { Gift } from 'lucide-react'
+import { GiftSeal, TYPED_FONT } from '../gifting/GiftCardPreview'
 import GiftPanel from '../gifting/GiftPanel'
 import { GIFT_BOX_BY_ID } from '../../data/gifting'
 import { useCart } from '../../context/cart-context'
 import { useLocale } from '../../i18n/locale-context'
-import { formatPrice } from '../../lib/format'
-
-// Typed by the shopper in either script: Jost for Latin, Plex for Arabic.
-const TYPED = "font-['Jost','IBM_Plex_Sans_Arabic','Futura',system-ui,sans-serif]"
+import { classNames, formatPrice } from '../../lib/format'
 
 /**
- * The message card as it will sit in the box: paper, a green rule along the
- * top, the gold seal, the message and who it is from. Read-only; the gift
- * panel edits it.
+ * The message card as it will sit in the box, drawn as the cart's preview
+ * draws it: paper, the green rule, the gold seal, the house's name, the
+ * message and who it is from. Read-only; the gift panel edits it. Unlike the
+ * preview it is read aloud: here it is the only place the message appears.
  */
 export function GiftCard({ message, from }) {
   const { t } = useLocale()
+  // The sender's name sits inside the sentence isolated, so an Arabic name in
+  // an English line (or the reverse) cannot pull the words around it.
+  const [before, after] = t('gifting.preview.from').split('{name}')
   return (
-    <figure className="relative max-w-sm border border-snow-200 bg-snow-50 pb-5 pe-14 ps-6 pt-7 shadow-[0_24px_48px_-36px_rgba(8,20,15,0.55)]">
+    <figure className="relative max-w-sm border border-snow-200 bg-snow-50 px-6 pb-6 pt-7 shadow-[0_24px_48px_-36px_rgba(8,20,15,0.55)]">
       <span aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-green-600" />
-      <span
-        aria-hidden="true"
-        className="absolute end-5 top-5 grid h-7 w-7 place-items-center rounded-full border border-gold-500"
-      >
-        <span className="h-3.5 w-3.5 rounded-full border border-gold-500/60" />
-      </span>
+      <GiftSeal className="absolute end-4 top-4 h-10 w-10" />
+      <p aria-hidden="true" className="ticket pe-12 text-green-600">
+        {t('brand')}
+      </p>
       <blockquote
         dir="auto"
-        className={`whitespace-pre-line break-words text-[16px] leading-relaxed text-ink-950 ${TYPED}`}
+        className={classNames('mt-4 whitespace-pre-line break-words text-[16px] leading-relaxed text-ink-950', TYPED_FONT)}
       >
         {message}
       </blockquote>
       {from && (
-        <figcaption dir="auto" className={`mt-4 text-[13px] text-snow-600 ${TYPED}`}>
-          {t('checkout.gift.from', { name: from })}
+        <figcaption className={classNames('mt-4 break-words text-[14px] leading-snug text-snow-600', TYPED_FONT)}>
+          {before}
+          <bdi>{from}</bdi>
+          {after}
         </figcaption>
       )}
     </figure>

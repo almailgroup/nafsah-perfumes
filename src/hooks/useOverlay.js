@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 /*
  * Every open overlay, bottom to top: the cart drawer, the product page, the
@@ -185,18 +185,4 @@ export function useOverlay(isOpen, onClose, panelRef) {
       remove(entry)
     }
   }, [isOpen, panelRef])
-}
-
-/** Tracks whether the window has scrolled past `offset` pixels. */
-export function useScrolled(offset = 12) {
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > offset)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [offset])
-
-  return scrolled
 }

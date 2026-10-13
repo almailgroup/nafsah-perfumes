@@ -48,7 +48,7 @@ export default function CheckboxList({ name, options, selected, counts, onToggle
                 className={classNames(
                   'grid h-[18px] w-[18px] shrink-0 place-items-center border transition-colors duration-200',
                   'peer-focus-visible:ring-2 peer-focus-visible:ring-green-600 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-snow-50',
-                  checked ? 'border-green-600 bg-green-600 text-snow-50' : 'border-snow-300 bg-snow-50 group-hover:border-green-600',
+                  checked ? 'border-green-600 bg-green-600 text-snow-50' : 'border-snow-600 bg-snow-50 group-hover:border-ink-950',
                 )}
               >
                 {checked && <Check className="h-3 w-3" strokeWidth={2} />}

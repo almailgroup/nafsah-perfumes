@@ -20,8 +20,12 @@ const joined = (items, lang, type) => {
   return listFormats.get(key).format(items)
 }
 
-/** The figures every Try First sentence quotes, in the active language and script. */
-function useTryFirstVars() {
+/**
+ * The figures every Try First sentence quotes, in the active language and
+ * script. Exported for the homepage trust badges, so they quote the same.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook beside the components it serves
+export function useTryFirstVars() {
   const { lang, tc, tr } = useLocale()
   return {
     vial: formatMl(VIAL_ML, lang),
@@ -264,7 +268,7 @@ function TryFirstDialog({ onClose }) {
         <footer className="flex flex-col-reverse gap-4 border-t border-snow-200 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-9">
           {/* A new tab, so a cart or checkout in progress is left as it was. */}
           <a
-            href={`${SHIPPING}/`}
+            href={`${SHIPPING}/#try-first`}
             target="_blank"
             rel="noopener noreferrer"
             className="ticket inline-flex items-center gap-1.5 self-start text-green-600 underline underline-offset-4 transition-colors hover:text-ink-950 sm:self-auto"

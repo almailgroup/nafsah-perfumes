@@ -8,12 +8,15 @@
  *   query,            // free text, EN or AR; every word must be found
  *   families[],       // FAMILIES ids — a fragrance's primary family
  *   notes[],          // NOTES ids — a fragrance must carry ALL of them
- *   concentrations[], // CONCENTRATIONS ids — any of its formats (oils are attar)
+ *   concentrations[], // CONCENTRATIONS ids — a bottle or oil in one of them (oils are attar)
  *   sillage[],        // SILLAGE ids
  *   genders[],        // GENDERS ids
- *   priceRange,       // [minFils, maxFils] — any bottle or oil inside it, never the sample
+ *   priceRange,       // [minFils, maxFils] — a bottle or oil inside it, never the sample
  *   sort,             // SORTS id
  * }
+ *
+ * Concentration and price are met by the same bottle: an extrait whose only
+ * bottle under 35 KWD is its quarter-tola attar is not an extrait under 35.
  */
 import { NOTE_LIST, NOTES } from '../data/notes'
 import {
@@ -89,6 +92,28 @@ function wordForms(word) {
   return forms
 }
 
+/**
+ * The forms a query word is looked up by: "والورد" and "وعود" as "ورد" and
+ * "عود". A stem of one letter, or the article on fewer than three ("والع" →
+ * "الع"), is dropped so a half-typed word does not match half the catalogue.
+ */
+const queryForms = (token) =>
+  wordForms(token).filter(
+    (form) => form === token || (form.length >= 2 && !(form.startsWith('ال') && form.length < 5)),
+  )
+
+/** Whether some form of the query word begins one of `words`. */
+const tokenFound = (token, words) =>
+  queryForms(token).some((form) => words.some((word) => word.startsWith(form)))
+
+// "oud and rose", "عود و ورد": the joining word is not something to find,
+// unless it is all the shopper has typed so far.
+const CONNECTORS = new Set(['and', '&', 'و'])
+const withoutConnectors = (tokens) => {
+  const words = tokens.filter((token) => !CONNECTORS.has(token))
+  return words.length ? words : tokens
+}
+
 /** Folded query words. An Arabic word loses its article, so "العود" looks for "عود". */
 export function tokenize(query) {
   const text = normalizeText(query)
@@ -138,13 +163,15 @@ export function searchIndex(product) {
 /**
  * Every word of the query must begin some word of the fragrance, in either
  * language. Matching word starts rather than any substring keeps "rose" from
- * finding tuberose while "cam" still finds Cambodi as you type.
+ * finding tuberose while "cam" still finds Cambodi as you type. An Arabic
+ * word may carry و ب ف ك and the article ("والورد" finds "ورد"), and "and"
+ * or "و" between words asks for nothing of its own.
  */
 export function matchesQuery(product, query) {
-  const tokens = tokenize(query)
+  const tokens = withoutConnectors(tokenize(query))
   if (tokens.length === 0) return true
   const words = searchIndex(product)
-  return tokens.every((token) => words.some((word) => word.startsWith(token)))
+  return tokens.every((token) => tokenFound(token, words))
 }
 
 /* ---------------------------------------------------------------------------
@@ -200,7 +227,7 @@ export function noteSuggestions(query, lang = 'en', limit = 8, { exclude = [], c
 
   const wordsMatch = (name) => {
     const words = normalizeText(name).split(' ').flatMap(wordForms)
-    return tokens.every((token) => words.some((word) => word.startsWith(token)))
+    return tokens.every((token) => tokenFound(token, words))
   }
 
   const ranked = []
@@ -310,15 +337,36 @@ export function activeFilterCount(filters) {
   return count
 }
 
-const inPriceRange = (product, range) =>
-  isFullRange(range) ||
-  bottleFormats(product).some((entry) => entry.priceFils >= range[0] && entry.priceFils <= range[1])
+/**
+ * The bottles and oils (never the sample) that meet the price range and the
+ * concentration filter together — one format must satisfy both. With
+ * `except: 'concentrations'`, the price alone.
+ */
+export const matchingFormats = (product, filters = {}, { except = null } = {}) => {
+  const range = filters.priceRange
+  const ids = except === 'concentrations' ? [] : filters.concentrations ?? []
+  return bottleFormats(product).filter(
+    (entry) =>
+      (isFullRange(range) || (entry.priceFils >= range[0] && entry.priceFils <= range[1])) &&
+      (!ids.length || ids.includes(concentrationFor(product, entry.id))),
+  )
+}
 
+/**
+ * The price a fragrance's card leads with: the cheapest bottle or oil that
+ * meets the price and concentration filters, else its plain "from" price.
+ */
+export const displayPriceFils = (product, filters = {}) => {
+  const active = !isFullRange(filters.priceRange) || (filters.concentrations?.length ?? 0) > 0
+  if (!active) return fromPriceFils(product)
+  const matching = matchingFormats(product, filters)
+  return matching.length ? Math.min(...matching.map((entry) => entry.priceFils)) : fromPriceFils(product)
+}
+
+// Concentration is not here: it is met format by format, with the price.
 const PREDICATES = {
   families: (product, ids) => ids.includes(product.family),
   notes: (product, ids) => ids.every((id) => hasNote(product, id)),
-  concentrations: (product, ids) =>
-    product.formats.some((entry) => ids.includes(concentrationFor(product, entry.id))),
   sillage: (product, ids) => ids.includes(product.projectionSillage),
   genders: (product, ids) => ids.includes(product.gender),
 }
@@ -326,11 +374,11 @@ const PREDICATES = {
 /** Whether a fragrance passes every filter, leaving out the facet named in `except`. */
 export function matchesFilters(product, filters, { except = null } = {}) {
   for (const facet of FACETS) {
-    if (facet === except) continue
+    if (facet === except || facet === 'concentrations') continue
     const ids = filters[facet]
     if (ids?.length && !PREDICATES[facet](product, ids)) return false
   }
-  if (!inPriceRange(product, filters.priceRange)) return false
+  if (!matchingFormats(product, filters, { except }).length) return false
   return matchesQuery(product, filters.query)
 }
 
@@ -338,18 +386,25 @@ const flag = (value) => Number(Boolean(value))
 
 const SORTERS = {
   featured: (a, b) => flag(b.bestseller) - flag(a.bestseller) || flag(b.isNew) - flag(a.isNew),
-  'price-asc': (a, b) => fromPriceFils(a) - fromPriceFils(b),
-  'price-desc': (a, b) => fromPriceFils(b) - fromPriceFils(a),
   newest: (a, b) => b.year - a.year,
 }
 
+const PRICE_DIRECTION = { 'price-asc': 1, 'price-desc': -1 }
+
 /**
  * The fragrances in order. Array#sort is stable, so ties keep catalogue
- * order. By rating: highest average first, then most reviews; fragrances
- * nobody has reviewed yet follow, in featured order.
+ * order. By price: the price each card shows under `filters` (displayPriceFils
+ * — the cheapest bottle inside the price and concentration filters), so the
+ * grid reads in order. By rating: highest average first, then most reviews;
+ * fragrances nobody has reviewed yet follow, in featured order.
  */
-export function sortProducts(products, sort = 'featured', { aggregates = {} } = {}) {
+export function sortProducts(products, sort = 'featured', { aggregates = {}, filters = null } = {}) {
   const list = [...products]
+  if (Object.hasOwn(PRICE_DIRECTION, sort)) {
+    const direction = PRICE_DIRECTION[sort]
+    const price = new Map(list.map((product) => [product, displayPriceFils(product, filters ?? {})]))
+    return list.sort((a, b) => direction * (price.get(a) - price.get(b)))
+  }
   if (sort === 'rating' && hasReviews(aggregates)) {
     const score = (product) => aggregates?.[product.id]
     return list.sort((a, b) => {
@@ -367,7 +422,7 @@ export function sortProducts(products, sort = 'featured', { aggregates = {} } = 
 export function filterProducts(products, filters, { aggregates = {} } = {}) {
   const clean = sanitizeFilters(filters)
   const matched = products.filter((product) => matchesFilters(product, clean))
-  return sortProducts(matched, clean.sort, { aggregates })
+  return sortProducts(matched, clean.sort, { aggregates, filters: clean })
 }
 
 /**
@@ -375,7 +430,9 @@ export function filterProducts(products, filters, { aggregates = {} } = {}) {
  * shopper would see on choosing it. Families, concentrations, projection and
  * gender are either-or within the facet, so its own selection is left out.
  * Notes must all be present, so a note's count is the current results that
- * also carry it. Every option of the facet is listed, zeros included.
+ * also carry it. A concentration counts a fragrance only when a bottle in
+ * that concentration is inside the price range. Every option of the facet is
+ * listed, zeros included.
  */
 export function facetCounts(products, filters, facet) {
   const clean = sanitizeFilters(filters)
@@ -392,12 +449,15 @@ export function facetCounts(products, filters, facet) {
     return counts
   }
 
-  const predicate = PREDICATES[facet]
-  if (!predicate) return counts
+  const has =
+    facet === 'concentrations'
+      ? (product, id) => matchingFormats(product, { ...clean, concentrations: [id] }).length > 0
+      : PREDICATES[facet] && ((product, id) => PREDICATES[facet](product, [id]))
+  if (!has) return counts
   for (const product of products) {
     if (!matchesFilters(product, clean, { except: facet })) continue
     for (const id of Object.keys(counts)) {
-      if (predicate(product, [id])) counts[id] += 1
+      if (has(product, id)) counts[id] += 1
     }
   }
   return counts

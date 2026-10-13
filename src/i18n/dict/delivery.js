@@ -2,12 +2,14 @@
 //
 // {time} is built from delivery.hours / delivery.minutes with tc(), so Arabic
 // agrees the noun with the number ("ساعتين و٥ دقائق"). {day} is a weekday
-// from formatWeekday(), {fee} a formatted price, {area} an area name.
+// from formatWeekday(), {fee} a formatted price, {area} an area name,
+// {headline} one of the promises above.
 export default {
   en: {
-    'delivery.sameDay': 'Same-day delivery across Kuwait — order within {time}',
+    'delivery.sameDay': 'Same-day delivery — order within {time}',
     'delivery.nextDay': 'Order now for delivery tomorrow',
     'delivery.later': 'Order now for delivery on {day}',
+    'delivery.withCaveat': '{headline} · outlying areas excepted',
     'delivery.remote': 'Delivery to {area} on {day}',
     'delivery.remoteFee': 'Outlying-area fee: +{fee}',
     'delivery.remoteNote.one': 'Al Khiran, Al Wafra, Sabah Al-Ahmad and other outlying areas: delivery in {count} day, +{fee}',
@@ -20,9 +22,10 @@ export default {
     'delivery.minutes.other': '{count} min',
   },
   ar: {
-    'delivery.sameDay': 'توصيل في اليوم نفسه داخل الكويت — اطلب خلال {time}',
+    'delivery.sameDay': 'توصيل في اليوم نفسه — اطلب خلال {time}',
     'delivery.nextDay': 'اطلب الآن ليصلك طلبك غداً',
     'delivery.later': 'اطلب الآن ليصلك طلبك يوم {day}',
+    'delivery.withCaveat': '{headline}، ما عدا المناطق البعيدة',
     'delivery.remote': 'التوصيل إلى {area} يوم {day}',
     'delivery.remoteFee': 'رسوم إضافية للمناطق البعيدة: {fee}',
     'delivery.remoteNote.zero': 'الخيران والوفرة وصباح الأحمد وغيرها من المناطق البعيدة: التوصيل خلال {count} يوم برسوم إضافية {fee}',

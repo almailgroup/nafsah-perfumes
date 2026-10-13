@@ -71,7 +71,9 @@ export default function ProductRow({ id, title, caption, products, onViewAll, on
                 </span>
                 <span className="relative">
                   <span className="t-title block !text-snow-50">{t('finder.row.allTitle')}</span>
-                  <span className="ticket mt-2 block text-gold-300">{tc('finder.row.count', PRODUCTS.length)}</span>
+                  <span className="ticket mt-2 block text-gold-300 transition-colors duration-300 group-hover:text-snow-200">
+                    {tc('finder.row.count', PRODUCTS.length)}
+                  </span>
                 </span>
               </button>
             </li>

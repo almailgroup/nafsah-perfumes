@@ -5,6 +5,7 @@ import { cartTotals, detailLines, EMPTY_GIFT } from '../../context/cart-context'
 import { EMPTY_ADDRESS } from '../../lib/address'
 import AddressFields from './AddressFields'
 import Confirmation from './Confirmation'
+import { GiftCard } from './GiftSummary'
 import OrderSummary from './OrderSummary'
 import StepRail from './StepRail'
 import { buildReceipt, EMPTY_FORM } from './checkout-logic'
@@ -93,6 +94,25 @@ describe('OrderSummary', () => {
     const html = render('ar', <OrderSummary lines={lines} totals={cartTotals(lines)} title="ملخص الطلب" headingId="s" />)
     expect(arabicText(html)).not.toMatch(/[0-9]/)
   })
+
+  // A middle dot beside Arabic-Indic digits reads as a zero: "١٠٠٠ مل".
+  it('joins the format and its volume with a comma, not a middle dot', () => {
+    const ar = render('ar', <OrderSummary lines={lines} totals={cartTotals(lines)} />)
+    expect(ar).toContain('الزجاجة الكاملة، ١٠٠ مل')
+    expect(arabicText(ar)).not.toContain('·')
+    expect(render('en', <OrderSummary lines={lines} totals={cartTotals(lines)} />)).toContain('Full Bottle, 100 ml')
+  })
+})
+
+describe('GiftCard', () => {
+  it('draws the cart preview’s card and keeps the message readable', () => {
+    const html = render('ar', <GiftCard message="عيد مبارك يا ماما" from="Noura" />)
+    expect(html).toMatch(/<p aria-hidden="true"[^>]*>نَفْسَة<\/p>/)
+    expect(html).toMatch(/<blockquote dir="auto"[^>]*rtl:font-sans-ar[^>]*>عيد مبارك يا ماما<\/blockquote>/)
+    expect(html).toContain('<figcaption')
+    expect(html).toContain('من <bdi>Noura</bdi>')
+    expect(html).not.toMatch(/<figure[^>]*aria-hidden/)
+  })
 })
 
 describe('AddressFields', () => {
@@ -106,8 +126,19 @@ describe('AddressFields', () => {
     expect(html).toContain('الخيران')
     expect(html).toContain('منطقة أخرى…')
     expect(html).toContain('من المناطق البعيدة')
+    // Never same-day, then next-day timing plus the policy's extra day.
+    expect(html).toContain('لا توصيل في اليوم نفسه')
+    expect(html).toContain('يوم توصيل إضافي')
     // A house asks for no floor or apartment.
     expect(html).not.toContain('id="checkout-floor"')
+  })
+
+  it('says an outlying area is never same-day, as the policy does', () => {
+    const html = render('en', <AddressFields address={form.address} buildingType="house" onChange={noop} onBuildingType={noop} />)
+    expect(html).toContain(
+      'Al Khiran is an outlying area: no same-day delivery — it arrives on next-day timing plus one extra delivery day — and KWD 2.000 is added.',
+    )
+    expect(html).not.toMatch(/1 extra day/)
   })
 
   it('wires errors to their fields', () => {

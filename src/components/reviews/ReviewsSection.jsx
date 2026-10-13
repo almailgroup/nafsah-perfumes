@@ -46,7 +46,7 @@ function revealBelow(node) {
  * Gulf-specific dimensions as meters, then the reviews themselves, newest
  * first, and a form to write one. Real submissions only — nothing is seeded,
  * and until the house has a review service each one is marked as saved in
- * this browser and awaiting publication.
+ * this browser only, not sent to the house.
  *
  * Renders <section id="reviews"> so a rating badge can scroll to it.
  */

@@ -182,6 +182,32 @@ describe('formatAddress', () => {
     )
   })
 
+  it('recognises a label run straight into its number', () => {
+    const base = { ...SALMIYA, avenue: '', floor: '' }
+    expect(formatAddress({ ...base, apartment: 'Apt.3' })).toMatch(/, Apt\.3 — /)
+    expect(formatAddress({ ...base, apartment: 'Flat#3' })).toMatch(/, Flat#3 — /)
+    expect(formatAddress({ ...base, apartment: 'شقة٣' }, 'ar')).toMatch(/، شقة٣ — /)
+    expect(formatAddress({ ...base, apartment: 'شقة٣' }, 'ar')).not.toContain('شقة شقة')
+    expect(formatAddress({ ...base, building: 'Bldg.7' })).toContain(', Bldg.7,')
+    expect(formatAddress({ ...base, building: 'Bldg.7' })).not.toContain('Building Bldg')
+    expect(formatAddress({ ...base, building: 'Villa#4' })).toContain(', Villa#4,')
+    expect(formatAddress({ ...base, building: 'منزل٨' }, 'ar')).toContain('، منزل٨،')
+    expect(formatAddress({ ...base, street: 'St.5' })).toContain('Block 3, St.5,')
+    expect(formatAddress({ ...base, street: 'St.5' })).not.toContain('Street St')
+    expect(formatAddress({ ...SALMIYA, floor: 'Fl.2' })).toContain(', Fl.2,')
+    expect(formatAddress({ ...SALMIYA, floor: 'الدور٢' }, 'ar')).toContain('، الدور٢،')
+    expect(formatAddress({ ...SALMIYA, floor: 'الدور٢' }, 'ar')).not.toContain('الدور الدور')
+  })
+
+  it('still labels plain numbers and words that only begin like a label', () => {
+    const base = { ...SALMIYA, avenue: '', floor: '', apartment: '' }
+    expect(formatAddress({ ...base, apartment: '5' })).toContain(', Apt 5 — ')
+    expect(formatAddress({ ...base, building: '18' })).toContain(', Building 18 — ')
+    expect(formatAddress({ ...base, street: 'Stanford' })).toContain('Block 3, Street Stanford,')
+    expect(formatAddress({ ...base, building: 'Villanova 3' })).toContain(', Building Villanova 3 — ')
+    expect(formatAddress({ ...base, floor: 'Floral 2' })).toContain(', Floor Floral 2 — ')
+  })
+
   it('uses the typed name for "other" and the short Capital name', () => {
     const other = { governorate: 'capital', area: 'other', areaOther: 'Salhiya', block: '1', street: '5', building: '2' }
     expect(formatAddress(other)).toBe('Block 1, Street 5, Building 2 — Salhiya, Al Asimah')

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { ArrowLeft, ArrowRight, SearchX } from 'lucide-react'
 import ActiveFilters from './catalogue/ActiveFilters'
 import Filters from './Filters'
@@ -9,8 +10,21 @@ import { SCENT_FINDER } from '../router/router-context'
 /** The full, filterable catalogue. State lives in useCatalogue. */
 export default function Collection({ catalogue, searchRef, onOpenProduct }) {
   const { t, tc, isRtl } = useLocale()
-  const { results, total, priceRange, activeChips, removeChip, reset } = catalogue
+  const { results, total, priceRange, concentrations, activeChips, removeChip, reset } = catalogue
   const Forward = isRtl ? ArrowLeft : ArrowRight
+  const headingRef = useRef(null)
+  const focusHeading = () => headingRef.current?.focus({ preventScroll: true })
+
+  // A chip removed from the empty state can bring results back, and the
+  // whole block — the chip that had focus with it — goes. Focus left on the
+  // page itself comes back to the catalogue's heading.
+  const empty = results.length === 0
+  const wasEmpty = useRef(empty)
+  useEffect(() => {
+    if (wasEmpty.current === empty) return
+    wasEmpty.current = empty
+    if (document.activeElement === document.body) headingRef.current?.focus({ preventScroll: true })
+  }, [empty])
 
   return (
     <section id="collection" aria-labelledby="collection-title" className="relative scroll-mt-32 bg-snow-50 py-16 sm:py-24">
@@ -18,7 +32,9 @@ export default function Collection({ catalogue, searchRef, onOpenProduct }) {
         <header className="flex flex-col gap-4 border-b border-gold-500/60 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="ticket text-green-600">{t('theCatalogue')}</p>
-            <h2 id="collection-title" className="t-h2 mt-4">{t('allPerfumes')}</h2>
+            <h2 id="collection-title" ref={headingRef} tabIndex={-1} className="t-h2 mt-4">
+              {t('allPerfumes')}
+            </h2>
           </div>
           <p className="ticket text-snow-600 sm:pb-1 sm:text-end">{tc('catalogue.meta', total)}</p>
         </header>
@@ -33,6 +49,7 @@ export default function Collection({ catalogue, searchRef, onOpenProduct }) {
                 product={product}
                 index={index}
                 priceRange={priceRange}
+                concentrations={concentrations}
                 onOpen={onOpenProduct}
               />
             ))}
@@ -46,10 +63,18 @@ export default function Collection({ catalogue, searchRef, onOpenProduct }) {
             <ActiveFilters
               chips={activeChips}
               onRemove={removeChip}
+              onEmpty={focusHeading}
               showClear={false}
               className="mt-7 max-w-2xl justify-center [&>ul]:justify-center"
             />
-            <button type="button" onClick={reset} className="btn-outline mt-8">
+            <button
+              type="button"
+              onClick={() => {
+                focusHeading()
+                reset()
+              }}
+              className="btn-outline mt-8"
+            >
               {t('catalogue.clearAll')}
             </button>
             <Link

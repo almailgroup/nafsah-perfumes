@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import RatingBadge from './RatingBadge'
+import ReviewForm from './ReviewForm'
 import ReviewsSection from './ReviewsSection'
 import StarInput from './StarInput'
 import { TryFirstBanner } from '../trust/TryFirst'
@@ -71,6 +72,26 @@ describe('ReviewsSection', () => {
   it('in Arabic, with the fragrance named in Arabic', () => {
     const html = render('ar', <ReviewsSection product={PRODUCTS_BY_ID['oud-noir']} />)
     expect(text(html)).toContain('لا توجد مراجعات بعد. كن أول من يكتب مراجعة عن العود الأسود.')
+  })
+})
+
+describe('ReviewForm', () => {
+  const form = (lang) => render(lang, <ReviewForm productName="Oud Noir" add={() => ({ ok: false, errors: {} })} />)
+
+  it('marks the review text as required, as the name is', () => {
+    const html = form('en')
+    expect(html).toMatch(/<textarea[^>]*aria-required="true"/)
+    expect(html).toMatch(/<input[^>]*aria-required="true"/)
+  })
+
+  it('says the review stays in this browser and is not sent to the house', () => {
+    const en = text(form('en'))
+    expect(en).toContain('Your review is saved in this browser only. It is not sent to Nafsah')
+    expect(en).toContain('Save review')
+    expect(en).not.toMatch(/publish/i)
+    const ar = text(form('ar'))
+    expect(ar).toContain('ولا تُرسل إلى نَفْسَة')
+    expect(ar).toContain('احفظ المراجعة')
   })
 })
 

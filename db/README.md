@@ -19,14 +19,14 @@ seed it from `src/data` (below) before pointing anything at it.
 | Table | Source today | Notes |
 | --- | --- | --- |
 | `governorates`, `areas` | `src/data/kuwait.js` | Ids match (`hawalli`, `salmiya`). `areas.remote` drives the outlying-area fee and timing. |
-| `fragrance_families`, `concentrations`, `sillage_levels`, `genders`, `seasons`, `occasions`, `formats`, `heat_scale` | `src/data/taxonomy.js` | One table per list. `sort_order` is the display order the code takes from array order. |
+| `fragrance_families`, `concentrations`, `sillage_levels`, `genders`, `seasons`, `occasions`, `formats`, `heat_scale`, `longevity_bands`, `layering_kinds` | `src/data/taxonomy.js` | One table per list. `sort_order` is the display order the code takes from array order. A `NULL` `longevity_bands.max_hours` is the open-ended top band, `Infinity` in code. |
 | `notes` | `src/data/notes.js` | `aliases` holds the alternative spellings search accepts. |
 | `products` | `src/data/products.js` | `catalogue_no` replaces today's positional `CATALOGUE_NUMBERS`. `palette` is the bottle drawing's colours. |
 | `product_family_profile` | `product.familyProfile` | 1–4 rows per product summing to 100, checked at commit by a deferred trigger. |
 | `product_seasons`, `product_occasions` | `product.seasons`, `product.occasions` | Join tables rather than arrays, so the Scent Finder can query them. |
 | `product_notes` | `topNotes`, `heartNotes`, `baseNotes` | `tier` + `position`; a note appears once per product. |
 | `product_formats` | `product.formats` | `price_fils` is integer fils, as everywhere in the code. |
-| `layering_suggestions` | `product.layering` | Bukhoor carries its own name; attar and spray partners point at a product. |
+| `layering_suggestions` | `product.layering` | `kind` references `layering_kinds`. Bukhoor carries its own name; attar and spray partners point at a product. |
 | `gift_boxes` | `src/data/gifting.js` | `price_fils = 0` is the complimentary Signature box. |
 | `delivery_policy` | `src/data/delivery.js` | One row. Every figure the site quotes ({threshold}, {cutoff}, {returnPeriod}…) comes from here. |
 | `customers`, `addresses` | `src/lib/address.js` (shape only) | Kuwaiti mobile as 8 digits (`^[4569][0-9]{7}$`); block 1–999; a listed area must belong to its governorate (composite foreign key). |

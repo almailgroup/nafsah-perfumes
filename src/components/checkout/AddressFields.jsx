@@ -1,5 +1,6 @@
 import { MapPin } from 'lucide-react'
-import { REMOTE_EXTRA_DAYS, REMOTE_SURCHARGE_FILS } from '../../data/delivery'
+import { REMOTE_SURCHARGE_FILS } from '../../data/delivery'
+import { policyVars } from '../../data/help'
 import { areasIn, AREA_BY_ID, GOVERNORATES, isRemoteArea, OTHER_AREA_ID } from '../../data/kuwait'
 import { useLocale } from '../../i18n/locale-context'
 import { formatPrice } from '../../lib/format'
@@ -15,7 +16,7 @@ import { ChoiceGroup, Field, Select, TextArea, TextInput } from './fields'
  * onChange(patch) merges into the address.
  */
 export default function AddressFields({ address, buildingType, errors = {}, onChange, onBuildingType }) {
-  const { lang, t, tc, tr } = useLocale()
+  const { lang, t, tr } = useLocale()
   const areas = address.governorate ? areasIn(address.governorate, lang) : []
   const remote = isRemoteArea(address.area)
   const set = (field) => (event) => onChange({ [field]: event.target.value })
@@ -92,14 +93,15 @@ export default function AddressFields({ address, buildingType, errors = {}, onCh
         </Field>
       )}
 
-      {/* Announced when an outlying area is picked: its extra day and its fee. */}
+      {/* Announced when an outlying area is picked: never same-day, and its fee. */}
       <div aria-live="polite" className="col-span-6 empty:hidden">
         {remote && (
           <p className="flex items-start gap-3 border-s-2 border-gold-500 bg-snow-100 px-4 py-3 font-sans text-[14px] leading-snug text-ink-950 rtl:font-sans-ar">
             <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-green-600" strokeWidth={1.5} />
-            {tc('checkout.remote.note', REMOTE_EXTRA_DAYS, {
+            {t('checkout.remote.note', {
               area: tr(AREA_BY_ID[address.area]),
               fee: formatPrice(REMOTE_SURCHARGE_FILS, lang),
+              remoteDelay: policyVars(lang).remoteDelay,
             })}
           </p>
         )}

@@ -17,9 +17,6 @@ import {
 import { formatPrice } from '../lib/format'
 import { getAggregates, subscribeReviews } from '../lib/reviews'
 
-/** The price slider's full span, in fils. Kept under its old name for callers. */
-export const DEFAULT_RANGE = FULL_RANGE
-
 // What a chip calls each value: the short family name, the full name elsewhere.
 const LABEL_OF = {
   families: (id) => FAMILY_BY_ID[id]?.short,

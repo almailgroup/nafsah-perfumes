@@ -36,6 +36,7 @@ export default function FilterSheet({ open, onClose, catalogue }) {
   const { t, tc } = useLocale()
   const titleId = useId()
   const panelRef = useRef(null)
+  const showRef = useRef(null)
   useOverlay(open, onClose, panelRef)
 
   if (!open) return null
@@ -103,16 +104,21 @@ export default function FilterSheet({ open, onClose, catalogue }) {
         </div>
 
         <footer className="flex items-center gap-4 border-t border-snow-200 bg-snow-50 px-5 py-4 sm:px-7">
+          {/* "Clear all" goes once it has cleared; focus moves to the button
+              beside it first, so it stays inside the sheet. */}
           {isFiltered && (
             <button
               type="button"
-              onClick={reset}
+              onClick={() => {
+                showRef.current?.focus()
+                reset()
+              }}
               className="ticket shrink-0 text-green-600 underline underline-offset-4 transition-colors hover:text-ink-950"
             >
               {t('catalogue.clearAll')}
             </button>
           )}
-          <button type="button" onClick={onClose} className="btn-green flex-1">
+          <button ref={showRef} type="button" onClick={onClose} className="btn-green flex-1">
             {tc('catalogue.showResults', results.length)}
           </button>
         </footer>

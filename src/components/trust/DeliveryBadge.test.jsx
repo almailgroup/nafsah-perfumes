@@ -32,35 +32,42 @@ afterEach(() => vi.useRealTimers())
 describe('DeliveryBadge', () => {
   it('counts down to the 2 PM cut-off in hours and minutes', () => {
     at(kuwait(SUNDAY, '10:48'))
-    expect(render('en', { variant: 'compact' })).toBe('Same-day delivery across Kuwait — order within 3 h 12 min')
-    expect(render('ar', { variant: 'compact' })).toBe('توصيل في اليوم نفسه داخل الكويت — اطلب خلال ٣ ساعات و١٢ دقيقة')
+    expect(render('en', { variant: 'compact' })).toBe(
+      'Same-day delivery — order within 3 h 12 min · outlying areas excepted',
+    )
+    expect(render('ar', { variant: 'compact' })).toBe(
+      'توصيل في اليوم نفسه — اطلب خلال ٣ ساعات و١٢ دقيقة، ما عدا المناطق البعيدة',
+    )
   })
 
   it('agrees the Arabic nouns with the number', () => {
+    // A chosen city area: the countdown alone.
+    const salmiya = { variant: 'compact', areaId: 'salmiya' }
     at(kuwait(SUNDAY, '12:00'))
-    expect(render('ar', { variant: 'compact' })).toMatch(/اطلب خلال ساعتين$/)
+    expect(render('ar', salmiya)).toMatch(/اطلب خلال ساعتين$/)
     at(kuwait(SUNDAY, '12:58'))
-    expect(render('ar', { variant: 'compact' })).toMatch(/اطلب خلال ساعة ودقيقتين$/)
+    expect(render('ar', salmiya)).toMatch(/اطلب خلال ساعة ودقيقتين$/)
     at(kuwait(SUNDAY, '13:55'))
-    expect(render('ar', { variant: 'compact' })).toMatch(/اطلب خلال ٥ دقائق$/)
-    expect(render('en', { variant: 'compact' })).toMatch(/order within 5 min$/)
+    expect(render('ar', salmiya)).toMatch(/اطلب خلال ٥ دقائق$/)
+    expect(render('en', salmiya)).toMatch(/order within 5 min$/)
     at(kuwait(SUNDAY, '13:59'))
-    expect(render('ar', { variant: 'compact' })).toMatch(/اطلب خلال دقيقة$/)
+    expect(render('ar', salmiya)).toMatch(/اطلب خلال دقيقة$/)
   })
 
   it('promises tomorrow after the cut-off and skips the Friday rest', () => {
     at(kuwait(SUNDAY, '14:00'))
-    expect(render('en', { variant: 'compact' })).toBe('Order now for delivery tomorrow')
-    expect(render('ar', { variant: 'compact' })).toBe('اطلب الآن ليصلك طلبك غداً')
+    expect(render('en', { variant: 'compact' })).toBe('Order now for delivery tomorrow · outlying areas excepted')
+    expect(render('ar', { variant: 'compact' })).toBe('اطلب الآن ليصلك طلبك غداً، ما عدا المناطق البعيدة')
     at(kuwait(THURSDAY, '15:00'))
-    expect(render('en', { variant: 'compact' })).toBe('Order now for delivery on Saturday')
-    expect(render('ar', { variant: 'compact' })).toBe('اطلب الآن ليصلك طلبك يوم السبت')
+    expect(render('en', { variant: 'compact' })).toBe('Order now for delivery on Saturday · outlying areas excepted')
+    expect(render('ar', { variant: 'compact' })).toBe('اطلب الآن ليصلك طلبك يوم السبت، ما عدا المناطق البعيدة')
+    expect(render('en', { variant: 'compact', areaId: 'salmiya' })).toBe('Order now for delivery on Saturday')
   })
 
   it('adds the outlying-area terms on the inline badge', () => {
     at(kuwait(SUNDAY, '10:48'))
     expect(render('en')).toBe(
-      'Same-day delivery across Kuwait — order within 3 h 12 min Al Khiran, Al Wafra, Sabah Al-Ahmad and other outlying areas: delivery in 2 days, +KWD 2.000',
+      'Same-day delivery — order within 3 h 12 min Al Khiran, Al Wafra, Sabah Al-Ahmad and other outlying areas: delivery in 2 days, +KWD 2.000',
     )
     expect(render('ar')).toMatch(/التوصيل خلال يومين برسوم إضافية د\.ك\. ٢٫٠٠٠$/)
   })
@@ -71,5 +78,14 @@ describe('DeliveryBadge', () => {
     expect(render('ar', { areaId: 'khiran' })).toBe(
       'التوصيل إلى الخيران يوم الثلاثاء رسوم إضافية للمناطق البعيدة: د.ك. ٢٫٠٠٠',
     )
+  })
+
+  it('excepts outlying areas on the one-line badge only until an area is chosen', () => {
+    at(kuwait(SUNDAY, '10:48'))
+    expect(render('en', { variant: 'compact' })).toMatch(/outlying areas excepted$/)
+    expect(render('ar', { variant: 'compact' })).toMatch(/، ما عدا المناطق البعيدة$/)
+    expect(render('en', { variant: 'compact', areaId: 'khiran' })).toBe('Delivery to Al Khiran on Tuesday')
+    expect(render('ar', { variant: 'compact', areaId: 'khiran' })).toBe('التوصيل إلى الخيران يوم الثلاثاء')
+    expect(render('en', { variant: 'compact', areaId: 'salmiya' })).toBe('Same-day delivery — order within 3 h 12 min')
   })
 })

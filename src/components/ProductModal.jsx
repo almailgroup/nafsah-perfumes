@@ -48,8 +48,12 @@ function Section({ id, title, lede, children, className }) {
  *
  * `onOpenProduct(product)` swaps the overlay to another fragrance; the
  * layering guide's links to partner scents are its caller.
+ *
+ * `initialFormatId` is the format the card was showing, so the page opens on
+ * the size and price the shopper just saw. The layering guide's swap passes
+ * none: a partner fragrance starts on its first format.
  */
-export default function ProductModal({ product, onClose, onOpenProduct }) {
+export default function ProductModal({ product, onClose, onOpenProduct, initialFormatId = null }) {
   const { addItem } = useCart()
   const { lang, t, tr } = useLocale()
   const panelRef = useRef(null)
@@ -57,7 +61,8 @@ export default function ProductModal({ product, onClose, onOpenProduct }) {
   const titleRef = useRef(null)
   const actionsRef = useRef(null)
   const shownId = useRef(null)
-  // The choice belongs to one fragrance: opening another starts on its first format.
+  // The choice belongs to one fragrance and one visit: opening another, or the
+  // same one again, starts on the format it was opened with.
   const [choice, setChoice] = useState({ productId: null, formatId: null })
   const [actionsInView, setActionsInView] = useState(true)
   const isOpen = Boolean(product)
@@ -90,17 +95,26 @@ export default function ProductModal({ product, onClose, onOpenProduct }) {
     }
   }, [isOpen])
 
+  // Closing forgets the choice, so the next opening follows the card again.
+  useEffect(() => {
+    if (!isOpen) setChoice({ productId: null, formatId: null })
+  }, [isOpen])
+
   if (!product) return null
 
   const format =
-    (choice.productId === product.id && formatOf(product, choice.formatId)) || product.formats[0]
+    (choice.productId === product.id && formatOf(product, choice.formatId)) ||
+    formatOf(product, initialFormatId) ||
+    product.formats[0]
   const formatLabel = tr(FORMAT_BY_ID[format.id])
   const concentration = CONCENTRATION_BY_ID[concentrationFor(product, format.id)]
   const catalogue = CATALOGUE_NUMBERS[product.id]
   const name = tr(product.name)
   const price = formatPrice(format.priceFils, lang)
   const year = formatNumber(product.year, lang, { useGrouping: false })
-  const addLabel = t('product.addAria', { name, format: formatLabel })
+  // Read after each action's visible label, which has to lead its name: speech
+  // input calls a button by the words it shows.
+  const context = t('trust.card.addContext', { name, format: formatLabel })
 
   // addItem opens the cart drawer, which sits below this overlay, so hand the
   // screen over to it rather than stacking the two. A gift opens it on the gift panel.
@@ -217,18 +231,15 @@ export default function ProductModal({ product, onClose, onOpenProduct }) {
                   </p>
 
                   <div ref={actionsRef} className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <button type="button" onClick={handleAdd} aria-label={addLabel} className="btn-green w-full">
+                    <button type="button" onClick={handleAdd} className="btn-green w-full">
                       <Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
                       {t('addToCart')}
+                      <span className="sr-only"> — {context}</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleGift}
-                      aria-label={t('product.giftAria', { name, format: formatLabel })}
-                      className="btn-outline w-full"
-                    >
+                    <button type="button" onClick={handleGift} className="btn-outline w-full">
                       <Gift aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
                       {t('product.gift')}
+                      <span className="sr-only"> — {context}</span>
                     </button>
                   </div>
 
@@ -264,7 +275,8 @@ export default function ProductModal({ product, onClose, onOpenProduct }) {
                   tabIndex={-1}
                   className="mt-12 scroll-mt-6 border-t border-snow-200 pt-10 empty:hidden focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
                 >
-                  <ReviewsSection product={product} />
+                  {/* Keyed: a swap to a partner fragrance starts a fresh review, not this one's draft. */}
+                  <ReviewsSection key={product.id} product={product} />
                 </div>
               </div>
 
@@ -286,12 +298,12 @@ export default function ProductModal({ product, onClose, onOpenProduct }) {
                   <button
                     type="button"
                     onClick={handleAdd}
-                    aria-label={addLabel}
                     tabIndex={showBar ? 0 : -1}
                     className="btn-green shrink-0 px-6"
                   >
                     <Plus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={1.5} />
                     {t('addToCart')}
+                    <span className="sr-only"> — {context}</span>
                   </button>
                 </div>
               </div>

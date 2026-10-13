@@ -6,6 +6,9 @@ import OlfactoryPyramid from './OlfactoryPyramid'
 import ProductFacts from './ProductFacts'
 import ScentProfile from './ScentProfile'
 import { familyShares, isAllYear, layeringPairs } from './derive'
+import ProductModal from '../ProductModal'
+import ReviewsSection from '../reviews/ReviewsSection'
+import { CartContext } from '../../context/cart-context'
 import { PRODUCTS, PRODUCTS_BY_ID } from '../../data/products'
 import { LocaleContext, translate, translateCount, translateValue } from '../../i18n/locale-context'
 
@@ -155,6 +158,15 @@ describe('ScentProfile', () => {
     expect(shown).toContain('طوال العام')
     expect(shown).not.toMatch(/[0-9]/)
   })
+
+  it('separates an Arabic step from its words with a comma: a dot beside ٣ reads as ٣٠', () => {
+    const html = render('ar', <ScentProfile product={oudNoir} />)
+    const steps = tags(html, /<div[^>]*role="meter"[^>]*>/g).map((tag) => attr(tag, 'aria-valuetext'))
+    expect(steps[0]).toBe('٣ من ٥، يصمد في الحرّ المعتدل')
+    expect(steps[2]).toBe('٣ من ٤، قوي')
+    expect(text(html)).toContain('٣ من ٥، يصمد في الحرّ المعتدل')
+    expect(text(html)).not.toMatch(/[٠-٩]\s*·|·\s*[٠-٩]/)
+  })
 })
 
 describe('LayeringGuide', () => {
@@ -181,5 +193,75 @@ describe('LayeringGuide', () => {
       'عرض ورد طائفي',
       'عرض المسك الأبيض',
     ])
+  })
+})
+
+describe('ProductModal', () => {
+  const cart = { addItem: () => {} }
+  const modal = (lang, props) =>
+    render(
+      lang,
+      <CartContext.Provider value={cart}>
+        <ProductModal product={oudNoir} onClose={() => {}} {...props} />
+      </CartContext.Provider>,
+    )
+  // Every <button>: its aria-label, if any, and the text inside it (screen-reader-only text included).
+  const buttons = (html) =>
+    [...html.matchAll(/<button\b([^>]*)>(.*?)<\/button>/gs)].map(([, attrs, inner]) => ({
+      label: attr(attrs, 'aria-label'),
+      text: text(inner),
+    }))
+  const checkedFormat = (html) => text(html.match(/<button[^>]*role="radio"[^>]*aria-checked="true"[^>]*>(.*?)<\/button>/s)[1])
+
+  it('names each action by its visible label first, then the fragrance and format', () => {
+    for (const [lang, add, gift, context] of [
+      ['en', 'Add to Cart', 'Send as a gift', 'Oud Noir, Full Bottle'],
+      ['ar', 'أضف إلى السلة', 'أرسله هدية', `${translateValue('ar', oudNoir.name)}، الزجاجة الكاملة`],
+    ]) {
+      const all = buttons(modal(lang))
+      // The purchase block and the bar that keeps it in reach.
+      expect(all.filter((button) => button.text.startsWith(add))).toEqual([
+        { label: undefined, text: `${add} — ${context}` },
+        { label: undefined, text: `${add} — ${context}` },
+      ])
+      expect(all.filter((button) => button.text.startsWith(gift))).toEqual([
+        { label: undefined, text: `${gift} — ${context}` },
+      ])
+      // WCAG 2.5.3: wherever a label overrides the content, it still contains it.
+      for (const button of all) if (button.label) expect(button.label).toContain(button.text)
+    }
+  })
+
+  it('opens on the format the card showed, and on the first format for one it does not sell', () => {
+    const fifty = modal('en', { initialFormatId: 'spray50' })
+    expect(checkedFormat(fifty)).toContain('50ml Spray')
+    expect(text(fifty)).toContain('50ml Spray, 50 ml KWD 75.000')
+
+    for (const initialFormatId of [undefined, 'tola', 'retired']) {
+      const html = modal('en', { initialFormatId })
+      expect(checkedFormat(html)).toContain('Full Bottle')
+      expect(text(html)).toContain('Full Bottle, 100 ml KWD 119.000')
+    }
+  })
+
+  it('keys the reviews by fragrance, so a swap to a layering partner starts a fresh form', () => {
+    // The element tree ProductModal returns, one level deep: React remounts a
+    // child whose key changes, dropping an open form and its draft with it.
+    const reviewsKey = (product) => {
+      let tree = null
+      function Shallow() {
+        tree = ProductModal({ product, onClose: () => {} })
+        return null
+      }
+      render('en', <CartContext.Provider value={cart}><Shallow /></CartContext.Provider>)
+      const find = (node) => {
+        if (Array.isArray(node)) return node.map(find).find(Boolean) ?? null
+        if (!node || typeof node !== 'object') return null
+        return node.type === ReviewsSection ? node : find(node.props?.children)
+      }
+      return find(tree)?.key
+    }
+    expect(reviewsKey(oudNoir)).toBe('oud-noir')
+    expect(reviewsKey(wardTaifi)).toBe('ward-taifi')
   })
 })

@@ -12,15 +12,18 @@ import { CHECKBOX_FACETS } from './catalogue/facets'
 import { useLocale } from '../i18n/locale-context'
 import { formatNumber } from '../lib/format'
 
-/** "8 of 15", announced politely as the results change. */
-function ResultCount({ shown, total, className }) {
+/**
+ * "8 of 15", announced politely as the results change. Focusable from script
+ * only: focus lands here when the last chip or "Clear all" goes.
+ */
+const ResultCount = forwardRef(function ResultCount({ shown, total, className }, ref) {
   const { lang, t } = useLocale()
   return (
-    <p aria-live="polite" aria-atomic="true" className={className}>
+    <p ref={ref} tabIndex={-1} aria-live="polite" aria-atomic="true" className={className}>
       {t('catalogue.showing', { shown: formatNumber(shown, lang), total: formatNumber(total, lang) })}
     </p>
   )
-}
+})
 
 /**
  * The catalogue's filter bar.
@@ -39,6 +42,8 @@ const Filters = forwardRef(function Filters({ catalogue }, searchRef) {
   const [openFacet, setOpenFacet] = useState(null)
   const [sheetOpen, setSheetOpen] = useState(false)
   const topRef = useRef(null)
+  const deskCountRef = useRef(null)
+  const barCountRef = useRef(null)
 
   // Closing the sheet on fewer results can leave the shopper scrolled past
   // the end of a now shorter grid. Bring the top of the results back under
@@ -110,12 +115,18 @@ const Filters = forwardRef(function Filters({ catalogue }, searchRef) {
             <NotePicker selected={filters.notes} counts={counts.notes} onToggle={toggleNote} />
           </FacetPopover>
           {rest.map(facetPanel)}
-          <ResultCount shown={results.length} total={total} className="ticket ms-auto text-snow-600" />
+          <ResultCount ref={deskCountRef} shown={results.length} total={total} className="ticket ms-auto text-snow-600" />
         </div>
 
         {/* With nothing found, the empty state lists the filters instead. */}
         {results.length > 0 && (
-          <ActiveFilters chips={activeChips} onRemove={removeChip} onClear={reset} className="mt-5" />
+          <ActiveFilters
+            chips={activeChips}
+            onRemove={removeChip}
+            onClear={reset}
+            onEmpty={() => deskCountRef.current?.focus({ preventScroll: true })}
+            className="mt-5"
+          />
         )}
       </div>
 
@@ -138,11 +149,22 @@ const Filters = forwardRef(function Filters({ catalogue }, searchRef) {
             </span>
           )}
         </button>
-        <ResultCount shown={results.length} total={total} className="ticket min-w-0 truncate text-snow-600" />
+        <ResultCount
+          ref={barCountRef}
+          shown={results.length}
+          total={total}
+          className="ticket min-w-0 truncate text-snow-600"
+        />
         <SortSelect value={sort} options={sorts} onChange={setSort} compact className="ms-auto min-w-0 max-w-[11.5rem] flex-1" />
       </div>
       {results.length > 0 && (
-        <ActiveFilters chips={activeChips} onRemove={removeChip} onClear={reset} className="mt-4 lg:hidden" />
+        <ActiveFilters
+          chips={activeChips}
+          onRemove={removeChip}
+          onClear={reset}
+          onEmpty={() => barCountRef.current?.focus({ preventScroll: true })}
+          className="mt-4 lg:hidden"
+        />
       )}
 
       <FilterSheet open={sheetOpen} onClose={closeSheet} catalogue={catalogue} />

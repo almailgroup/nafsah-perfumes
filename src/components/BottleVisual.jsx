@@ -1,5 +1,6 @@
 import { useId } from 'react'
-import { classNames } from '../lib/format'
+import { useLocale } from '../i18n/locale-context'
+import { classNames, formatOrdinal } from '../lib/format'
 
 /**
  * Vector stand-in for product photography.
@@ -26,6 +27,8 @@ const SILHOUETTE =
 const STOPPER = 'M80 4 L120 4 L123 18 C123 25 113 30 100 30 C87 30 77 25 77 18 Z'
 
 export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, label, className }) {
+  const { lang, t } = useLocale()
+  const arabic = lang === 'ar'
   const uid = useId().replace(/:/g, '')
   const liquid = `lq-${uid}`
   const glass = `gl-${uid}`
@@ -150,13 +153,14 @@ export default function BottleVisual({ palette, fillLevel = 0.88, catalogue, lab
           x="100"
           y="219"
           textAnchor="middle"
-          fontFamily="Jost, Futura, sans-serif"
+          fontFamily={arabic ? "'IBM Plex Sans Arabic','Noto Sans Arabic',sans-serif" : 'Jost, Futura, sans-serif'}
           fontSize="5.5"
-          letterSpacing="1.2"
+          letterSpacing={arabic ? '0' : '1.2'}
           fill="#08140f"
           fillOpacity="0.55"
         >
-          No. {catalogue}
+          {/* Jost has no Arabic: in Arabic the number reads as it does on the card. */}
+          {arabic ? t('product.catalogueNo', { no: formatOrdinal(catalogue, lang) }) : <>No. {catalogue}</>}
         </text>
       )}
 

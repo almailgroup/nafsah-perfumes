@@ -1,12 +1,9 @@
 import { useId, useState } from 'react'
 import { BadgeCheck, Clock, Headset, TestTube } from 'lucide-react'
-import { TryFirstModal } from './trust/TryFirst'
-import { FORMATS } from '../data/taxonomy'
+import { TryFirstModal, useTryFirstVars } from './trust/TryFirst'
+import { policyVars } from '../data/help'
 import { useLocale } from '../i18n/locale-context'
-import { deliveryVars } from '../lib/delivery'
-import { classNames, formatMl } from '../lib/format'
-
-const VIAL_ML = FORMATS.find((format) => format.kind === 'sample')?.ml ?? 2
+import { classNames } from '../lib/format'
 
 // Same-day delivery and Try First are the house's own promises (trust.*); the
 // authenticity and consultation lines are core copy.
@@ -27,7 +24,10 @@ export default function TrustBadges() {
   const { lang, t } = useLocale()
   const headingId = useId()
   const [tryFirstOpen, setTryFirstOpen] = useState(false)
-  const vars = { ...deliveryVars(lang), vial: formatMl(VIAL_ML, lang) }
+  // The cut-off and rest days from the delivery policy, and the Try First
+  // formats and vial exactly as the Try First modal quotes them.
+  const tryFirstVars = useTryFirstVars()
+  const vars = { ...policyVars(lang), ...tryFirstVars }
 
   return (
     <section aria-labelledby={headingId} className="relative overflow-hidden bg-green-600">

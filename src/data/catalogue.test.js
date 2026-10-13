@@ -13,6 +13,7 @@ import {
   fromPriceFils,
 } from './products'
 import { validateCatalogue, validateProduct } from './schema'
+import { filterProducts } from '../lib/catalogue'
 import {
   CONCENTRATIONS,
   CONCENTRATION_BY_ID,
@@ -116,6 +117,16 @@ describe('catalogue', () => {
     for (const product of PRODUCTS) {
       expect(product.layering.length, product.id).toBeGreaterThanOrEqual(2)
       expect(product.layering.length, product.id).toBeLessThanOrEqual(3)
+    }
+  })
+
+  it('layers the house way: oil on the pulse points first, the spray over it', () => {
+    for (const product of PRODUCTS) {
+      for (const pairing of product.layering) {
+        expect(pairing.how.en, product.id).not.toMatch(/\bspray\b[^.]*\bfirst\b/i)
+        expect(pairing.how.en, product.id).not.toMatch(/first and add/i)
+        expect(pairing.how.en, product.id).not.toMatch(/\boil over it\b/i)
+      }
     }
   })
 
@@ -286,6 +297,13 @@ describe('notes', () => {
     expect(NOTES.amber.ar).toBe('عنبر')
     expect(NOTES.ambergris.ar).toBe('عنبر رمادي')
     expect(NOTES.driftwood.ar).toBe('الخشب الطافي')
+  })
+
+  it('finds the oud fragrances under the other spellings of oud', () => {
+    for (const query of ['oudh', 'aoud', 'agarwood', 'agar']) {
+      const ids = filterProducts(PRODUCTS, { query }).map((p) => p.id)
+      expect(ids, query).toEqual(expect.arrayContaining(['oud-noir', 'qahwa', 'dehn-al-oud']))
+    }
   })
 
   it('lists every note A–Z by English name', () => {

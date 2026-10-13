@@ -189,7 +189,8 @@ Latin digits if the house prefers.
   products are appended, because catalogue numbers are positional.
 - **Delivery fees, the cut-off, rest days, the return window.** Change the constant in
   `src/data/delivery.js`. The delivery badge, cart, checkout, announcement bar, FAQ, Shipping
-  & Returns page and terms all follow.
+  & Returns page and terms all follow. The `*/index.html` meta descriptions carry no policy
+  figures, apart from `index.html`'s "since 1974".
 - **Areas.** `src/data/kuwait.js`: add a row under its governorate as `[id, English, Arabic]`,
   with `REMOTE` as a fourth value for an outlying area.
 - **Gift boxes.** `src/data/gifting.js`: name, blurb and price in fils; the FAQ quotes them.
@@ -245,10 +246,13 @@ components.
 
 This storefront is a working template. Before trading on it, replace or confirm:
 
-- **Heritage story** — founded 1974, Yusuf Nafsah, the three-bench atelier, the Grasse bench,
-  four-week maceration, the named material sources (Al Hada, Tamil Nadu, Florence), "never
+- **Heritage story** — Yusuf Nafsah, the three-bench atelier, the Grasse bench, four-week
+  maceration, the named material sources (Al Hada, Tamil Nadu, Florence), "never
   reformulated", and the Kuwait boutique decanting oils and vials (`src/i18n/strings.js`,
-  the terms' "Who you are dealing with").
+  the terms' "Who you are dealing with"). The founding year, 1974, is `HOUSE_FOUNDED` in
+  `src/data/help.js`, which the story, footer and terms read; it is also written out as
+  "since 1974" in `index.html`'s meta description, as `FIRST_YEAR` in `src/data/schema.js`
+  and in the `year` check in `db/schema.sql`.
 - **Contact details** — the boutique address, `+965 2200 0000`, `atelier@nafsah.example`,
   WhatsApp, opening hours and the Grasse atelier (`ContactPage.jsx`, `Footer.jsx`,
   `strings.js`).
@@ -263,7 +267,9 @@ This storefront is a working template. Before trading on it, replace or confirm:
 - **Legal templates** — the privacy policy and terms of sale are drafts, not legal advice;
   have them reviewed under Kuwaiti law (`legal.js`).
 - **Services not yet connected** — payments (KNET, cards, Apple Pay), order handling, the
-  review service and the newsletter. Checkout and the newsletter are demonstrations.
+  review service, the newsletter and the contact form, through which returns, Try First
+  returns and GCC/international order requests all arrive. Checkout, the contact form and the
+  newsletter are demonstrations.
 - **Arabic copy and the area list** — have a native copy editor review the Arabic, and check
   the residential area names and governorate assignments in `kuwait.js`.
 

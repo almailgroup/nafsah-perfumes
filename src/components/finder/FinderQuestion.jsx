@@ -30,6 +30,7 @@ export default function FinderQuestion({
   const uid = useId()
   const titleId = `${uid}-title`
   const hintId = `${uid}-hint`
+  const stepId = `${uid}-step`
   const refs = useRef([])
   const Back = isRtl ? ArrowRight : ArrowLeft
   const Forward = isRtl ? ArrowLeft : ArrowRight
@@ -57,7 +58,9 @@ export default function FinderQuestion({
   return (
     <section aria-labelledby={titleId} className="animate-fade-in">
       <div className="flex items-baseline justify-between gap-6">
-        <p aria-live="polite" className="ticket text-green-600">
+        {/* Not a live region: the screen is remounted per question, so the
+            step is read as the description of the heading that takes focus. */}
+        <p id={stepId} className="ticket text-green-600">
           {stepText}
         </p>
         <p className="ticket text-end text-snow-600">{tr(question.label)}</p>
@@ -78,14 +81,15 @@ export default function FinderQuestion({
         ))}
       </div>
 
-      <h2
+      <h1
         id={titleId}
         ref={headingRef}
         tabIndex={-1}
+        aria-describedby={stepId}
         className="t-h2 mt-10 max-w-3xl outline-none focus-visible:ring-0 focus-visible:ring-offset-0 sm:mt-14"
       >
         {tr(question.title)}
-      </h2>
+      </h1>
       <p id={hintId} className="t-body mt-4 max-w-xl text-snow-600">
         {tr(question.hint)}
       </p>

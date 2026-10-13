@@ -14,8 +14,6 @@ export const STEPS = ['details', 'delivery', 'review']
 /** Payment is chosen here and taken nowhere: this is a demonstration storefront. */
 export const PAYMENT_METHODS = ['knet', 'card', 'apple-pay', 'cod']
 
-export const BUILDING_TYPES = ['house', 'apartment']
-
 export const EMPTY_FORM = Object.freeze({
   name: '',
   email: '',

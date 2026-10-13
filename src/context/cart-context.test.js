@@ -6,6 +6,8 @@ import {
   detailLines,
   EMPTY_GIFT,
   GIFT_KEY,
+  giftForCart,
+  isLineFull,
   LEGACY_CART_KEY,
   MAX_QTY,
   migrateLegacyCart,
@@ -273,5 +275,42 @@ describe('cartReducer', () => {
     const start = [line('oud-noir', 'full', 2)]
     expect(cartReducer(start, { type: 'replace', lines: [line('oud-noir', 'full', 2)] })).toBe(start)
     expect(cartReducer(start, { type: 'replace', lines: [] })).toEqual([])
+  })
+})
+
+describe('an emptied cart and its gift', () => {
+  const majlis = sanitizeGift({ enabled: true, boxId: 'majlis', message: 'Eid Mubarak', from: 'Noura', deliverToRecipient: true })
+
+  it('keeps the gift while there is something to wrap', () => {
+    expect(giftForCart(majlis, 1)).toBe(majlis)
+  })
+
+  it('drops box, card and recipient delivery once the last line goes', () => {
+    expect(giftForCart(majlis, 0)).toEqual(EMPTY_GIFT)
+    // A gift switched off but still holding a card is reset too, so it cannot return later.
+    expect(giftForCart({ ...majlis, enabled: false }, 0)).toEqual(EMPTY_GIFT)
+    const empty = sanitizeGift(null)
+    expect(giftForCart(empty, 0)).toBe(empty)
+  })
+
+  it('does not carry an abandoned gift into the next order', () => {
+    // What the provider does: remove the only line, the gift follows, then a plain add.
+    let lines = cartReducer([], { type: 'add', productId: 'oud-noir', formatId: 'full', qty: 1 })
+    let gift = giftForCart(majlis, lines.length)
+    lines = cartReducer(lines, { type: 'remove', id: 'oud-noir__full' })
+    gift = giftForCart(gift, lines.length)
+    lines = cartReducer(lines, { type: 'add', productId: 'ambre-royale', formatId: 'full', qty: 1 })
+    expect(cartTotals(detailLines(lines), gift).giftFils).toBe(0)
+    expect(gift).toMatchObject({ enabled: false, deliverToRecipient: false, message: '', from: '', boxId: 'signature' })
+  })
+})
+
+describe('isLineFull', () => {
+  it('is true only for a line already at MAX_QTY', () => {
+    const lines = [line('oud-noir', 'full', MAX_QTY), line('oud-noir', 'sample', MAX_QTY - 1)]
+    expect(isLineFull(lines, 'oud-noir__full')).toBe(true)
+    expect(isLineFull(lines, 'oud-noir__sample')).toBe(false)
+    expect(isLineFull(lines, 'qahwa__full')).toBe(false)
+    expect(isLineFull([], 'oud-noir__full')).toBe(false)
   })
 })

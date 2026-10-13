@@ -40,8 +40,8 @@ function useMinuteClock() {
 /**
  * When an order placed now arrives, on Kuwait time: same-day with a countdown
  * to the 2 PM cut-off, tomorrow, or the next delivery day after the Friday
- * rest. `compact` is one line for cards and the cart; `inline` adds the
- * outlying-area terms underneath.
+ * rest. `compact` is one line for cards and the cart (excepting outlying
+ * areas until one is chosen); `inline` adds the outlying-area terms underneath.
  */
 export default function DeliveryBadge({ areaId = null, variant = 'inline' }) {
   const { lang, t, tc, tr } = useLocale()
@@ -69,10 +69,12 @@ export default function DeliveryBadge({ areaId = null, variant = 'inline' }) {
   const Icon = promise.type === 'same-day' ? Clock : Truck
 
   if (variant === 'compact') {
+    // Until an area is chosen, the one line says outlying areas are not part of the promise.
+    const line = !areaId && !promise.remote ? t('delivery.withCaveat', { headline }) : headline
     return (
       <p className="flex items-start gap-2 font-sans text-[13px] font-normal leading-snug text-ink-950 rtl:font-sans-ar">
         <Icon aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-green-600" strokeWidth={1.5} />
-        <span>{headline}</span>
+        <span>{line}</span>
       </p>
     )
   }

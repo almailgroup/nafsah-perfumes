@@ -26,9 +26,7 @@ export default {
     'product.formatLabel': 'Choose a size or format',
     'product.format.vial': 'with a free {volume} test vial',
     'product.selection': '{format}, {volume}',
-    'product.addAria': 'Add {name}, {format}, to the cart',
     'product.gift': 'Send as a gift',
-    'product.giftAria': 'Send {name}, {format}, as a gift',
 
     'product.about': 'About the fragrance',
 
@@ -79,9 +77,7 @@ export default {
     'product.formatLabel': 'اختر الحجم أو الصيغة',
     'product.format.vial': 'مع عيّنة اختبار {volume} مجاناً',
     'product.selection': '{format}، {volume}',
-    'product.addAria': 'أضف {name}، {format}، إلى السلة',
     'product.gift': 'أرسله هدية',
-    'product.giftAria': 'أرسل {name}، {format}، هدية',
 
     'product.about': 'عن العطر',
 
@@ -101,7 +97,8 @@ export default {
     'product.profile.heat': 'مقاومة الحرّ',
     'product.profile.longevity': 'الثبات على البشرة',
     'product.profile.projection': 'الفوحان والأثر',
-    'product.profile.steps': '{value} من {max} · {label}',
+    // An Arabic comma, not a middle dot: '·' beside ٣ reads as another digit (٣٠).
+    'product.profile.steps': '{value} من {max}، {label}',
     'product.profile.season': 'الموسم',
     'product.profile.allYear': 'طوال العام',
     'product.profile.occasions': 'المناسبات',

@@ -104,6 +104,20 @@ export function sanitizeGift(stored) {
   }
 }
 
+/**
+ * The gift belongs to the order: once the cart is empty it goes back to the
+ * empty gift, box, card and recipient delivery included, so none of it comes
+ * back on the next order. Returns the same object when nothing changes.
+ */
+export function giftForCart(gift, lineCount) {
+  if (lineCount > 0) return gift
+  const empty = sanitizeGift(null)
+  return JSON.stringify(gift) === JSON.stringify(empty) ? gift : empty
+}
+
+/** Whether the line `id` already holds MAX_QTY bottles, so another add would change nothing. */
+export const isLineFull = (lines, id) => (lines.find((line) => line.id === id)?.qty ?? 0) >= MAX_QTY
+
 /** Stored lines joined to the live catalogue, so a price change never leaves a stale line behind. */
 export function detailLines(lines) {
   return lines.flatMap((line) => {

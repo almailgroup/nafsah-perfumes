@@ -349,7 +349,9 @@ function vibeMatch(product, vibeId) {
   const notes = [...product.topNotes, ...product.heartNotes, ...product.baseNotes]
   const noteScore = notes.reduce((sum, note) => sum + (vibe.notes[note?.id] ?? 0), 0)
   const signature = notes.find((note) => vibe.notes[note?.id] === 1) ?? null
-  const familyFit = clamp01(share / FULL_FAMILY_SHARE)
+  // Notes confirm the family: with no signature note, the shelf a fragrance
+  // sits on proves nothing (a white musk is not heavy oud).
+  const familyFit = noteScore > 0 ? clamp01(share / FULL_FAMILY_SHARE) : 0
   const fit = FAMILY_PART * familyFit + (1 - FAMILY_PART) * clamp01(noteScore)
   return { fit, lead, signature }
 }
@@ -449,12 +451,22 @@ export function recommend(answers, products) {
 }
 
 /**
- * The families a character answer points at, in display order, for "see all
- * matches in the catalogue". Families that only colour a character (weight
- * under one half) are left out. No character answered → [].
+ * The families a character answer points at, in display order. Families that
+ * only colour a character (weight under one half) are left out. No character
+ * answered → [].
  */
 export function familiesFor(answers) {
   const vibe = VIBES[sanitizeAnswers(answers).vibe]
   if (!vibe) return []
   return FAMILIES.map((family) => family.id).filter((id) => (vibe.families[id] ?? 0) >= 0.5)
+}
+
+/**
+ * The families the catalogue opens on from the results: those the character
+ * answer points at, plus the family of each of the `count` closest matches,
+ * so every fragrance just shown is among them. Display order.
+ */
+export function seeAllFamilies(answers, results, count = 3) {
+  const wanted = new Set([...familiesFor(answers), ...results.slice(0, count).map((result) => result.product.family)])
+  return FAMILIES.map((family) => family.id).filter((id) => wanted.has(id))
 }

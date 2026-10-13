@@ -3,12 +3,12 @@ import { ArrowLeft, ArrowRight, Check, CircleAlert } from 'lucide-react'
 import { useLocale } from '../i18n/locale-context'
 import { classNames, formatNumber } from '../lib/format'
 import { FOOTER_LOGO } from '../brand'
+import { HOUSE_FOUNDED } from '../data/help'
 import { Link } from '../router/RouterProvider'
 import { CONTACT, FAQ, PRIVACY, SCENT_FINDER, SHIPPING, TERMS } from '../router/router-context'
 
 const EMAIL = 'atelier@nafsah.example'
 const PHONE = '+965 2200 0000'
-const FOUNDED = 1974
 
 /* Every link goes somewhere real: a page, a section of the homepage, or the
    contact form with its subject already chosen. */
@@ -142,7 +142,9 @@ export default function Footer({ onGoToSection }) {
                   {t(error)}
                 </p>
               )}
-              <p role="status" className="sr-only">
+              {/* Said as well as shown: nothing stores an address yet, so the
+                  form must not claim one was saved. */}
+              <p role="status" className="t-body mt-3 text-[14px] text-snow-300 empty:mt-0">
                 {subscribed ? t('finder.footer.subscribedNote') : ''}
               </p>
             </form>
@@ -163,7 +165,7 @@ export default function Footer({ onGoToSection }) {
               className="block h-9 w-auto"
             />
             <p className="t-body mt-5 max-w-xs text-snow-200">
-              {t('finder.footer.tagline', { year: formatNumber(FOUNDED, lang, { useGrouping: false }) })}
+              {t('finder.footer.tagline', { year: formatNumber(HOUSE_FOUNDED, lang, { useGrouping: false }) })}
             </p>
             {/* One address in both languages: the Kuwait boutique. */}
             <address className="mt-6 space-y-2 not-italic">

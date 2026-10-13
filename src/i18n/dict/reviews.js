@@ -19,7 +19,7 @@ export default {
     'reviews.write': 'Write a review',
     'reviews.local':
       'Until the house connects its review service, each review is kept in the browser it was written in.',
-    'reviews.pending': 'Saved in this browser · awaiting publication',
+    'reviews.pending': 'Saved in this browser only · not sent to Nafsah',
     'reviews.showAll.one': 'Show {count} review',
     'reviews.showAll.other': 'Show all {count} reviews',
     'reviews.showFewer': 'Show fewer',
@@ -73,13 +73,13 @@ export default {
     'reviews.form.optional': 'optional',
     'reviews.form.areaHelp': 'For example, Salmiya or Jabriya.',
     'reviews.form.localNote':
-      'Your review is saved in this browser and published once the house connects its review service.',
-    'reviews.form.submit': 'Submit review',
+      'Your review is saved in this browser only. It is not sent to Nafsah, so for now only you can see it.',
+    'reviews.form.submit': 'Save review',
     'reviews.form.errorSummary.one': 'Please check the field marked above.',
     'reviews.form.errorSummary.other': 'Please check the {count} fields marked above.',
     'reviews.form.successTitle': 'Thank you, {name}.',
     'reviews.form.successBody':
-      'Your review is saved in this browser. It will be published once the house connects its review service; until then it shows here, for you only.',
+      'Your review is saved in this browser only and has not been sent to Nafsah. It shows here, for you alone.',
     'reviews.form.done': 'Done',
 
     'reviews.err.rating': 'Choose a rating from {min} to {max}.',
@@ -109,7 +109,7 @@ export default {
     'reviews.empty': 'لا توجد مراجعات بعد. كن أول من يكتب مراجعة عن {name}.',
     'reviews.write': 'اكتب مراجعة',
     'reviews.local': 'إلى أن تربط الدار خدمة المراجعات، تبقى كل مراجعة محفوظة في المتصفح الذي كُتبت فيه.',
-    'reviews.pending': 'محفوظة في هذا المتصفح · بانتظار النشر',
+    'reviews.pending': 'محفوظة في هذا المتصفح فقط · لم تُرسل إلى نَفْسَة',
     'reviews.showAll.zero': 'عرض المراجعات',
     'reviews.showAll.one': 'عرض المراجعة',
     'reviews.showAll.two': 'عرض المراجعتين',
@@ -166,8 +166,8 @@ export default {
     'reviews.form.area': 'المنطقة',
     'reviews.form.optional': 'اختياري',
     'reviews.form.areaHelp': 'مثل السالمية أو الجابرية.',
-    'reviews.form.localNote': 'تُحفظ مراجعتك في هذا المتصفح، وتُنشر حين تربط الدار خدمة المراجعات.',
-    'reviews.form.submit': 'أرسل المراجعة',
+    'reviews.form.localNote': 'تُحفظ مراجعتك في هذا المتصفح فقط، ولا تُرسل إلى نَفْسَة، فلا يراها الآن أحد سواك.',
+    'reviews.form.submit': 'احفظ المراجعة',
     'reviews.form.errorSummary.zero': 'يُرجى مراجعة الحقول المشار إليها أعلاه.',
     'reviews.form.errorSummary.one': 'يُرجى مراجعة الحقل المشار إليه أعلاه.',
     'reviews.form.errorSummary.two': 'يُرجى مراجعة الحقلين المشار إليهما أعلاه.',
@@ -175,8 +175,7 @@ export default {
     'reviews.form.errorSummary.many': 'يُرجى مراجعة الحقول المشار إليها أعلاه، وعددها {count}.',
     'reviews.form.errorSummary.other': 'يُرجى مراجعة الحقول المشار إليها أعلاه، وعددها {count}.',
     'reviews.form.successTitle': 'شكراً لك، {name}.',
-    'reviews.form.successBody':
-      'حُفظت مراجعتك في هذا المتصفح، وستُنشر حين تربط الدار خدمة المراجعات. وإلى ذلك الحين تظهر هنا لك وحدك.',
+    'reviews.form.successBody': 'حُفظت مراجعتك في هذا المتصفح فقط ولم تُرسل إلى نَفْسَة، فهي تظهر هنا لك وحدك.',
     'reviews.form.done': 'تم',
 
     'reviews.err.rating': 'اختر تقييماً من {min} إلى {max}.',

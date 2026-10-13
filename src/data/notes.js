@@ -30,8 +30,8 @@ const ENTRIES = [
   { id: 'vanilla-orchid', en: 'Vanilla Orchid', ar: 'زهرة الفانيلا' },
 
   // Oud, musk & animalics
-  { id: 'cambodi-oud', en: 'Cambodi Oud', ar: 'عود كمبودي', aliases: ['Cambodian Oud', 'Kambodi Oud'] },
-  { id: 'hindi-oud', en: 'Hindi Oud', ar: 'عود هندي', aliases: ['Indian Oud'] },
+  { id: 'cambodi-oud', en: 'Cambodi Oud', ar: 'عود كمبودي', aliases: ['Cambodian Oud', 'Kambodi Oud', 'Oudh', 'Aoud', 'Agarwood'] },
+  { id: 'hindi-oud', en: 'Hindi Oud', ar: 'عود هندي', aliases: ['Indian Oud', 'Oudh', 'Aoud', 'Agarwood'] },
   { id: 'musk', en: 'Musk', ar: 'مسك' },
   { id: 'white-musk', en: 'White Musk', ar: 'مسك أبيض' },
   { id: 'ambrette-seed', en: 'Ambrette Seed', ar: 'حبّ المسك', aliases: ['Ambrette'] },
