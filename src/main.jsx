@@ -2,6 +2,7 @@ import './polyfills.js'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import './fonts.js'
 import './index.css'
 
 // A tab opened before a deploy still asks for the old build's page chunks,

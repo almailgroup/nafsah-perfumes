@@ -113,10 +113,6 @@ export const LEGAL = {
             en: 'GitHub, which hosts this site — the technical information every browser request carries (IP address, browser type, the page requested), in its server logs.',
             ar: 'GitHub، الذي يستضيف هذا الموقع — المعلومات التقنية التي يحملها كل طلب من المتصفّح (عنوان IP، نوع المتصفّح، الصفحة المطلوبة) في سجلات خوادمه.',
           },
-          {
-            en: 'Google Fonts, which serves the typefaces on every page — your IP address, browser type and this site’s address. It sets no cookies.',
-            ar: 'خطوط Google، التي تقدّم الخطوط في كل صفحة — عنوان IP ونوع المتصفّح وعنوان هذا الموقع، دون أيّ ملفّات تعريف ارتباط.',
-          },
         ],
         after: [
           {

@@ -52,8 +52,8 @@ export default {
         // display sizes unchanged; x-height 0.460 against Inter's 0.550, so
         // lowercase UI text is set a step larger to hold its apparent size.
         // Being 11% narrower than Inter, that step costs almost no width.
-        display: ['Jost', 'Futura', 'Century Gothic', 'sans-serif'],
-        sans: ['Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Jost Variable"', 'Jost', 'Futura', 'Century Gothic', 'sans-serif'],
+        sans: ['"Jost Variable"', 'Jost', 'Futura', 'system-ui', '-apple-system', 'sans-serif'],
         // Jost has no Arabic, so the Arabic side keeps its own pair. Reem Kufi
         // is geometric Kufi, which now sits closer to the Latin than the
         // inscriptional serif it replaced.
