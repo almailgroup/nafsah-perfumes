@@ -32,3 +32,7 @@ pnpm-debug.log*
 *.whl
 .venv/
 __pycache__/
+
+# Design lab mockups (local only, never shipped)
+design-lab/
+src/design-lab/
